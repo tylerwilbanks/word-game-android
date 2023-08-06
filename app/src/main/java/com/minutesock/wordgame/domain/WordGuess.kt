@@ -1,4 +1,4 @@
-package com.minutesock.wordgame
+package com.minutesock.wordgame.domain
 
 class WordGuess() {
     val letters = List(5) {
