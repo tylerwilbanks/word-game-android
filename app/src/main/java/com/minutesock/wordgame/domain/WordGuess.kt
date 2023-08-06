@@ -1,10 +1,24 @@
 package com.minutesock.wordgame.domain
 
-class WordGuess {
-    val letters = List(5) {
+class WordGuess(val attemptNumber: Int) {
+    private val wordSize = 5
+
+    val letters = List(wordSize) {
         Letter()
     }
+
+    val lockedIn = false
+
     val word get() = letters.joinToString { it.displayCharacter }
-    val getNextAvailableLetterIndexForInput get() = letters.indexOfFirst { it.availableForInput }
+
+    val getLetterIndexForInput: Int get() {
+        val index = letters.indexOfFirst { it.availableForInput }
+        return if (index == -1) {
+            letters.size - 1
+        } else {
+            index
+        }
+    }
+
     val isIncomplete get() = letters.any { it.availableForInput }
 }

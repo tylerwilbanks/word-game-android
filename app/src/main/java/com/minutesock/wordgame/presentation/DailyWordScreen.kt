@@ -15,9 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.WordGuess
+import com.minutesock.wordgame.presentation.components.WordRow
 
 @Composable
-fun DailyWordScreen() {
+fun DailyWordScreen(onEvent: (DailyWordEvent) -> Unit) {
     val animationDuration = 1000
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -36,11 +37,11 @@ fun DailyWordScreen() {
                     ),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
-                text = "Yet another word game!",
+                text = "What in da word?!",
             )
 
             WordRow(
-                WordGuess()
+                WordGuess(1)
             )
         }
     }
