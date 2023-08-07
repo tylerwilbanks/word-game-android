@@ -11,14 +11,15 @@ class GuessWord(val attemptNumber: Int) {
 
     val word get() = letters.joinToString { it.displayCharacter }
 
-    val getLetterIndexForInput: Int get() {
-        val index = letters.indexOfFirst { it.availableForInput }
-        return if (index == -1) {
-            letters.size - 1
-        } else {
-            index
+    val getLetterIndexForInput: Int
+        get() {
+            val index = letters.indexOfFirst { it.availableForInput }
+            return if (index == -1) {
+                letters.size - 1
+            } else {
+                index
+            }
         }
-    }
 
     val isIncomplete get() = letters.any { it.availableForInput }
 }

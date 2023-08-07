@@ -21,7 +21,10 @@ class MainActivity : ComponentActivity() {
         viewModel.setupGame()
         setContent {
             WordGameTheme {
-                DailyWordScreen(state = viewModel.state.collectAsState().value, onEvent = viewModel::onEvent)
+                DailyWordScreen(
+                    state = viewModel.state.collectAsState().value,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
     }

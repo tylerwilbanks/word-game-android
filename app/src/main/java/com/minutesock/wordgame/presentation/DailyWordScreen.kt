@@ -31,7 +31,6 @@ fun DailyWordScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -49,7 +48,13 @@ fun DailyWordScreen(
             state.guesses.forEach {
                 WordRow(state = state, guess = it)
             }
+        }
 
+        Column(
+            modifier = Modifier.padding(bottom = 20.dp),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             val keyboardRows = listOf(
                 listOf(
                     "q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
@@ -62,7 +67,7 @@ fun DailyWordScreen(
                 )
             )
 
-            keyboardRows.forEach {keyboardRow ->
+            keyboardRows.forEach { keyboardRow ->
                 Row {
                     keyboardRow.forEach {
                         FalseKeyboardLetter(state = state, displayText = it, onEvent = onEvent)

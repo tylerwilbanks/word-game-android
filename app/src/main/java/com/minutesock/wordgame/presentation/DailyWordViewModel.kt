@@ -10,10 +10,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DailyWordViewModel: ViewModel() {
+class DailyWordViewModel : ViewModel() {
 
     private val _state = MutableStateFlow(DailyWordState())
-    val state get() = _state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), DailyWordState())
+    val state
+        get() = _state.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            DailyWordState()
+        )
 
     private val errorMessageDelay = 1000L
 
@@ -23,23 +28,25 @@ class DailyWordViewModel: ViewModel() {
         }
         _state.value = DailyWordState(
             guesses = guesses,
-            currentGuess = guesses.first {!it.lockedIn},
+            currentGuess = guesses.first { !it.lockedIn },
             chosenWord = "Jumby"
         )
     }
 
     fun onEvent(event: DailyWordEvent) {
         when (event) {
-            is DailyWordEvent.OnCharacterPress ->  {
+            is DailyWordEvent.OnCharacterPress -> {
                 viewModelScope.launch {
                     updateMessage("You pressed ${event.character}")
                 }
             }
-            DailyWordEvent.OnDeletePress ->  {
+
+            DailyWordEvent.OnDeletePress -> {
                 viewModelScope.launch {
                     updateMessage("You pressed delete!")
                 }
             }
+
             DailyWordEvent.OnEnterPress -> {
                 viewModelScope.launch {
                     updateMessage("You pressed enter!")

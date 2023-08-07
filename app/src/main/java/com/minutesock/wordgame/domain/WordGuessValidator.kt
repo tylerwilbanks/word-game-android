@@ -15,12 +15,22 @@ object WordGuessValidator {
         }
     }
 
-    fun validateGuess(context: Context, wordGuess: GuessWord, correctWord: String): ValidationResult {
+    fun validateGuess(
+        context: Context,
+        wordGuess: GuessWord,
+        correctWord: String
+    ): ValidationResult {
         if (wordGuess.isIncomplete) {
-            return ValidationResult(ValidationResultType.Error, context.getString(R.string.word_is_incomplete))
+            return ValidationResult(
+                ValidationResultType.Error,
+                context.getString(R.string.word_is_incomplete)
+            )
         }
         if (!validWords.contains(wordGuess.word)) {
-            ValidationResult(ValidationResultType.Error, context.getString(R.string.word_does_not_exist))
+            ValidationResult(
+                ValidationResultType.Error,
+                context.getString(R.string.word_does_not_exist)
+            )
         }
 
         if (wordGuess.word == correctWord.uppercase()) {
