@@ -22,7 +22,7 @@ class GuessWord(val attemptNumber: Int) {
         }
 
     val getLetterForInput: GuessLetter? get() = letters.firstOrNull { it.availableForInput }
-    val getLetterToErase: GuessLetter? get() = letters.last { !it.availableForInput }
+    val getLetterToErase: GuessLetter? get() = letters.lastOrNull { !it.availableForInput }
 
     val isIncomplete get() = letters.any { it.availableForInput }
 }
