@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.R
-import com.minutesock.wordgame.domain.WordGuess
 import com.minutesock.wordgame.presentation.components.WordRow
 
 @Composable

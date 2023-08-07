@@ -1,16 +1,10 @@
 package com.minutesock.wordgame.presentation
 
-import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.WordGuess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 class DailyWordViewModel: ViewModel() {
