@@ -1,22 +1,32 @@
 package com.minutesock.wordgame.presentation
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.WordGuess
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
 class DailyWordViewModel: ViewModel() {
 
-    var guesses: List<WordGuess> by mutableStateOf(
-        List(5) {
-            WordGuess(it)
-        })
-        private set
+    private val _state = MutableStateFlow(DailyWordState())
+    val state get() = _state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), DailyWordState())
 
-    var currentGuess by mutableStateOf(
-        guesses.first {!it.lockedIn}
-    )
+    fun setupGame() {
+        val guesses = List(5) {
+            WordGuess(it)
+        }
+        _state.value = DailyWordState(
+            guesses = guesses,
+            currentGuess = guesses.first {!it.lockedIn},
+        )
+    }
 
     fun onEvent(event: DailyWordEvent) {
         // todo implement

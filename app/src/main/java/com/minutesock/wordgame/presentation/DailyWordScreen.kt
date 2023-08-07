@@ -12,13 +12,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.WordGuess
 import com.minutesock.wordgame.presentation.components.WordRow
 
 @Composable
-fun DailyWordScreen(onEvent: (DailyWordEvent) -> Unit) {
+fun DailyWordScreen(
+    state: DailyWordState,
+    onEvent: (DailyWordEvent) -> Unit
+) {
     val animationDuration = 1000
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -31,18 +36,18 @@ fun DailyWordScreen(onEvent: (DailyWordEvent) -> Unit) {
         ) {
             Text(
                 modifier = Modifier
-                    .padding(vertical = 50.dp)
+                    .padding(top = 20.dp, bottom = 15.dp)
                     .animateContentSize(
                         animationSpec = tween(animationDuration)
                     ),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
-                text = "What in da word?!",
+                text = state.message ?: stringResource(id = R.string.what_in_da_word),
             )
 
-            WordRow(
-                WordGuess(1)
-            )
+            state.guesses.forEach {
+                WordRow(state = state, guess = it)
+            }
         }
     }
 }

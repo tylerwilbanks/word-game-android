@@ -15,13 +15,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.domain.Letter
+import com.minutesock.wordgame.presentation.DailyWordState
 
 @Composable
-fun LetterCard(letter: Letter) {
+fun LetterCard(state: DailyWordState, letter: Letter) {
     Card(
         modifier = Modifier
             .padding(4.dp)
-            .size(64.dp),
+            .size(48.dp),
         colors = CardDefaults.cardColors(containerColor = letter.color),
         border = BorderStroke(2.dp, Color.LightGray),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),

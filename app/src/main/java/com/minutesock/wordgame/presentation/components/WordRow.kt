@@ -12,10 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.WordGuess
+import com.minutesock.wordgame.presentation.DailyWordState
 import com.minutesock.wordgame.ui.theme.WordGameTheme
 
 @Composable
 fun WordRow(
+    state: DailyWordState,
     guess: WordGuess
 ) {
     Row(
@@ -24,25 +26,8 @@ fun WordRow(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        LetterCard(guess.letters[0])
-        LetterCard(guess.letters[1])
-        LetterCard(guess.letters[2])
-        LetterCard(guess.letters[3])
-        LetterCard(guess.letters[4])
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WordPreview() {
-    WordGameTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            WordRow(
-                WordGuess(1)
-            )
+        guess.letters.forEach {
+            LetterCard(state = state, letter = it)
         }
     }
 }
