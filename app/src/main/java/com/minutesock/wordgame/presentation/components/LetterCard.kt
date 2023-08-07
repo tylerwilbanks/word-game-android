@@ -21,7 +21,6 @@ import com.minutesock.wordgame.presentation.DailyWordState
 fun LetterCard(state: DailyWordState, letter: Letter) {
     Card(
         modifier = Modifier
-            .padding(4.dp)
             .size(48.dp),
         colors = CardDefaults.cardColors(containerColor = letter.color),
         border = BorderStroke(2.dp, Color.LightGray),
