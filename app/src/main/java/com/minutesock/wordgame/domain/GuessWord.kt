@@ -1,10 +1,10 @@
 package com.minutesock.wordgame.domain
 
-class WordGuess(val attemptNumber: Int) {
+class GuessWord(val attemptNumber: Int) {
     private val wordSize = 5
 
     val letters = List(wordSize) {
-        Letter()
+        GuessLetter()
     }
 
     val lockedIn = false

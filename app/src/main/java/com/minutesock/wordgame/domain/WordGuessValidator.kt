@@ -15,7 +15,7 @@ object WordGuessValidator {
         }
     }
 
-    fun validateGuess(context: Context, wordGuess: WordGuess, correctWord: String): ValidationResult {
+    fun validateGuess(context: Context, wordGuess: GuessWord, correctWord: String): ValidationResult {
         if (wordGuess.isIncomplete) {
             return ValidationResult(ValidationResultType.Error, context.getString(R.string.word_is_incomplete))
         }

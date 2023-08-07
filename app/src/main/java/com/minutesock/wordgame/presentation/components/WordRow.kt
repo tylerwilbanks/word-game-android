@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.minutesock.wordgame.domain.WordGuess
+import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.presentation.DailyWordState
 
 @Composable
 fun WordRow(
     state: DailyWordState,
-    guess: WordGuess
+    guess: GuessWord
 ) {
     Row(
         modifier = Modifier
