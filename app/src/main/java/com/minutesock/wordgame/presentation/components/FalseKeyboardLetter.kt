@@ -7,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.presentation.DailyWordEvent
 import com.minutesock.wordgame.presentation.DailyWordState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FalseKeyboardLetter(
     state: DailyWordState,
