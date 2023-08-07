@@ -37,12 +37,31 @@ class DailyWordViewModel : ViewModel() {
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
                 viewModelScope.launch {
+                    val currentGuess = _state.value.currentGuess
+                    currentGuess?.getLetterForInput?.let { guessLetter ->
+                        guessLetter.updateCharacter(event.character)
+                        _state.update {
+                            it.copy(
+                                currentGuess = currentGuess
+                            )
+                        }
+                    }
+
                     updateMessage("You pressed ${event.character}")
                 }
             }
 
             DailyWordEvent.OnDeletePress -> {
                 viewModelScope.launch {
+                    val currentGuess = _state.value.currentGuess
+                    currentGuess?.getLetterToErase?.let { guessLetter ->
+                        guessLetter.updateCharacter(' ')
+                        _state.update {
+                            it.copy(
+                                currentGuess = currentGuess
+                            )
+                        }
+                    }
                     updateMessage("You pressed delete!")
                 }
             }

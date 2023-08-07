@@ -21,7 +21,7 @@ fun WordRow(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        guess.letters.forEach {
+        state.guesses.find { it == guess }?.letters?.forEach {
             LetterCard(state = state, letter = it)
         }
     }
