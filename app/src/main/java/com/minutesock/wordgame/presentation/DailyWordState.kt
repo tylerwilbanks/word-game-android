@@ -6,6 +6,6 @@ data class DailyWordState(
     val guesses: List<GuessWord> = emptyList(),
     val currentGuess: GuessWord? = null,
     val currentWord: String? = null,
-    val chosenWord: String? = null,
+    val correctWord: String? = null,
     val message: String? = null
 )

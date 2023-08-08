@@ -36,7 +36,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
             dailyWordState.copy(
                 guesses = guesses,
                 currentGuess = guesses.firstOrNull { !it.lockedIn },
-                chosenWord = "Jumby"
+                correctWord = "wrath"
             )
         }
     }
@@ -51,11 +51,10 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                         _state.update {
                             it.copy(
                                 currentGuess = currentGuess,
-                                currentWord = currentGuess.word
+                                currentWord = currentGuess.displayWord
                             )
                         }
                     }
-
                 }
             }
 
@@ -67,7 +66,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                         _state.update {
                             it.copy(
                                 currentGuess = currentGuess,
-                                currentWord = currentGuess.word
+                                currentWord = currentGuess.displayWord
                             )
                         }
                     }
@@ -77,22 +76,30 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
             DailyWordEvent.OnEnterPress -> {
                 viewModelScope.launch {
                     _state.value.currentGuess?.let { currentGuess ->
-                        val result = GuessWordValidator.validateGuess(
-                            context,
-                            currentGuess,
-                            state.value.chosenWord ?: ""
-                        )
-                        when (result.type) {
-                            DailyWordValidationResultType.Error -> {}
-                            DailyWordValidationResultType.Incorrect -> currentGuess.lockedIn = true
-                            DailyWordValidationResultType.Success -> currentGuess.lockedIn = true
-                        }
-                        _state.update { dailyWordState ->
-                            dailyWordState.copy(
-                                message = result.message,
-                                currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
+                        _state.value.correctWord?.let { correctWord ->
+                            val result = GuessWordValidator.validateGuess(
+                                context,
+                                currentGuess,
+                                correctWord
                             )
+                            when (result.type) {
+                                DailyWordValidationResultType.Error -> {}
+                                DailyWordValidationResultType.Incorrect -> currentGuess.updateGuess(
+                                    correctWord = correctWord
+                                )
+
+                                DailyWordValidationResultType.Success -> currentGuess.updateGuess(
+                                    correctWord = correctWord
+                                )
+                            }
+                            _state.update { dailyWordState ->
+                                dailyWordState.copy(
+                                    message = result.message,
+                                    currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
+                                )
+                            }
                         }
+
                     }
                 }
             }

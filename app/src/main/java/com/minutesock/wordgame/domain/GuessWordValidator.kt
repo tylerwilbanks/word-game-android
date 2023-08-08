@@ -34,17 +34,22 @@ object GuessWordValidator {
             )
         }
 
-        if (guessWord.word == correctWord.lowercase()) {
-            return DailyWordValidationResult(DailyWordValidationResultType.Success, "You are correct!")
+        if (guessWord.word == correctWord) {
+            return DailyWordValidationResult(
+                DailyWordValidationResultType.Success,
+                "You are correct!"
+            )
         }
 
-        if (!validWords.contains(guessWord.word.lowercase())) {
+        if (!validWords.contains(guessWord.word)) {
             return DailyWordValidationResult(
                 DailyWordValidationResultType.Error,
                 context.getString(R.string.word_does_not_exist)
             )
-        } else if (validWords.contains(guessWord.word.lowercase())) {
-            return DailyWordValidationResult(DailyWordValidationResultType.Incorrect,
+        }
+        if (guessWord.word != correctWord && validWords.contains(guessWord.displayWord.lowercase())) {
+            return DailyWordValidationResult(
+                DailyWordValidationResultType.Incorrect,
                 encouragingMessages[Random().nextInt(encouragingMessages.size)]
             )
         }
