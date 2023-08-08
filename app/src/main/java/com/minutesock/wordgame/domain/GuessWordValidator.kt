@@ -4,13 +4,20 @@ import android.content.Context
 import com.minutesock.wordgame.R
 import com.minutesock.wordgame.utils.FileUtil
 import com.minutesock.wordgame.utils.convertToStringList
+import java.util.Random
 
 object GuessWordValidator {
     private var validWords = emptyList<String>()
+    private var wordSelection = emptyList<String>()
+    private val encouragingMessages = listOf("So close!", "Not quite!")
 
     fun initValidWords(context: Context) {
-        val jsonArray = FileUtil().obtainJsonArray(context, "valid_words.json")
-        jsonArray?.let {
+        val wordSelectionJsonArray = FileUtil().obtainJsonArray(context, "word_selection.json")
+        wordSelectionJsonArray?.let {
+            wordSelection = it.convertToStringList()
+        }
+        val validWordsJsonArray = FileUtil().obtainJsonArray(context, "valid_words.json")
+        validWordsJsonArray?.let {
             validWords = it.convertToStringList()
         }
     }
@@ -19,34 +26,40 @@ object GuessWordValidator {
         context: Context,
         guessWord: GuessWord,
         correctWord: String
-    ): ValidationResult {
+    ): DailyWordValidationResult {
         if (guessWord.isIncomplete) {
-            return ValidationResult(
-                ValidationResultType.Error,
+            return DailyWordValidationResult(
+                DailyWordValidationResultType.Error,
                 context.getString(R.string.word_is_incomplete)
             )
         }
-        if (!validWords.contains(guessWord.word)) {
-            return ValidationResult(
-                ValidationResultType.Error,
+
+        if (guessWord.word == correctWord.lowercase()) {
+            return DailyWordValidationResult(DailyWordValidationResultType.Success, "You are correct!")
+        }
+
+        if (!validWords.contains(guessWord.word.lowercase())) {
+            return DailyWordValidationResult(
+                DailyWordValidationResultType.Error,
                 context.getString(R.string.word_does_not_exist)
+            )
+        } else if (validWords.contains(guessWord.word.lowercase())) {
+            return DailyWordValidationResult(DailyWordValidationResultType.Incorrect,
+                encouragingMessages[Random().nextInt(encouragingMessages.size)]
             )
         }
 
-        if (guessWord.word == correctWord.uppercase()) {
-            return ValidationResult(ValidationResultType.Success, "You are correct!")
-        }
-        return ValidationResult(ValidationResultType.Success, "Incorrect word.")
+        return DailyWordValidationResult(DailyWordValidationResultType.Success, "Incorrect word.")
     }
+}
 
-    data class ValidationResult(
-        val type: ValidationResultType,
-        val message: String
-    )
+data class DailyWordValidationResult(
+    val type: DailyWordValidationResultType,
+    val message: String
+)
 
-    enum class ValidationResultType {
-        Error,
-        UnknownError,
-        Success
-    }
+enum class DailyWordValidationResultType {
+    Error,
+    Incorrect,
+    Success
 }

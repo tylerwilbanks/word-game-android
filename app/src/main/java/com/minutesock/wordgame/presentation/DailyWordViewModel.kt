@@ -3,6 +3,7 @@ package com.minutesock.wordgame.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.minutesock.wordgame.domain.DailyWordValidationResultType
 import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.domain.GuessWordValidator
 import kotlinx.coroutines.delay
@@ -81,10 +82,15 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                             currentGuess,
                             state.value.chosenWord ?: ""
                         )
+                        when (result.type) {
+                            DailyWordValidationResultType.Error -> {}
+                            DailyWordValidationResultType.Incorrect -> currentGuess.lockedIn = true
+                            DailyWordValidationResultType.Success -> currentGuess.lockedIn = true
+                        }
                         _state.update { dailyWordState ->
                             dailyWordState.copy(
                                 message = result.message,
-                                currentGuess = _state.value.guesses.first { !it.lockedIn }
+                                currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
                             )
                         }
                     }

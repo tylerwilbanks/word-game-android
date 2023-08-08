@@ -7,9 +7,9 @@ class GuessWord {
         GuessLetter()
     }
 
-    val lockedIn = false
+    var lockedIn = false
 
-    val word get() = letters.joinToString { it.displayCharacter }
+    val word get() = letters.joinToString(separator = "") { it.displayCharacter }.uppercase()
 
     val getLetterIndexForInput: Int
         get() {
