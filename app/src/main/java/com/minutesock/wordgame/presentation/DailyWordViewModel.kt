@@ -1,8 +1,10 @@
 package com.minutesock.wordgame.presentation
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.domain.GuessWord
+import com.minutesock.wordgame.domain.GuessWordValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,9 +12,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DailyWordViewModel : ViewModel() {
+class DailyWordViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(DailyWordState())
+    private val context = getApplication<Application>().applicationContext
+
     val state
         get() = _state.stateIn(
             viewModelScope,
@@ -24,13 +28,16 @@ class DailyWordViewModel : ViewModel() {
 
     fun setupGame() {
         val guesses = List(5) {
-            GuessWord(it)
+            GuessWord()
         }
-        _state.value = DailyWordState(
-            guesses = guesses,
-            currentGuess = guesses.first { !it.lockedIn },
-            chosenWord = "Jumby"
-        )
+
+        _state.update { dailyWordState ->
+            dailyWordState.copy(
+                guesses = guesses,
+                currentGuess = guesses.firstOrNull { !it.lockedIn },
+                chosenWord = "Jumby"
+            )
+        }
     }
 
     fun onEvent(event: DailyWordEvent) {
@@ -42,12 +49,12 @@ class DailyWordViewModel : ViewModel() {
                         guessLetter.updateCharacter(event.character)
                         _state.update {
                             it.copy(
-                                currentGuess = currentGuess
+                                currentGuess = currentGuess,
+                                currentWord = currentGuess.word
                             )
                         }
                     }
 
-                    updateMessage("You pressed ${event.character}")
                 }
             }
 
@@ -58,17 +65,29 @@ class DailyWordViewModel : ViewModel() {
                         guessLetter.updateCharacter(' ')
                         _state.update {
                             it.copy(
-                                currentGuess = currentGuess
+                                currentGuess = currentGuess,
+                                currentWord = currentGuess.word
                             )
                         }
                     }
-                    updateMessage("You pressed delete!")
                 }
             }
 
             DailyWordEvent.OnEnterPress -> {
                 viewModelScope.launch {
-                    updateMessage("You pressed enter!")
+                    _state.value.currentGuess?.let { currentGuess ->
+                        val result = GuessWordValidator.validateGuess(
+                            context,
+                            currentGuess,
+                            state.value.chosenWord ?: ""
+                        )
+                        _state.update { dailyWordState ->
+                            dailyWordState.copy(
+                                message = result.message,
+                                currentGuess = _state.value.guesses.first { !it.lockedIn }
+                            )
+                        }
+                    }
                 }
             }
         }

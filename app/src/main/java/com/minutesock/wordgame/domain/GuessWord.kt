@@ -1,6 +1,6 @@
 package com.minutesock.wordgame.domain
 
-class GuessWord(val attemptNumber: Int) {
+class GuessWord {
     private val wordSize = 5
 
     val letters = List(wordSize) {

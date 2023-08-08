@@ -5,7 +5,7 @@ import com.minutesock.wordgame.R
 import com.minutesock.wordgame.utils.FileUtil
 import com.minutesock.wordgame.utils.convertToStringList
 
-object WordGuessValidator {
+object GuessWordValidator {
     private var validWords = emptyList<String>()
 
     fun initValidWords(context: Context) {
@@ -17,27 +17,26 @@ object WordGuessValidator {
 
     fun validateGuess(
         context: Context,
-        wordGuess: GuessWord,
+        guessWord: GuessWord,
         correctWord: String
     ): ValidationResult {
-        if (wordGuess.isIncomplete) {
+        if (guessWord.isIncomplete) {
             return ValidationResult(
                 ValidationResultType.Error,
                 context.getString(R.string.word_is_incomplete)
             )
         }
-        if (!validWords.contains(wordGuess.word)) {
-            ValidationResult(
+        if (!validWords.contains(guessWord.word)) {
+            return ValidationResult(
                 ValidationResultType.Error,
                 context.getString(R.string.word_does_not_exist)
             )
         }
 
-        if (wordGuess.word == correctWord.uppercase()) {
+        if (guessWord.word == correctWord.uppercase()) {
             return ValidationResult(ValidationResultType.Success, "You are correct!")
         }
-
-        return ValidationResult(ValidationResultType.UnknownError, "Something went wrong.")
+        return ValidationResult(ValidationResultType.Success, "Incorrect word.")
     }
 
     data class ValidationResult(

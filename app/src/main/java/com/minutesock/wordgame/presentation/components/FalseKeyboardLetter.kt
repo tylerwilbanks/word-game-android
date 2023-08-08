@@ -42,8 +42,18 @@ fun FalseKeyboardLetter(
         }
     ) {
         when (displayText) {
-            "enter" -> Icon(imageVector = Icons.Default.CheckCircle, contentDescription = "enter", tint = Color.White)
-            "remove" -> Icon(imageVector = Icons.Default.Clear, contentDescription = "remove", tint = Color.White)
+            "enter" -> Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = "enter",
+                tint = Color.White
+            )
+
+            "remove" -> Icon(
+                imageVector = Icons.Default.Clear,
+                contentDescription = "remove",
+                tint = Color.White
+            )
+
             else -> Text(
                 textAlign = TextAlign.Center,
                 text = displayText,
