@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,9 +21,22 @@ import com.minutesock.wordgame.R
 import com.minutesock.wordgame.presentation.components.FalseKeyboardLetter
 import com.minutesock.wordgame.presentation.components.WordRow
 
+
+val keyboardRows = listOf(
+    listOf(
+        "q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
+    ),
+    listOf(
+        "a", "s", "d", "f", "g", "h", "j", "k", "l",
+    ),
+    listOf(
+        "enter", "z", "x", "c", "v", "b", "n", "m", "remove"
+    )
+)
+
 @Composable
 fun DailyWordScreen(
-    state: DailyWordState,
+    state: State<DailyWordState>,
     onEvent: (DailyWordEvent) -> Unit
 ) {
     val animationDuration = 500
@@ -42,11 +56,11 @@ fun DailyWordScreen(
                     ),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
-                text = state.message ?: stringResource(id = R.string.what_in_da_word),
+                text = state.value.message ?: stringResource(id = R.string.what_in_da_word),
             )
 
-            state.guesses.forEach {
-                WordRow(state = state, guess = it)
+            state.value.guesses.forEach {
+                WordRow(guess = it)
             }
         }
 
@@ -55,22 +69,11 @@ fun DailyWordScreen(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val keyboardRows = listOf(
-                listOf(
-                    "q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
-                ),
-                listOf(
-                    "a", "s", "d", "f", "g", "h", "j", "k", "l",
-                ),
-                listOf(
-                    "enter", "z", "x", "c", "v", "b", "n", "m", "remove"
-                )
-            )
 
             keyboardRows.forEach { keyboardRow ->
                 Row {
                     keyboardRow.forEach {
-                        FalseKeyboardLetter(state = state, displayText = it, onEvent = onEvent)
+                        FalseKeyboardLetter(displayText = it, onEvent = onEvent)
                     }
                 }
             }

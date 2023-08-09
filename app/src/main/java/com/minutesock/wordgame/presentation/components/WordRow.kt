@@ -8,11 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.GuessWord
-import com.minutesock.wordgame.presentation.DailyWordState
 
 @Composable
 fun WordRow(
-    state: DailyWordState,
     guess: GuessWord
 ) {
     Row(
@@ -21,8 +19,8 @@ fun WordRow(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        state.guesses.find { it == guess }?.letters?.forEach {
-            LetterCard(state = state, letter = it)
+        guess.letters.forEach {
+            LetterCard(letter = it)
         }
     }
 }

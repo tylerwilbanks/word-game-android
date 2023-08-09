@@ -21,10 +21,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.domain.GuessLetter
-import com.minutesock.wordgame.presentation.DailyWordState
 
 @Composable
-fun LetterCard(state: DailyWordState, letter: GuessLetter) {
+fun LetterCard(letter: GuessLetter) {
     val rotated by remember { mutableStateOf(true) }
 
     val rotation by animateFloatAsState(

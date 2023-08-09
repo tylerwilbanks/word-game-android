@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minutesock.wordgame.domain.GuessWordValidator
 import com.minutesock.wordgame.presentation.DailyWordScreen
 import com.minutesock.wordgame.presentation.DailyWordViewModel
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WordGameTheme {
                 DailyWordScreen(
-                    state = viewModel.state.collectAsState().value,
+                    state = viewModel.state.collectAsStateWithLifecycle(),
                     onEvent = viewModel::onEvent
                 )
             }

@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class DailyWordViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -44,63 +43,57 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     fun onEvent(event: DailyWordEvent) {
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
-                viewModelScope.launch {
-                    val currentGuess = _state.value.currentGuess
-                    currentGuess?.getLetterForInput?.let { guessLetter ->
-                        guessLetter.updateCharacter(event.character)
-                        _state.update {
-                            it.copy(
-                                currentGuess = currentGuess,
-                                currentWord = currentGuess.displayWord
-                            )
-                        }
+                val currentGuess = _state.value.currentGuess
+                currentGuess?.getLetterForInput?.let { guessLetter ->
+                    guessLetter.updateCharacter(event.character)
+                    _state.update {
+                        it.copy(
+                            currentGuess = currentGuess,
+                            currentWord = currentGuess.displayWord
+                        )
                     }
                 }
             }
 
             DailyWordEvent.OnDeletePress -> {
-                viewModelScope.launch {
-                    val currentGuess = _state.value.currentGuess
-                    currentGuess?.getLetterToErase?.let { guessLetter ->
-                        guessLetter.updateCharacter(' ')
-                        _state.update {
-                            it.copy(
-                                currentGuess = currentGuess,
-                                currentWord = currentGuess.displayWord
-                            )
-                        }
+                val currentGuess = _state.value.currentGuess
+                currentGuess?.getLetterToErase?.let { guessLetter ->
+                    guessLetter.updateCharacter(' ')
+                    _state.update {
+                        it.copy(
+                            currentGuess = currentGuess,
+                            currentWord = currentGuess.displayWord
+                        )
                     }
                 }
             }
 
             DailyWordEvent.OnEnterPress -> {
-                viewModelScope.launch {
-                    _state.value.currentGuess?.let { currentGuess ->
-                        _state.value.correctWord?.let { correctWord ->
-                            val result = GuessWordValidator.validateGuess(
-                                context,
-                                currentGuess,
-                                correctWord
+                _state.value.currentGuess?.let { currentGuess ->
+                    _state.value.correctWord?.let { correctWord ->
+                        val result = GuessWordValidator.validateGuess(
+                            context,
+                            currentGuess,
+                            correctWord
+                        )
+                        when (result.type) {
+                            DailyWordValidationResultType.Error -> {}
+                            DailyWordValidationResultType.Incorrect -> currentGuess.updateGuess(
+                                correctWord = correctWord
                             )
-                            when (result.type) {
-                                DailyWordValidationResultType.Error -> {}
-                                DailyWordValidationResultType.Incorrect -> currentGuess.updateGuess(
-                                    correctWord = correctWord
-                                )
 
-                                DailyWordValidationResultType.Success -> currentGuess.updateGuess(
-                                    correctWord = correctWord
-                                )
-                            }
-                            _state.update { dailyWordState ->
-                                dailyWordState.copy(
-                                    message = result.message,
-                                    currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
-                                )
-                            }
+                            DailyWordValidationResultType.Success -> currentGuess.updateGuess(
+                                correctWord = correctWord
+                            )
                         }
-
+                        _state.update { dailyWordState ->
+                            dailyWordState.copy(
+                                message = result.message,
+                                currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
+                            )
+                        }
                     }
+
                 }
             }
         }

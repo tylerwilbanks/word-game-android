@@ -17,11 +17,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.presentation.DailyWordEvent
-import com.minutesock.wordgame.presentation.DailyWordState
 
 @Composable
 fun FalseKeyboardLetter(
-    state: DailyWordState,
     onEvent: (DailyWordEvent) -> Unit,
     displayText: String
 ) {
