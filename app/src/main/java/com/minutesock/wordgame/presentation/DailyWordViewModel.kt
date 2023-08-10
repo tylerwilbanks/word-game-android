@@ -2,17 +2,13 @@ package com.minutesock.wordgame.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.domain.DailyWordValidationResultType
-import com.minutesock.wordgame.domain.GuessWord
+import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWordValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class DailyWordViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -23,15 +19,12 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val errorMessageDelay = 1000L
 
-    fun setupGame() {
-        val guesses = List(5) {
-            GuessWord()
-        }
+    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
 
         _state.update { dailyWordState ->
             dailyWordState.copy(
-                guesses = guesses,
-                currentGuess = guesses.firstOrNull { !it.lockedIn },
+                wordLength = wordLength,
+                maxGuessAttempts = maxGuessAttempts,
                 correctWord = "wrath"
             )
         }
@@ -40,51 +33,22 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     fun onEvent(event: DailyWordEvent) {
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
-                    val currentGuess = _state.value.currentGuess
-                    currentGuess?.getLetterForInput?.let { guessLetter ->
-                        guessLetter.updateCharacter(event.character)
-                        _state.value = state.value.copy(
-                            currentGuess = currentGuess,
-                            currentWord = currentGuess.displayWord
-                        )
-                }
+                _state.value = state.value.copy(
+                    letters = state.value.letters.plus(GuessLetter(event.character))
+                )
             }
 
             DailyWordEvent.OnDeletePress -> {
-                    val currentGuess = _state.value.currentGuess
-                    currentGuess?.getLetterToErase?.let { guessLetter ->
-                        guessLetter.updateCharacter(' ')
-                        _state.value = state.value.copy(
-                            currentGuess = currentGuess,
-                            currentWord = currentGuess.displayWord
-                        )
+                if (state.value.letters.isEmpty()) {
+                    return
                 }
+                _state.value = state.value.copy(
+                    letters = state.value.letters.subList(0, state.value.letters.size - 1)
+                )
             }
 
             DailyWordEvent.OnEnterPress -> {
-                    _state.value.currentGuess?.let { currentGuess ->
-                        _state.value.correctWord?.let { correctWord ->
-                            val result = GuessWordValidator.validateGuess(
-                                context,
-                                currentGuess,
-                                correctWord
-                            )
-                            when (result.type) {
-                                DailyWordValidationResultType.Error -> {}
-                                DailyWordValidationResultType.Incorrect -> currentGuess.updateGuess(
-                                    correctWord = correctWord
-                                )
 
-                                DailyWordValidationResultType.Success -> currentGuess.updateGuess(
-                                    correctWord = correctWord
-                                )
-                            }
-                            _state.value = state.value.copy(
-                                message = result.message,
-                                currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
-                            )
-                        }
-                }
             }
         }
     }

@@ -59,8 +59,12 @@ fun DailyWordScreen(
                 text = state.value.message ?: stringResource(id = R.string.what_in_da_word),
             )
 
-            state.value.guesses.forEach {
-                WordRow(guess = it)
+            for (i in 0 until state.value.maxGuessAttempts) {
+                WordRow(
+                    letters = state.value.letters,
+                    wordLength = state.value.wordLength,
+                    rowNum = i,
+                )
             }
         }
 

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.domain.GuessLetter
 
 @Composable
-fun LetterCard(letter: GuessLetter) {
+fun LetterCard(letter: GuessLetter?) {
     val rotated by remember { mutableStateOf(true) }
 
     val rotation by animateFloatAsState(
@@ -32,7 +32,7 @@ fun LetterCard(letter: GuessLetter) {
     )
 
     val animateColor by animateColorAsState(
-        targetValue = if (rotated) letter.color else Color.Black,
+        targetValue = if (rotated) letter?.color ?: Color.Black else Color.Black,
         animationSpec = tween(500)
     )
 
@@ -57,7 +57,7 @@ fun LetterCard(letter: GuessLetter) {
                     .graphicsLayer {
                         rotationY = rotation
                     },
-                text = letter.displayCharacter,
+                text = letter?.displayCharacter ?: "",
                 color = Color.White,
                 fontSize = 32.sp
             )

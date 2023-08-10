@@ -22,40 +22,40 @@ object GuessWordValidator {
         }
     }
 
-    fun validateGuess(
-        context: Context,
-        guessWord: GuessWord,
-        correctWord: String
-    ): DailyWordValidationResult {
-        if (guessWord.isIncomplete) {
-            return DailyWordValidationResult(
-                DailyWordValidationResultType.Error,
-                context.getString(R.string.word_is_incomplete)
-            )
-        }
-
-        if (guessWord.word == correctWord) {
-            return DailyWordValidationResult(
-                DailyWordValidationResultType.Success,
-                "You are correct!"
-            )
-        }
-
-        if (!validWords.contains(guessWord.word)) {
-            return DailyWordValidationResult(
-                DailyWordValidationResultType.Error,
-                context.getString(R.string.word_does_not_exist)
-            )
-        }
-        if (guessWord.word != correctWord && validWords.contains(guessWord.displayWord.lowercase())) {
-            return DailyWordValidationResult(
-                DailyWordValidationResultType.Incorrect,
-                encouragingMessages[Random().nextInt(encouragingMessages.size)]
-            )
-        }
-
-        return DailyWordValidationResult(DailyWordValidationResultType.Success, "Incorrect word.")
-    }
+//    fun validateGuess(
+//        context: Context,
+//        guessWord: GuessWord,
+//        correctWord: String
+//    ): DailyWordValidationResult {
+//        if (guessWord.isIncomplete) {
+//            return DailyWordValidationResult(
+//                DailyWordValidationResultType.Error,
+//                context.getString(R.string.word_is_incomplete)
+//            )
+//        }
+//
+//        if (guessWord.word == correctWord) {
+//            return DailyWordValidationResult(
+//                DailyWordValidationResultType.Success,
+//                "You are correct!"
+//            )
+//        }
+//
+//        if (!validWords.contains(guessWord.word)) {
+//            return DailyWordValidationResult(
+//                DailyWordValidationResultType.Error,
+//                context.getString(R.string.word_does_not_exist)
+//            )
+//        }
+//        if (guessWord.word != correctWord && validWords.contains(guessWord.displayWord.lowercase())) {
+//            return DailyWordValidationResult(
+//                DailyWordValidationResultType.Incorrect,
+//                encouragingMessages[Random().nextInt(encouragingMessages.size)]
+//            )
+//        }
+//
+//        return DailyWordValidationResult(DailyWordValidationResultType.Success, "Incorrect word.")
+//    }
 }
 
 data class DailyWordValidationResult(
