@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.presentation.DailyWordEvent
+import com.minutesock.wordgame.uiutils.bounceClick
 
 @Composable
 fun FalseKeyboardLetter(
@@ -28,14 +29,16 @@ fun FalseKeyboardLetter(
     TextButton(
         modifier = Modifier
             .size(sizeX, 55.dp)
-            .padding(2.dp),
+            .padding(2.dp)
+            .bounceClick(),
+
         colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
         shape = RoundedCornerShape(10),
         onClick = {
             when (displayText) {
-                "enter" -> onEvent(DailyWordEvent.OnEnterPress)
-                "remove" -> onEvent(DailyWordEvent.OnDeletePress)
-                else -> onEvent(DailyWordEvent.OnCharacterPress(displayText.first()))
+                "enter" -> { onEvent(DailyWordEvent.OnEnterPress) }
+                "remove" -> { onEvent(DailyWordEvent.OnDeletePress) }
+                else -> { onEvent(DailyWordEvent.OnCharacterPress(displayText.first())) }
             }
         }
     ) {

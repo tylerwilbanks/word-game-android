@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class DailyWordViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -18,7 +19,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     private val context = getApplication<Application>().applicationContext
 
     val state
-        get() = _state.stateIn(
+        = _state.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
             DailyWordState()
@@ -43,27 +44,31 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     fun onEvent(event: DailyWordEvent) {
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
-                val currentGuess = _state.value.currentGuess
-                currentGuess?.getLetterForInput?.let { guessLetter ->
-                    guessLetter.updateCharacter(event.character)
-                    _state.update {
-                        it.copy(
-                            currentGuess = currentGuess,
-                            currentWord = currentGuess.displayWord
-                        )
+                viewModelScope.launch {
+                    val currentGuess = _state.value.currentGuess
+                    currentGuess?.getLetterForInput?.let { guessLetter ->
+                        guessLetter.updateCharacter(event.character)
+                        _state.update {
+                            it.copy(
+                                currentGuess = currentGuess,
+                                currentWord = currentGuess.displayWord
+                            )
+                        }
                     }
                 }
             }
 
             DailyWordEvent.OnDeletePress -> {
-                val currentGuess = _state.value.currentGuess
-                currentGuess?.getLetterToErase?.let { guessLetter ->
-                    guessLetter.updateCharacter(' ')
-                    _state.update {
-                        it.copy(
-                            currentGuess = currentGuess,
-                            currentWord = currentGuess.displayWord
-                        )
+                viewModelScope.launch {
+                    val currentGuess = _state.value.currentGuess
+                    currentGuess?.getLetterToErase?.let { guessLetter ->
+                        guessLetter.updateCharacter(' ')
+                        _state.update {
+                            it.copy(
+                                currentGuess = currentGuess,
+                                currentWord = currentGuess.displayWord
+                            )
+                        }
                     }
                 }
             }
