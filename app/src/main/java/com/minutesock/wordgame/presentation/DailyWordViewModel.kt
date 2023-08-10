@@ -40,37 +40,28 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     fun onEvent(event: DailyWordEvent) {
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
-                viewModelScope.launch {
                     val currentGuess = _state.value.currentGuess
                     currentGuess?.getLetterForInput?.let { guessLetter ->
                         guessLetter.updateCharacter(event.character)
-                        _state.update {
-                            it.copy(
-                                currentGuess = currentGuess,
-                                currentWord = currentGuess.displayWord
-                            )
-                        }
-                    }
+                        _state.value = state.value.copy(
+                            currentGuess = currentGuess,
+                            currentWord = currentGuess.displayWord
+                        )
                 }
             }
 
             DailyWordEvent.OnDeletePress -> {
-                viewModelScope.launch {
                     val currentGuess = _state.value.currentGuess
                     currentGuess?.getLetterToErase?.let { guessLetter ->
                         guessLetter.updateCharacter(' ')
-                        _state.update {
-                            it.copy(
-                                currentGuess = currentGuess,
-                                currentWord = currentGuess.displayWord
-                            )
-                        }
-                    }
+                        _state.value = state.value.copy(
+                            currentGuess = currentGuess,
+                            currentWord = currentGuess.displayWord
+                        )
                 }
             }
 
             DailyWordEvent.OnEnterPress -> {
-                viewModelScope.launch {
                     _state.value.currentGuess?.let { currentGuess ->
                         _state.value.correctWord?.let { correctWord ->
                             val result = GuessWordValidator.validateGuess(
@@ -88,14 +79,11 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                                     correctWord = correctWord
                                 )
                             }
-                            _state.update { dailyWordState ->
-                                dailyWordState.copy(
-                                    message = result.message,
-                                    currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
-                                )
-                            }
+                            _state.value = state.value.copy(
+                                message = result.message,
+                                currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
+                            )
                         }
-                    }
                 }
             }
         }

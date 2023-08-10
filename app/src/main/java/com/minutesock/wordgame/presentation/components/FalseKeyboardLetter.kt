@@ -36,9 +36,9 @@ fun FalseKeyboardLetter(
         shape = RoundedCornerShape(10),
         onClick = {
             when (displayText) {
-                "enter" -> { onEvent(DailyWordEvent.OnEnterPress) }
-                "remove" -> { onEvent(DailyWordEvent.OnDeletePress) }
-                else -> { onEvent(DailyWordEvent.OnCharacterPress(displayText.first())) }
+                "enter" -> onEvent(DailyWordEvent.OnEnterPress)
+                "remove" -> onEvent(DailyWordEvent.OnDeletePress)
+                else -> onEvent(DailyWordEvent.OnCharacterPress(displayText.first()))
             }
         }
     ) {
