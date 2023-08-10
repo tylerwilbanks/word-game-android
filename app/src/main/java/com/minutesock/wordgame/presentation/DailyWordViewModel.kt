@@ -9,6 +9,7 @@ import com.minutesock.wordgame.domain.GuessWordValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -18,12 +19,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     private val _state = MutableStateFlow(DailyWordState())
     private val context = getApplication<Application>().applicationContext
 
-    val state
-        = _state.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            DailyWordState()
-        )
+    val state = _state.asStateFlow()
 
     private val errorMessageDelay = 1000L
 
@@ -74,31 +70,32 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
             }
 
             DailyWordEvent.OnEnterPress -> {
-                _state.value.currentGuess?.let { currentGuess ->
-                    _state.value.correctWord?.let { correctWord ->
-                        val result = GuessWordValidator.validateGuess(
-                            context,
-                            currentGuess,
-                            correctWord
-                        )
-                        when (result.type) {
-                            DailyWordValidationResultType.Error -> {}
-                            DailyWordValidationResultType.Incorrect -> currentGuess.updateGuess(
-                                correctWord = correctWord
+                viewModelScope.launch {
+                    _state.value.currentGuess?.let { currentGuess ->
+                        _state.value.correctWord?.let { correctWord ->
+                            val result = GuessWordValidator.validateGuess(
+                                context,
+                                currentGuess,
+                                correctWord
                             )
+                            when (result.type) {
+                                DailyWordValidationResultType.Error -> {}
+                                DailyWordValidationResultType.Incorrect -> currentGuess.updateGuess(
+                                    correctWord = correctWord
+                                )
 
-                            DailyWordValidationResultType.Success -> currentGuess.updateGuess(
-                                correctWord = correctWord
-                            )
-                        }
-                        _state.update { dailyWordState ->
-                            dailyWordState.copy(
-                                message = result.message,
-                                currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
-                            )
+                                DailyWordValidationResultType.Success -> currentGuess.updateGuess(
+                                    correctWord = correctWord
+                                )
+                            }
+                            _state.update { dailyWordState ->
+                                dailyWordState.copy(
+                                    message = result.message,
+                                    currentGuess = _state.value.guesses.firstOrNull { !it.lockedIn }
+                                )
+                            }
                         }
                     }
-
                 }
             }
         }
