@@ -40,15 +40,15 @@ fun FalseKeyboardLetter(
         onClick = {
             when (displayText) {
                 "enter" -> {
-                    onEvent(DailyWordEvent.OnEnterPress)
+                    onEvent.invoke(DailyWordEvent.OnEnterPress)
                 }
 
                 "remove" -> {
-                    onEvent(DailyWordEvent.OnDeletePress)
+                    onEvent.invoke(DailyWordEvent.OnDeletePress)
                 }
 
                 else -> {
-                    onEvent(DailyWordEvent.OnCharacterPress(displayText.first()))
+                    onEvent.invoke(DailyWordEvent.OnCharacterPress(displayText.first()))
                 }
             }
         }
