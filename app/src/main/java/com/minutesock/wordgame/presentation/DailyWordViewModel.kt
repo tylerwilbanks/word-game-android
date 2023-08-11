@@ -2,9 +2,8 @@ package com.minutesock.wordgame.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.minutesock.wordgame.domain.DailyWordValidationResultType
 import com.minutesock.wordgame.domain.GuessLetter
-import com.minutesock.wordgame.domain.GuessWordValidator
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +19,6 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     private val errorMessageDelay = 1000L
 
     fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
-
         _state.update { dailyWordState ->
             dailyWordState.copy(
                 wordLength = wordLength,
@@ -33,22 +31,36 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
     fun onEvent(event: DailyWordEvent) {
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
+                if (state.value.currentGuess.size >= state.value.wordLength) {
+                    return
+                }
                 _state.value = state.value.copy(
-                    letters = state.value.letters.plus(GuessLetter(event.character))
+                    currentGuess = state.value.currentGuess.plus(GuessLetter(event.character))
+                        .toImmutableList()
                 )
             }
 
             DailyWordEvent.OnDeletePress -> {
-                if (state.value.letters.isEmpty()) {
+                if (state.value.currentGuess.isEmpty()) {
                     return
                 }
                 _state.value = state.value.copy(
-                    letters = state.value.letters.subList(0, state.value.letters.size - 1)
+                    currentGuess = state.value.currentGuess.subList(
+                        0,
+                        state.value.currentGuess.size - 1
+                    )
+                        .toImmutableList()
                 )
             }
 
             DailyWordEvent.OnEnterPress -> {
-
+                val lastWord = state.value.currentGuess.takeLast(
+                    state.value.wordLength
+                )
+                state
+//                _state.value = state.value.copy(
+//                    currentGuess = state.value.currentGuess.plus(Gu)
+//                )
             }
         }
     }

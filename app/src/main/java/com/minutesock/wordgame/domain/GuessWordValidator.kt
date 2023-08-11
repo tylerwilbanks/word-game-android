@@ -1,10 +1,8 @@
 package com.minutesock.wordgame.domain
 
 import android.content.Context
-import com.minutesock.wordgame.R
 import com.minutesock.wordgame.utils.FileUtil
 import com.minutesock.wordgame.utils.convertToStringList
-import java.util.Random
 
 object GuessWordValidator {
     private var validWords = emptyList<String>()

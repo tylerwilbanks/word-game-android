@@ -11,34 +11,45 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.presentation.DailyWordEvent
-import com.minutesock.wordgame.uiutils.bounceClick
 
 @Composable
 fun FalseKeyboardLetter(
     onEvent: (DailyWordEvent) -> Unit,
     displayText: String
 ) {
-    val isLetter = displayText.length == 1
-    val sizeX = if (isLetter) 38.dp else 50.dp
+    val isLetter by remember { mutableStateOf(displayText.length == 1) }
+    val sizeX by remember {
+        mutableStateOf(if (isLetter) 38.dp else 50.dp)
+    }
     TextButton(
         modifier = Modifier
             .size(sizeX, 55.dp)
-            .padding(2.dp)
-            .bounceClick(),
+            .padding(2.dp),
 
         colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
         shape = RoundedCornerShape(10),
         onClick = {
             when (displayText) {
-                "enter" -> onEvent(DailyWordEvent.OnEnterPress)
-                "remove" -> onEvent(DailyWordEvent.OnDeletePress)
-                else -> onEvent(DailyWordEvent.OnCharacterPress(displayText.first()))
+                "enter" -> {
+                    onEvent(DailyWordEvent.OnEnterPress)
+                }
+
+                "remove" -> {
+                    onEvent(DailyWordEvent.OnDeletePress)
+                }
+
+                else -> {
+                    onEvent(DailyWordEvent.OnCharacterPress(displayText.first()))
+                }
             }
         }
     ) {

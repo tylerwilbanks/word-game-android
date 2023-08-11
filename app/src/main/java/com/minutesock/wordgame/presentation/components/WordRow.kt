@@ -5,17 +5,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.GuessLetter
-import com.minutesock.wordgame.presentation.DailyWordState
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun WordRow(
-    letters: List<GuessLetter>,
-    wordLength: Int,
-    rowNum: Int
+    guessLetters: ImmutableList<GuessLetter>
 ) {
     Row(
         modifier = Modifier
@@ -23,8 +20,8 @@ fun WordRow(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        for (i in 0 until wordLength) {
-            LetterCard(letter = letters.getOrNull(i + rowNum * wordLength))
+        guessLetters.forEach {
+            LetterCard(letter = it)
         }
     }
 }
