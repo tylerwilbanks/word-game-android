@@ -7,8 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWord
+import com.minutesock.wordgame.domain.GuessWordState
 import com.minutesock.wordgame.domain.addGuessLetter
-import kotlinx.collections.immutable.persistentListOf
+import com.minutesock.wordgame.domain.eraseLetter
+import com.minutesock.wordgame.domain.updateState
+import com.minutesock.wordgame.utils.Resource
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,8 +38,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                 }.toImmutableList()
             )
         }.toMutableList()
-        w[0] = w[0].addGuessLetter(GuessLetter(_character = 'C'))
-            ?: GuessWord(letters = persistentListOf())
+        w[0] = w[0].updateState(GuessWordState.Editing)
         guessWords.addAll(w)
         _state.update { dailyWordState ->
             dailyWordState.copy(
@@ -52,16 +54,96 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
                 viewModelScope.launch {
+                    getCurrentGuessWordAndHandleError()?.let { index ->
+                        updateCurrentGuessWord(index, event.character)
+                    }
                 }
             }
 
             DailyWordEvent.OnDeletePress -> {
                 viewModelScope.launch {
+                    getCurrentGuessWordAndHandleError()?.let { index ->
+                        eraseLetter(index)
+                    }
                 }
             }
 
             DailyWordEvent.OnEnterPress -> {
                 viewModelScope.launch {
+                }
+            }
+        }
+    }
+
+    private fun getCurrentGuessWordIndex(): Resource<Int> {
+        val index = guessWords.indexOfFirst {
+            it.state == GuessWordState.Editing
+        }
+
+        return if (index == -1) {
+            Resource.Error("There is no more guess attempts left")
+        } else {
+            Resource.Success(index)
+        }
+    }
+
+    private fun getCurrentGuessWordAndHandleError(): Int? {
+        return when (val result = getCurrentGuessWordIndex()) {
+            is Resource.Error -> {
+                result.message?.let { errorMessage ->
+                    _state.update {
+                        it.copy(
+                            message = errorMessage
+                        )
+                    }
+                }
+                null
+            }
+
+            is Resource.Success -> result.data
+        }
+    }
+
+    private fun updateCurrentGuessWord(index: Int, character: Char) {
+        val result = guessWords[index].addGuessLetter(
+            GuessLetter(_character = character)
+        )
+        when (result) {
+            is Resource.Error -> {
+                result.message?.let { errorMessage ->
+                    _state.update {
+                        it.copy(
+                            message = errorMessage
+                        )
+                    }
+                }
+
+            }
+
+            is Resource.Success -> {
+                result.data?.let {
+                    guessWords[index] = it
+                }
+            }
+        }
+    }
+
+    private fun eraseLetter(index: Int) {
+        when (val result = guessWords[index].eraseLetter()) {
+            is Resource.Error -> {
+                result.message?.let { errorMessage ->
+                    _state.update {
+                        it.copy(
+                            message = errorMessage
+                        )
+                    }
+                }
+
+            }
+
+            is Resource.Success -> {
+                result.data?.let { guessWord ->
+                    guessWords[index] = guessWord
                 }
             }
         }
