@@ -10,28 +10,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.minutesock.wordgame.domain.GuessLetter
+import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.presentation.components.FalseKeyboard
 import com.minutesock.wordgame.presentation.components.WordRow
-import kotlinx.collections.immutable.toImmutableList
 
 
 @Composable
 fun DailyWordScreen(
-    state: State<DailyWordState>,
+    state: DailyWordState,
+    guessWords: SnapshotStateList<GuessWord>,
     onEvent: (DailyWordEvent) -> Unit,
     falseKeyboardKeys: FalseKeyboardKeys
 ) {
     val animationDuration by remember { mutableStateOf(500) }
-    val message by remember { mutableStateOf(state.value.message) }
+    val message by remember { mutableStateOf(state.message) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -48,31 +48,11 @@ fun DailyWordScreen(
                     ),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
-                text = state.value.message,
+                text = state.message,
             )
 
-            // previous guessed rows
-            state.value.previousGuesses.forEach {
+            guessWords.forEach {
                 WordRow(guessLetters = it.letters)
-            }
-
-            // current guess row
-            WordRow(
-                guessLetters = state.value.currentGuess.plus(
-                    List(state.value.wordLength - state.value.currentGuess.size) {
-                        GuessLetter()
-                    }
-                ).toImmutableList()
-            )
-
-            // future guess rows - previous guess rows - 1 for current guess row
-            for (i in 0 until state.value.maxGuessAttempts - state.value.previousGuesses.size - 1) {
-                WordRow(
-                    guessLetters = List(state.value.wordLength)
-                    {
-                        GuessLetter()
-                    }.toImmutableList()
-                )
             }
         }
 

@@ -18,3 +18,7 @@ data class GuessLetter(
 
     val availableForInput get() = character == ' '
 }
+
+fun GuessLetter.updateState() {
+    // todo implement
+}
