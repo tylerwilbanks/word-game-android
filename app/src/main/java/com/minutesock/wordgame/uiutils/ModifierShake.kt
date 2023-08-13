@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.IntOffset
 import kotlin.math.roundToInt
 
-fun Modifier.shake(shakeController: ShakeController) = composed {
+fun Modifier.shake(shakeController: ShakeController, onFinished: (() -> Unit)? = null) = composed {
     shakeController.shakeConfig?.let { shakeConfig ->
         val shake = remember { Animatable(0f) }
         LaunchedEffect(shakeController.shakeConfig) {
@@ -23,7 +23,10 @@ fun Modifier.shake(shakeController: ShakeController) = composed {
                     else -> shake.animateTo(-1f, spring(stiffness = shakeConfig.intensity))
                 }
             }
+
             shake.animateTo(0f)
+            onFinished?.invoke()
+
         }
 
         this

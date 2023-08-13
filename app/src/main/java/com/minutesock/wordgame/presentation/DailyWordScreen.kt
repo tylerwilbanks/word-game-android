@@ -65,7 +65,7 @@ fun DailyWordScreen(
 
 
             guessWords.forEach {
-                WordRow(guessWord = it, guessLetters = it.letters)
+                WordRow(guessWord = it, guessLetters = it.letters, onEvent = onEvent)
             }
         }
 

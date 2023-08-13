@@ -74,6 +74,16 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
 
                 }
             }
+
+            DailyWordEvent.OnWordRowErrorAnimationFinished -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            message = context.getString(R.string.what_in_da_word)
+                        )
+                    }
+                }
+            }
         }
     }
 
