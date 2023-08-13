@@ -1,6 +1,7 @@
 package com.minutesock.wordgame.domain
 
-import com.minutesock.wordgame.utils.Resource
+import com.minutesock.wordgame.presentation.GuessWordError
+import com.minutesock.wordgame.utils.Option
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -16,33 +17,14 @@ enum class GuessWordState {
     Complete
 }
 
-enum class GuessWordError {
-    None,
-    Unknown,
-    NoWordToEdit,
-    NoLettersAvailableForInput,
-    NoLettersToRemove;
 
-    val message: String
-        get() {
-            // todo extract these into string resources
-            return when (this) {
-                None -> ""
-                Unknown -> "Unknown Error"
-                NoWordToEdit -> "There are no words to edit."
-                NoLettersAvailableForInput -> "This word is full."
-                NoLettersToRemove -> "This word is empty."
-            }
-        }
-}
-
-fun GuessWord.addGuessLetter(guessLetter: GuessLetter): Resource<GuessWord?> {
+fun GuessWord.addGuessLetter(guessLetter: GuessLetter): Option<GuessWord?> {
     val newGuessLetterList = this.letters.toMutableList()
     newGuessLetterList.indexOfFirst { it.availableForInput }.let { index ->
         if (index == -1) {
             val customError = GuessWordError.NoLettersAvailableForInput
-            return Resource.Error(
-                message = customError.message,
+            return Option.UiError(
+                uiText = customError.message,
                 errorCode = customError.ordinal
             )
         }
@@ -51,7 +33,7 @@ fun GuessWord.addGuessLetter(guessLetter: GuessLetter): Resource<GuessWord?> {
             state = guessLetter.state
         )
     }
-    return Resource.Success(
+    return Option.Success(
         data = this.copy(
             letters = newGuessLetterList.toImmutableList(),
             state = this.state
@@ -59,13 +41,13 @@ fun GuessWord.addGuessLetter(guessLetter: GuessLetter): Resource<GuessWord?> {
     )
 }
 
-fun GuessWord.eraseLetter(): Resource<GuessWord?> {
+fun GuessWord.eraseLetter(): Option<GuessWord?> {
     val newGuessLetterList = this.letters.toMutableList()
     newGuessLetterList.indexOfLast { it.answered }.let { index ->
         if (index == -1) {
             val customError = GuessWordError.NoLettersToRemove
-            return Resource.Error(
-                message = customError.message,
+            return Option.UiError(
+                uiText = customError.message,
                 errorCode = customError.ordinal
             )
         }
@@ -73,7 +55,7 @@ fun GuessWord.eraseLetter(): Resource<GuessWord?> {
         newGuessLetterList[index] = newGuessLetterList[index].erase()
 
     }
-    return Resource.Success(
+    return Option.Success(
         data = this.copy(
             letters = newGuessLetterList.toImmutableList(),
             state = this.state

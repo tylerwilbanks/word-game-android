@@ -1,5 +1,7 @@
 package com.minutesock.wordgame.presentation
 
+import com.minutesock.wordgame.uiutils.UiText
+
 data class DailyWordState(
     val wordLength: Int = 5,
     val maxGuessAttempts: Int = 5,
@@ -8,7 +10,7 @@ data class DailyWordState(
 )
 
 data class DailyWordStateMessage(
-    val message: String = "",
+    val uiText: UiText? = null,
     val isError: Boolean = false,
 )
 

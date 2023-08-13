@@ -76,7 +76,7 @@ fun DailyWordScreen(
                     .padding(top = 20.dp, bottom = 15.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
-                text = state.dailyWordStateMessage?.message ?: "",
+                text = state.dailyWordStateMessage?.uiText?.asString() ?: "",
                 color = messageColor
             )
 

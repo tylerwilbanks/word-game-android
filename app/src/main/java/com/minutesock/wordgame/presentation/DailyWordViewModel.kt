@@ -1,34 +1,29 @@
 package com.minutesock.wordgame.presentation
 
-import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWord
-import com.minutesock.wordgame.domain.GuessWordError
 import com.minutesock.wordgame.domain.GuessWordState
 import com.minutesock.wordgame.domain.addGuessLetter
 import com.minutesock.wordgame.domain.eraseLetter
 import com.minutesock.wordgame.domain.updateState
-import com.minutesock.wordgame.utils.Resource
+import com.minutesock.wordgame.uiutils.UiText
+import com.minutesock.wordgame.utils.Option
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DailyWordViewModel(application: Application) : AndroidViewModel(application) {
+class DailyWordViewModel : ViewModel() {
 
     private val _state = MutableStateFlow(DailyWordState())
     val state = _state.asStateFlow()
 
-    private val context = getApplication<Application>().applicationContext
-
     val guessWords = mutableStateListOf<GuessWord>()
-
-    private val errorMessageDelay = 1000L
 
     fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
         val w = List(maxGuessAttempts) {
@@ -46,7 +41,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                 maxGuessAttempts = maxGuessAttempts,
                 correctWord = "smack",
                 dailyWordStateMessage = DailyWordStateMessage(
-                    message = context.getString(R.string.what_in_da_word)
+                    uiText = UiText.StringResource(R.string.what_in_da_word)
                 )
             )
         }
@@ -81,7 +76,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                     _state.update {
                         it.copy(
                             dailyWordStateMessage = DailyWordStateMessage(
-                                message = context.getString(R.string.what_in_da_word)
+                                uiText = UiText.StringResource(R.string.what_in_da_word)
                             )
                         )
                     }
@@ -90,25 +85,27 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun getCurrentGuessWordIndex(): Resource<Int> {
+    private fun getCurrentGuessWordIndex(): Option<Int> {
         val index = guessWords.indexOfFirst {
             it.state == GuessWordState.Editing
         }
         return if (index == -1) {
-            Resource.Error("There is no more guess attempts left")
+            Option.UiError(
+                uiText = UiText.StringResource(R.string.there_is_no_more_guess_attempts_left)
+            )
         } else {
-            Resource.Success(index)
+            Option.Success(index)
         }
     }
 
     private fun getCurrentGuessWordAndHandleError(): Int? {
         return when (val result = getCurrentGuessWordIndex()) {
-            is Resource.Error -> {
-                result.message?.let { errorMessage ->
+            is Option.UiError -> {
+                result.uiText?.let { uiText ->
                     _state.update {
                         it.copy(
                             dailyWordStateMessage = DailyWordStateMessage(
-                                message = errorMessage,
+                                uiText = uiText,
                                 isError = true
                             )
                         )
@@ -117,7 +114,12 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                 null
             }
 
-            is Resource.Success -> result.data
+            is Option.Success -> result.data
+
+            else -> {
+                /* ignore Option.Error */
+                null
+            }
         }
     }
 
@@ -126,8 +128,8 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
             GuessLetter(_character = character)
         )
         when (result) {
-            is Resource.Error -> {
-                result.message?.let { errorMessage ->
+            is Option.UiError -> {
+                result.uiText?.let { uiTextError ->
                     result.errorCode?.let { errorCode ->
                         guessWords[index] = guessWords[index].copy(
                             errorState = GuessWordError.values()[errorCode]
@@ -136,7 +138,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                     _state.update {
                         it.copy(
                             dailyWordStateMessage = DailyWordStateMessage(
-                                message = errorMessage,
+                                uiText = uiTextError,
                                 isError = true
                             )
                         )
@@ -145,18 +147,21 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
 
             }
 
-            is Resource.Success -> {
+            is Option.Success -> {
                 result.data?.let {
                     guessWords[index] = it
                 }
+            }
+
+            else -> {/* ignore Option.Error */
             }
         }
     }
 
     private fun eraseLetter(index: Int) {
         when (val result = guessWords[index].eraseLetter()) {
-            is Resource.Error -> {
-                result.message?.let { errorMessage ->
+            is Option.UiError -> {
+                result.uiText?.let { uiText ->
                     result.errorCode?.let { errorCode ->
                         guessWords[index] = guessWords[index].copy(
                             errorState = GuessWordError.values()[errorCode]
@@ -165,7 +170,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                     _state.update {
                         it.copy(
                             dailyWordStateMessage = DailyWordStateMessage(
-                                message = errorMessage,
+                                uiText = uiText,
                                 isError = true
                             )
                         )
@@ -174,10 +179,13 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
 
             }
 
-            is Resource.Success -> {
+            is Option.Success -> {
                 result.data?.let { guessWord ->
                     guessWords[index] = guessWord
                 }
+            }
+
+            else -> {/* ignore Option.Error */
             }
         }
     }
