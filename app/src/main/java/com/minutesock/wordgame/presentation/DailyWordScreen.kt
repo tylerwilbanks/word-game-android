@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.GuessWord
@@ -36,7 +35,7 @@ fun DailyWordScreen(
 ) {
     val shakeController = rememberShakeController()
     val messageColor by animateColorAsState(
-        targetValue = if (state.dailyWordStateMessage?.isError == true) Color.Red else Color.Black,
+        targetValue = if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
         animationSpec = tween(
             if (state.dailyWordStateMessage?.isError == true) 200 else 1000,
             easing = LinearEasing

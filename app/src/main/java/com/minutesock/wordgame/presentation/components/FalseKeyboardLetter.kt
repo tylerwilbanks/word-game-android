@@ -1,5 +1,6 @@
 package com.minutesock.wordgame.presentation.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -35,7 +37,7 @@ fun FalseKeyboardLetter(
             .size(sizeX, 55.dp)
             .padding(2.dp),
 
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         shape = RoundedCornerShape(10),
         onClick = {
             when (displayText) {
@@ -57,19 +59,19 @@ fun FalseKeyboardLetter(
             "enter" -> Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = "enter",
-                tint = Color.Green
+                tint = MaterialTheme.colorScheme.primary
             )
 
             "remove" -> Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "remove",
-                tint = Color.Red
+                tint = if (isSystemInDarkTheme()) Color.White else Color.Black
             )
 
             else -> Text(
                 textAlign = TextAlign.Center,
                 text = displayText,
-                color = Color.White,
+                color = if (isSystemInDarkTheme()) Color.White else Color.Black,
                 fontSize = 16.sp
             )
         }
