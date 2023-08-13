@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWord
+import com.minutesock.wordgame.domain.GuessWordError
 import com.minutesock.wordgame.domain.GuessWordState
 import com.minutesock.wordgame.domain.addGuessLetter
 import com.minutesock.wordgame.domain.eraseLetter
@@ -70,6 +71,7 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
 
             DailyWordEvent.OnEnterPress -> {
                 viewModelScope.launch {
+
                 }
             }
         }
@@ -79,7 +81,6 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
         val index = guessWords.indexOfFirst {
             it.state == GuessWordState.Editing
         }
-
         return if (index == -1) {
             Resource.Error("There is no more guess attempts left")
         } else {
@@ -111,6 +112,11 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
         when (result) {
             is Resource.Error -> {
                 result.message?.let { errorMessage ->
+                    result.errorCode?.let { errorCode ->
+                        guessWords[index] = guessWords[index].copy(
+                            errorState = GuessWordError.values()[errorCode]
+                        )
+                    }
                     _state.update {
                         it.copy(
                             message = errorMessage
@@ -132,6 +138,11 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
         when (val result = guessWords[index].eraseLetter()) {
             is Resource.Error -> {
                 result.message?.let { errorMessage ->
+                    result.errorCode?.let { errorCode ->
+                        guessWords[index] = guessWords[index].copy(
+                            errorState = GuessWordError.values()[errorCode]
+                        )
+                    }
                     _state.update {
                         it.copy(
                             message = errorMessage

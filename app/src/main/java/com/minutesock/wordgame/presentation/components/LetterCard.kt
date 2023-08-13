@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,12 +40,12 @@ fun LetterCard(letter: GuessLetter) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(48.dp)
-            .border(BorderStroke(2.dp, Color.LightGray))
-            .background(letter.color)
+            .border(BorderStroke(2.dp, Color.LightGray), shape = RoundedCornerShape(5.dp))
+            .background(animateColor, shape = RoundedCornerShape(5.dp))
             .graphicsLayer {
                 rotationY = rotation
                 cameraDistance = 8 * density
-            }
+            },
     ) {
         Text(
             modifier = Modifier

@@ -1,7 +1,5 @@
 package com.minutesock.wordgame.presentation
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.presentation.components.FalseKeyboard
 import com.minutesock.wordgame.presentation.components.WordRow
+import com.minutesock.wordgame.uiutils.ShakeConfig
+import com.minutesock.wordgame.uiutils.rememberShakeController
+import com.minutesock.wordgame.uiutils.shake
 
 
 @Composable
@@ -30,8 +32,20 @@ fun DailyWordScreen(
     onEvent: (DailyWordEvent) -> Unit,
     falseKeyboardKeys: FalseKeyboardKeys
 ) {
-    val animationDuration by remember { mutableStateOf(500) }
     val message by remember { mutableStateOf(state.message) }
+    val shakeController = rememberShakeController()
+
+    LaunchedEffect(state.message) {
+        shakeController.shake(
+            ShakeConfig(
+                iterations = 2,
+                intensity = 2_000f,
+                rotateY = 15f,
+                translateX = 40f,
+            )
+        )
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -42,17 +56,16 @@ fun DailyWordScreen(
         ) {
             Text(
                 modifier = Modifier
-                    .padding(top = 20.dp, bottom = 15.dp)
-                    .animateContentSize(
-                        animationSpec = tween(animationDuration)
-                    ),
+                    .shake(shakeController)
+                    .padding(top = 20.dp, bottom = 15.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
                 text = state.message,
             )
 
+
             guessWords.forEach {
-                WordRow(guessLetters = it.letters)
+                WordRow(guessWord = it, guessLetters = it.letters)
             }
         }
 

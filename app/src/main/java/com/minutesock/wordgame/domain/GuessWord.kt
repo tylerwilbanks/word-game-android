@@ -6,7 +6,8 @@ import kotlinx.collections.immutable.toImmutableList
 
 data class GuessWord(
     val letters: ImmutableList<GuessLetter>,
-    val state: GuessWordState = GuessWordState.Unused
+    val state: GuessWordState = GuessWordState.Unused,
+    val errorState: GuessWordError = GuessWordError.None
 )
 
 enum class GuessWordState {
@@ -16,6 +17,7 @@ enum class GuessWordState {
 }
 
 enum class GuessWordError {
+    None,
     Unknown,
     NoWordToEdit,
     NoLettersAvailableForInput,
@@ -25,6 +27,7 @@ enum class GuessWordError {
         get() {
             // todo extract these into string resources
             return when (this) {
+                None -> ""
                 Unknown -> "Unknown Error"
                 NoWordToEdit -> "There are no words to edit."
                 NoLettersAvailableForInput -> "This word is full."
