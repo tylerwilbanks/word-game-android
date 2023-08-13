@@ -27,12 +27,7 @@ fun WordRow(
     LaunchedEffect(guessWord.errorState) {
         if (guessWord.errorState != GuessWordError.None) {
             shakeController.shake(
-                ShakeConfig(
-                    iterations = 2,
-                    intensity = 2_000f,
-                    rotateY = 15f,
-                    translateX = 40f,
-                )
+                shakeConfig = ShakeConfig.no(1000L) { onEvent(DailyWordEvent.OnWordRowErrorAnimationFinished) }
             )
         }
     }
@@ -42,8 +37,7 @@ fun WordRow(
             .padding(5.dp)
             .shake(
                 shakeController = shakeController,
-                finishDelay = 1000L
-            ) { onEvent(DailyWordEvent.OnWordRowErrorAnimationFinished) }
+            )
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {

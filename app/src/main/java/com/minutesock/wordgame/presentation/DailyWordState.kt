@@ -4,7 +4,12 @@ data class DailyWordState(
     val wordLength: Int = 5,
     val maxGuessAttempts: Int = 5,
     val correctWord: String? = null,
-    val message: String = ""
+    val dailyWordStateMessage: DailyWordStateMessage? = null
+)
+
+data class DailyWordStateMessage(
+    val message: String = "",
+    val isError: Boolean = false,
 )
 
 

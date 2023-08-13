@@ -11,5 +11,25 @@ data class ShakeConfig(
     val translateX: Float = 0f,
     val translateY: Float = 0f,
     val trigger: Long = System.currentTimeMillis(),
-)
+    val animationFinishDelay: Long? = null,
+    val onAnimationFinished: (() -> Unit)? = null
+) {
+    companion object {
+        fun no(
+            animationFinishDelay: Long? = null,
+            onAnimationFinished: (() -> Unit)? = null
+        ) = ShakeConfig(
+            iterations = 2,
+            intensity = 2_000f,
+            rotateY = 15f,
+            translateX = 40f,
+            animationFinishDelay = animationFinishDelay,
+            onAnimationFinished = onAnimationFinished,
+        )
+    }
+
+}
+
+
+
 

@@ -14,7 +14,6 @@ import com.minutesock.wordgame.domain.eraseLetter
 import com.minutesock.wordgame.domain.updateState
 import com.minutesock.wordgame.utils.Resource
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -46,7 +45,9 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                 wordLength = wordLength,
                 maxGuessAttempts = maxGuessAttempts,
                 correctWord = "smack",
-                message = context.getString(R.string.what_in_da_word)
+                dailyWordStateMessage = DailyWordStateMessage(
+                    message = context.getString(R.string.what_in_da_word)
+                )
             )
         }
     }
@@ -79,7 +80,9 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                 viewModelScope.launch {
                     _state.update {
                         it.copy(
-                            message = context.getString(R.string.what_in_da_word)
+                            dailyWordStateMessage = DailyWordStateMessage(
+                                message = context.getString(R.string.what_in_da_word)
+                            )
                         )
                     }
                 }
@@ -104,7 +107,10 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                 result.message?.let { errorMessage ->
                     _state.update {
                         it.copy(
-                            message = errorMessage
+                            dailyWordStateMessage = DailyWordStateMessage(
+                                message = errorMessage,
+                                isError = true
+                            )
                         )
                     }
                 }
@@ -129,7 +135,10 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     _state.update {
                         it.copy(
-                            message = errorMessage
+                            dailyWordStateMessage = DailyWordStateMessage(
+                                message = errorMessage,
+                                isError = true
+                            )
                         )
                     }
                 }
@@ -155,7 +164,10 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     _state.update {
                         it.copy(
-                            message = errorMessage
+                            dailyWordStateMessage = DailyWordStateMessage(
+                                message = errorMessage,
+                                isError = true
+                            )
                         )
                     }
                 }
@@ -167,16 +179,6 @@ class DailyWordViewModel(application: Application) : AndroidViewModel(applicatio
                     guessWords[index] = guessWord
                 }
             }
-        }
-    }
-
-    private suspend fun updateMessage(message: String) {
-        _state.update {
-            it.copy(message = message)
-        }
-        delay(errorMessageDelay)
-        _state.update {
-            it.copy(message = "")
         }
     }
 }

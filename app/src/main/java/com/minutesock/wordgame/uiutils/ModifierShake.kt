@@ -16,8 +16,6 @@ import kotlin.math.roundToInt
 
 fun Modifier.shake(
     shakeController: ShakeController,
-    finishDelay: Long? = null,
-    onFinished: (() -> Unit)? = null
 ) = composed {
     shakeController.shakeConfig?.let { shakeConfig ->
         val shake = remember { Animatable(0f) }
@@ -30,10 +28,10 @@ fun Modifier.shake(
             }
 
             shake.animateTo(0f)
-            finishDelay?.let {
-                delay(finishDelay)
+            shakeController.shakeConfig?.animationFinishDelay?.let {
+                delay(it)
             }
-            onFinished?.invoke()
+            shakeController.shakeConfig?.onAnimationFinished?.invoke()
 
         }
 

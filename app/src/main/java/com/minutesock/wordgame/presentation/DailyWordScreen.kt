@@ -1,5 +1,8 @@
 package com.minutesock.wordgame.presentation
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,11 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.GuessWord
@@ -32,18 +34,32 @@ fun DailyWordScreen(
     onEvent: (DailyWordEvent) -> Unit,
     falseKeyboardKeys: FalseKeyboardKeys
 ) {
-    val message by remember { mutableStateOf(state.message) }
     val shakeController = rememberShakeController()
-
-    LaunchedEffect(state.message) {
-        shakeController.shake(
-            ShakeConfig(
-                iterations = 2,
-                intensity = 2_000f,
-                rotateY = 15f,
-                translateX = 40f,
-            )
+    val messageColor by animateColorAsState(
+        targetValue = if (state.dailyWordStateMessage?.isError == true) Color.Red else Color.Black,
+        animationSpec = tween(
+            if (state.dailyWordStateMessage?.isError == true) 200 else 1000,
+            easing = LinearEasing
         )
+    )
+
+    LaunchedEffect(state.dailyWordStateMessage) {
+        state.dailyWordStateMessage?.let {
+            if (it.isError) {
+                shakeController.shake(
+                    ShakeConfig.no()
+                )
+            } else {
+                shakeController.shake(
+                    ShakeConfig(
+                        iterations = 1,
+                        intensity = 1_000f,
+                        rotateX = 5f,
+                        translateY = 15f,
+                    )
+                )
+            }
+        }
     }
 
     Surface(
@@ -60,7 +76,8 @@ fun DailyWordScreen(
                     .padding(top = 20.dp, bottom = 15.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
-                text = state.message,
+                text = state.dailyWordStateMessage?.message ?: "",
+                color = messageColor
             )
 
 
