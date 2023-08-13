@@ -40,7 +40,10 @@ fun WordRow(
     Row(
         modifier = Modifier
             .padding(5.dp)
-            .shake(shakeController = shakeController) { onEvent(DailyWordEvent.OnWordRowErrorAnimationFinished) }
+            .shake(
+                shakeController = shakeController,
+                finishDelay = 1000L
+            ) { onEvent(DailyWordEvent.OnWordRowErrorAnimationFinished) }
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {

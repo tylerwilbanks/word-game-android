@@ -11,9 +11,14 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.IntOffset
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
-fun Modifier.shake(shakeController: ShakeController, onFinished: (() -> Unit)? = null) = composed {
+fun Modifier.shake(
+    shakeController: ShakeController,
+    finishDelay: Long? = null,
+    onFinished: (() -> Unit)? = null
+) = composed {
     shakeController.shakeConfig?.let { shakeConfig ->
         val shake = remember { Animatable(0f) }
         LaunchedEffect(shakeController.shakeConfig) {
@@ -25,6 +30,9 @@ fun Modifier.shake(shakeController: ShakeController, onFinished: (() -> Unit)? =
             }
 
             shake.animateTo(0f)
+            finishDelay?.let {
+                delay(finishDelay)
+            }
             onFinished?.invoke()
 
         }
