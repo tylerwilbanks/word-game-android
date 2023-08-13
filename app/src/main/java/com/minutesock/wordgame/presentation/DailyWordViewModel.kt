@@ -26,28 +26,35 @@ class DailyWordViewModel : ViewModel() {
     val guessWords = mutableStateListOf<GuessWord>()
 
     fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
-        val w = List(maxGuessAttempts) {
-            GuessWord(
-                List(wordLength) {
-                    GuessLetter()
-                }.toImmutableList()
-            )
-        }.toMutableList()
-        w[0] = w[0].updateState(GuessWordState.Editing)
-        guessWords.addAll(w)
-        _state.update { dailyWordState ->
-            dailyWordState.copy(
-                wordLength = wordLength,
-                maxGuessAttempts = maxGuessAttempts,
-                correctWord = "smack",
-                dailyWordStateMessage = DailyWordStateMessage(
-                    uiText = UiText.StringResource(R.string.what_in_da_word)
+        if (state.value.gameState == DailyWordGameState.NotStarted) {
+            val w = List(maxGuessAttempts) {
+                GuessWord(
+                    List(wordLength) {
+                        GuessLetter()
+                    }.toImmutableList()
                 )
-            )
+            }.toMutableList()
+            w[0] = w[0].updateState(GuessWordState.Editing)
+            guessWords.addAll(w)
+            _state.update { dailyWordState ->
+                dailyWordState.copy(
+                    gameState = DailyWordGameState.InProgress,
+                    wordLength = wordLength,
+                    maxGuessAttempts = maxGuessAttempts,
+                    correctWord = "smack",
+                    dailyWordStateMessage = DailyWordStateMessage(
+                        uiText = UiText.StringResource(R.string.what_in_da_word)
+                    )
+                )
+            }
         }
     }
 
     fun onEvent(event: DailyWordEvent) {
+        if (state.value.gameState == DailyWordGameState.NotStarted ||
+                state.value.gameState == DailyWordGameState.Complete) {
+            return
+        }
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
                 viewModelScope.launch {
