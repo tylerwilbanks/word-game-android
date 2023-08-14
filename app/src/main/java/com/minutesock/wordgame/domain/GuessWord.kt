@@ -78,21 +78,21 @@ fun GuessWord.updateState(newState: GuessWordState): GuessWord {
 fun GuessWord.lockInGuess(correctWord: String): GuessWord {
     val newGuessLetters = mutableListOf<GuessLetter>()
     val correctChars: List<Char> = correctWord.map { it.lowercaseChar() }
-    val ass = hashMapOf<Char, Int>()
+    val processedLetters = hashMapOf<Char, Int>()
 
     this.letters.forEachIndexed { index: Int, guessLetter: GuessLetter ->
         val duplicateLetterCount = correctChars.count { it == guessLetter.character }
-        if (ass.get(guessLetter.character) == null) {
-            ass[guessLetter.character] = 0
+        if (processedLetters.get(guessLetter.character) == null) {
+            processedLetters[guessLetter.character] = 0
         }
         val newState = when {
             guessLetter.character == correctChars[index] -> LetterState.Correct
-            correctChars.contains(guessLetter.character) && ass[guessLetter.character]!! <= duplicateLetterCount -> LetterState.Present
+            correctChars.contains(guessLetter.character) && processedLetters[guessLetter.character]!! <= duplicateLetterCount -> LetterState.Present
             !correctChars.contains(guessLetter.character) -> LetterState.Absent
             else -> LetterState.Absent
         }
-        ass[guessLetter.character]?.let {
-            ass[guessLetter.character] = it + 1
+        processedLetters[guessLetter.character]?.let {
+            processedLetters[guessLetter.character] = it + 1
         }
         newGuessLetters.add(
             GuessLetter(
