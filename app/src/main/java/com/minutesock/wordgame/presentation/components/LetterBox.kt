@@ -32,7 +32,7 @@ fun LetterBox(letter: GuessLetter) {
     )
 
     val animateColor by animateColorAsState(
-        targetValue = if (rotated) letter.color else MaterialTheme.colorScheme.background,
+        targetValue = if (rotated) letter.displayColor(MaterialTheme.colorScheme.background) else MaterialTheme.colorScheme.background,
         animationSpec = tween(500)
     )
 
@@ -44,7 +44,10 @@ fun LetterBox(letter: GuessLetter) {
                 BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(5.dp)
             )
-            .background(letter.color, shape = RoundedCornerShape(5.dp))
+            .background(
+                letter.displayColor(MaterialTheme.colorScheme.background),
+                shape = RoundedCornerShape(5.dp)
+            )
             .graphicsLayer {
                 rotationY = rotation
                 cameraDistance = 8 * density

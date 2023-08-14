@@ -1,6 +1,8 @@
 package com.minutesock.wordgame.domain
 
 import androidx.compose.ui.graphics.Color
+import com.minutesock.wordgame.ui.theme.guessLetterGreen
+import com.minutesock.wordgame.ui.theme.guessLetterYellow
 
 data class GuessLetter(
     private val _character: Char = AvailableChar,
@@ -9,12 +11,11 @@ data class GuessLetter(
     val displayCharacter get() = character.toString().uppercase()
     val character get() = _character.lowercaseChar()
 
-    val color
-        get() = when (state) {
-            LetterState.Absent -> Color.Black
-            LetterState.Present -> Color.Yellow
-            LetterState.Correct -> Color.Green
-        }
+    fun displayColor(absentBackgroundColor: Color) = when (state) {
+        LetterState.Absent -> absentBackgroundColor
+        LetterState.Present -> guessLetterYellow
+        LetterState.Correct -> guessLetterGreen
+    }
 
     val availableForInput get() = character == AvailableChar
 
