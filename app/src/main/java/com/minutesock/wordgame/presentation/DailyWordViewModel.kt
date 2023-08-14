@@ -4,11 +4,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.R
+import com.minutesock.wordgame.domain.DailyWordValidationResultType
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.domain.GuessWordState
+import com.minutesock.wordgame.domain.GuessWordValidator
 import com.minutesock.wordgame.domain.addGuessLetter
 import com.minutesock.wordgame.domain.eraseLetter
+import com.minutesock.wordgame.domain.lockInGuess
 import com.minutesock.wordgame.domain.updateState
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.Option
@@ -41,7 +44,7 @@ class DailyWordViewModel : ViewModel() {
                     gameState = DailyWordGameState.InProgress,
                     wordLength = wordLength,
                     maxGuessAttempts = maxGuessAttempts,
-                    correctWord = "smack",
+                    correctWord = "bully",
                     dailyWordStateMessage = DailyWordStateMessage(
                         uiText = UiText.StringResource(R.string.what_in_da_word)
                     )
@@ -52,7 +55,8 @@ class DailyWordViewModel : ViewModel() {
 
     fun onEvent(event: DailyWordEvent) {
         if (state.value.gameState == DailyWordGameState.NotStarted ||
-                state.value.gameState == DailyWordGameState.Complete) {
+            state.value.gameState == DailyWordGameState.Complete
+        ) {
             return
         }
         when (event) {
@@ -74,11 +78,63 @@ class DailyWordViewModel : ViewModel() {
 
             DailyWordEvent.OnEnterPress -> {
                 viewModelScope.launch {
+                    getCurrentGuessWordAndHandleError()?.let { index ->
+                        val currentGuessWord = guessWords[index]
+                        val result = GuessWordValidator.validateGuess(
+                            currentGuessWord,
+                            state.value.correctWord!!
+                        )
+                        when (result.type) {
+                            DailyWordValidationResultType.Unknown -> TODO()
+                            DailyWordValidationResultType.Error -> {
+                                displayError(result.uiText)
+                            }
 
+                            DailyWordValidationResultType.Incorrect -> {
+                                guessWords[index] =
+                                    guessWords[index].lockInGuess(state.value.correctWord!!)
+                                _state.update {
+                                    it.copy(
+                                        dailyWordStateMessage = DailyWordStateMessage(
+                                            uiText = result.uiText,
+                                            isError = false
+                                        )
+                                    )
+                                }
+                                // game is complete
+                                if (index + 1 == guessWords.size) {
+                                    _state.update {
+                                        it.copy(
+                                            gameState = DailyWordGameState.Complete
+                                        )
+                                    }
+                                } else {
+                                    guessWords[index + 1] = guessWords[index + 1].copy(
+                                        state = GuessWordState.Editing
+                                    )
+                                }
+
+                            }
+
+                            DailyWordValidationResultType.Success -> {
+                                guessWords[index] =
+                                    guessWords[index].lockInGuess(state.value.correctWord!!)
+                                _state.update {
+                                    it.copy(
+                                        gameState = DailyWordGameState.Complete,
+                                        dailyWordStateMessage = DailyWordStateMessage(
+                                            uiText = result.uiText,
+                                            isError = false
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            DailyWordEvent.OnWordRowErrorAnimationFinished -> {
+            DailyWordEvent.OnErrorAnimationFinished -> {
                 viewModelScope.launch {
                     _state.update {
                         it.copy(
@@ -89,6 +145,23 @@ class DailyWordViewModel : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    private fun displayError(uiText: UiText, guessWordError: GuessWordError? = null) {
+        _state.update {
+            it.copy(
+                dailyWordStateMessage = DailyWordStateMessage(
+                    uiText = uiText,
+                    isError = true
+                )
+            )
+        }
+
+        getCurrentGuessWordAndHandleError()?.let { index ->
+            guessWords[index] = guessWords[index].copy(
+                errorState = guessWordError ?: GuessWordError.Unknown
+            )
         }
     }
 
@@ -160,7 +233,8 @@ class DailyWordViewModel : ViewModel() {
                 }
             }
 
-            else -> {/* ignore Option.Error */
+            else -> {
+                /* ignore Option.Error */
             }
         }
     }

@@ -44,7 +44,7 @@ fun LetterBox(letter: GuessLetter) {
                 BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(5.dp)
             )
-            .background(animateColor, shape = RoundedCornerShape(5.dp))
+            .background(letter.color, shape = RoundedCornerShape(5.dp))
             .graphicsLayer {
                 rotationY = rotation
                 cameraDistance = 8 * density

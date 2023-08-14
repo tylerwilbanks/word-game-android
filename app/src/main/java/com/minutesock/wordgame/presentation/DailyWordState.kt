@@ -15,7 +15,7 @@ data class DailyWordStateMessage(
     val isError: Boolean = false,
 )
 
-enum class DailyWordGameState{
+enum class DailyWordGameState {
     NotStarted,
     InProgress,
     Complete

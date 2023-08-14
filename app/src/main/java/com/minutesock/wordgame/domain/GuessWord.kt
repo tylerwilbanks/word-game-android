@@ -9,7 +9,12 @@ data class GuessWord(
     val letters: ImmutableList<GuessLetter>,
     val state: GuessWordState = GuessWordState.Unused,
     val errorState: GuessWordError = GuessWordError.None
-)
+) {
+    val word: String get() = letters.joinToString("") { it.displayCharacter }.lowercase()
+    val displayWord: String get() = letters.joinToString("") { it.displayCharacter }.uppercase()
+
+    val isIncomplete: Boolean get() = letters.any { it.availableForInput }
+}
 
 enum class GuessWordState {
     Unused,
@@ -67,5 +72,38 @@ fun GuessWord.updateState(newState: GuessWordState): GuessWord {
     return this.copy(
         letters = this.letters,
         state = newState
+    )
+}
+
+fun GuessWord.lockInGuess(correctWord: String): GuessWord {
+    val newGuessLetters = mutableListOf<GuessLetter>()
+    val correctChars: List<Char> = correctWord.map { it.lowercaseChar() }
+    val ass = hashMapOf<Char, Int>()
+
+    this.letters.forEachIndexed { index: Int, guessLetter: GuessLetter ->
+        val duplicateLetterCount = correctChars.count { it == guessLetter.character }
+        if (ass.get(guessLetter.character) == null) {
+            ass[guessLetter.character] = 0
+        }
+        val newState = when {
+            guessLetter.character == correctChars[index] -> LetterState.Correct
+            correctChars.contains(guessLetter.character) && ass[guessLetter.character]!! <= duplicateLetterCount -> LetterState.Present
+            !correctChars.contains(guessLetter.character) -> LetterState.Absent
+            else -> LetterState.Absent
+        }
+        ass[guessLetter.character]?.let {
+            ass[guessLetter.character] = it + 1
+        }
+        newGuessLetters.add(
+            GuessLetter(
+                _character = guessLetter.character,
+                state = newState
+            )
+        )
+    }
+
+    return this.copy(
+        letters = newGuessLetters.toImmutableList(),
+        state = GuessWordState.Complete
     )
 }

@@ -26,9 +26,7 @@ fun WordRow(
     val shakeController = rememberShakeController()
     LaunchedEffect(guessWord.errorState) {
         if (guessWord.errorState != GuessWordError.None) {
-            shakeController.shake(
-                shakeConfig = ShakeConfig.no(1000L) { onEvent(DailyWordEvent.OnWordRowErrorAnimationFinished) }
-            )
+            shakeController.shake(ShakeConfig.no())
         }
     }
 

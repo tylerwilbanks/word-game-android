@@ -25,10 +25,6 @@ data class GuessLetter(
     }
 }
 
-fun GuessLetter.updateState() {
-    // todo implement
-}
-
 fun GuessLetter.erase(): GuessLetter {
     return this.copy(
         _character = GuessLetter.AvailableChar

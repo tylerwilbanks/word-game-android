@@ -46,7 +46,7 @@ fun DailyWordScreen(
         state.dailyWordStateMessage?.let {
             if (it.isError) {
                 shakeController.shake(
-                    ShakeConfig.no()
+                    ShakeConfig.no(1000L) { onEvent(DailyWordEvent.OnErrorAnimationFinished) }
                 )
             } else {
                 shakeController.shake(
