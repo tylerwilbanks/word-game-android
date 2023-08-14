@@ -1,6 +1,7 @@
 package com.minutesock.wordgame.presentation
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -72,7 +73,9 @@ fun DailyWordScreen(
             Text(
                 modifier = Modifier
                     .shake(shakeController)
-                    .padding(top = 20.dp, bottom = 15.dp),
+                    .padding(top = 20.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)
+                    .animateContentSize(),
+
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
                 text = state.dailyWordStateMessage?.uiText?.asString() ?: "",

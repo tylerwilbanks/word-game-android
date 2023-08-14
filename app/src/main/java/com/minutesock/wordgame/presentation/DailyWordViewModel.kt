@@ -55,14 +55,14 @@ class DailyWordViewModel : ViewModel() {
 
     fun onEvent(event: DailyWordEvent) {
         if (state.value.gameState == DailyWordGameState.NotStarted ||
-            state.value.gameState == DailyWordGameState.Complete
+            state.value.gameState.isGameOver
         ) {
             return
         }
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
                 viewModelScope.launch {
-                    getCurrentGuessWordAndHandleError()?.let { index ->
+                    getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         updateCurrentGuessWord(index, event.character)
                     }
                 }
@@ -70,7 +70,7 @@ class DailyWordViewModel : ViewModel() {
 
             DailyWordEvent.OnDeletePress -> {
                 viewModelScope.launch {
-                    getCurrentGuessWordAndHandleError()?.let { index ->
+                    getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         eraseLetter(index)
                     }
                 }
@@ -78,11 +78,12 @@ class DailyWordViewModel : ViewModel() {
 
             DailyWordEvent.OnEnterPress -> {
                 viewModelScope.launch {
-                    getCurrentGuessWordAndHandleError()?.let { index ->
+                    getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         val currentGuessWord = guessWords[index]
                         val result = GuessWordValidator.validateGuess(
-                            currentGuessWord,
-                            state.value.correctWord!!
+                            guessWord = currentGuessWord,
+                            correctWord = state.value.correctWord!!,
+                            isFinalGuess = isFinalGuess(index)
                         )
                         when (result.type) {
                             DailyWordValidationResultType.Unknown -> TODO()
@@ -97,15 +98,15 @@ class DailyWordViewModel : ViewModel() {
                                     it.copy(
                                         dailyWordStateMessage = DailyWordStateMessage(
                                             uiText = result.uiText,
-                                            isError = false
+                                            isError = isFinalGuess(index)
                                         )
                                     )
                                 }
-                                // game is complete
-                                if (index + 1 == guessWords.size) {
+
+                                if (isFinalGuess(index)) {
                                     _state.update {
                                         it.copy(
-                                            gameState = DailyWordGameState.Complete
+                                            gameState = DailyWordGameState.Failure
                                         )
                                     }
                                 } else {
@@ -121,7 +122,7 @@ class DailyWordViewModel : ViewModel() {
                                     guessWords[index].lockInGuess(state.value.correctWord!!)
                                 _state.update {
                                     it.copy(
-                                        gameState = DailyWordGameState.Complete,
+                                        gameState = DailyWordGameState.Success,
                                         dailyWordStateMessage = DailyWordStateMessage(
                                             uiText = result.uiText,
                                             isError = false
@@ -148,6 +149,8 @@ class DailyWordViewModel : ViewModel() {
         }
     }
 
+    private fun isFinalGuess(index: Int): Boolean = index + 1 == guessWords.size
+
     private fun displayError(uiText: UiText, guessWordError: GuessWordError? = null) {
         _state.update {
             it.copy(
@@ -158,7 +161,7 @@ class DailyWordViewModel : ViewModel() {
             )
         }
 
-        getCurrentGuessWordAndHandleError()?.let { index ->
+        getCurrentGuessWordIndexAndHandleError()?.let { index ->
             guessWords[index] = guessWords[index].copy(
                 errorState = guessWordError ?: GuessWordError.Unknown
             )
@@ -178,7 +181,7 @@ class DailyWordViewModel : ViewModel() {
         }
     }
 
-    private fun getCurrentGuessWordAndHandleError(): Int? {
+    private fun getCurrentGuessWordIndexAndHandleError(): Int? {
         return when (val result = getCurrentGuessWordIndex()) {
             is Option.UiError -> {
                 result.uiText?.let { uiText ->

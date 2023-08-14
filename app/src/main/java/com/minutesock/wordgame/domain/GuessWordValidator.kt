@@ -5,15 +5,45 @@ import com.minutesock.wordgame.R
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.FileUtil
 import com.minutesock.wordgame.utils.convertToStringList
-import java.util.Random
 
 object GuessWordValidator {
     private var validWords = emptyList<String>()
     private var wordSelection = emptyList<String>()
 
     // todo extract string resources
-    private val encouragingMessages = listOf("So close!", "Not quite!")
-    private val correctMessages = listOf("You are correct!", "Marvelous.", "Exceptional.")
+    private val failureMessages = listOf(
+        "The word eludes you this time.",
+        "A valiant effort, but not the word.",
+        "The word remains a mystery.",
+        "The word stays hidden.",
+        "The word is a sly one.",
+        "Once more, the word dances out of your sight.",
+        "The word prefers to remain in the shadows for now."
+    ).shuffled()
+
+    private val encouragingMessages = listOf(
+        "Not quite!",
+        "Guess again, the right word is out there!",
+        "Keep those guesses coming, you're improving!",
+        "Not the word, but you're learning from each attempt!",
+        "Keep the guesses flowing. The puzzle will yield."
+    ).shuffled()
+
+    private val correctMessages = listOf(
+        "Well guessed!",
+        "Marvelous.",
+        "Exceptional.",
+        "Champion.",
+        "You cracked it!",
+        "Absolutely right.",
+        "Astonishing.",
+        "Glorious!",
+        "On the nose!"
+    ).shuffled()
+
+    private var failureMessageIndex = 0
+    private var encouragingMessageIndex = 0
+    private var correctMessagesIndex = 0
 
     fun initValidWords(context: Context) {
         val wordSelectionJsonArray = FileUtil().obtainJsonArray(context, "word_selection.json")
@@ -28,7 +58,8 @@ object GuessWordValidator {
 
     fun validateGuess(
         guessWord: GuessWord,
-        correctWord: String
+        correctWord: String,
+        isFinalGuess: Boolean,
     ): DailyWordValidationResult {
         if (guessWord.isIncomplete) {
             return DailyWordValidationResult(
@@ -38,9 +69,11 @@ object GuessWordValidator {
         }
 
         if (guessWord.word == correctWord) {
+            val randomMessageResult = getRandomMessage(correctMessages, correctMessagesIndex)
+            correctMessagesIndex = randomMessageResult.second
             return DailyWordValidationResult(
                 DailyWordValidationResultType.Success,
-                UiText.DynamicString(correctMessages[Random().nextInt(correctMessages.size)])
+                UiText.DynamicString(randomMessageResult.first)
             )
         }
 
@@ -51,9 +84,21 @@ object GuessWordValidator {
             )
         }
         if (guessWord.word != correctWord && validWords.contains(guessWord.displayWord.lowercase())) {
+            val randomMessageResult = getRandomMessage(
+                if (isFinalGuess) failureMessages else encouragingMessages,
+                if (isFinalGuess) failureMessageIndex else encouragingMessageIndex
+            )
+            if (isFinalGuess) {
+                failureMessageIndex = randomMessageResult.second
+            } else {
+                encouragingMessageIndex = randomMessageResult.second
+            }
+
             return DailyWordValidationResult(
                 DailyWordValidationResultType.Incorrect,
-                UiText.DynamicString(encouragingMessages[Random().nextInt(encouragingMessages.size)])
+                UiText.DynamicString(
+                    randomMessageResult.first
+                )
             )
         }
 
@@ -61,6 +106,11 @@ object GuessWordValidator {
             DailyWordValidationResultType.Unknown,
             UiText.StringResource(R.string.unknown_error)
         )
+    }
+
+    private fun getRandomMessage(messagePool: List<String>, index: Int): Pair<String, Int> {
+        val i = if (index + 1 == messagePool.size) 0 else index + 1
+        return Pair(messagePool[i], i)
     }
 }
 

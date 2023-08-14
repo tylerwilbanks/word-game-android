@@ -18,7 +18,15 @@ data class DailyWordStateMessage(
 enum class DailyWordGameState {
     NotStarted,
     InProgress,
-    Complete
+    Success,
+    Failure;
+
+    val isGameOver
+        get() = when (this) {
+            Success -> true
+            Failure -> true
+            else -> false
+        }
 }
 
 
