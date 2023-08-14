@@ -21,23 +21,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.minutesock.wordgame.domain.GuessKey
 import com.minutesock.wordgame.presentation.DailyWordEvent
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun FalseKeyboardLetter(
     onEvent: (DailyWordEvent) -> Unit,
-    displayText: String
+    displayText: String,
+    guessKeys: ImmutableList<GuessKey>,
 ) {
     val isLetter by remember { mutableStateOf(displayText.length == 1) }
     val sizeX by remember {
         mutableStateOf(if (isLetter) 35.dp else 50.dp)
     }
+
+    val backgroundColor = if (isLetter) {
+        guessKeys.firstOrNull { it.character == displayText.firstOrNull() }
+            ?.displayColor(MaterialTheme.colorScheme.secondaryContainer)
+            ?: MaterialTheme.colorScheme.secondaryContainer
+    } else {
+        MaterialTheme.colorScheme.secondaryContainer
+    }
+
     TextButton(
         modifier = Modifier
             .size(sizeX, 55.dp)
             .padding(2.dp),
 
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
         shape = RoundedCornerShape(10),
         onClick = {
             when (displayText) {

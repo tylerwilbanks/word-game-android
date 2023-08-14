@@ -5,16 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.DailyWordValidationResultType
+import com.minutesock.wordgame.domain.GuessKey
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.domain.GuessWordState
 import com.minutesock.wordgame.domain.GuessWordValidator
+import com.minutesock.wordgame.domain.LetterState
 import com.minutesock.wordgame.domain.addGuessLetter
 import com.minutesock.wordgame.domain.eraseLetter
 import com.minutesock.wordgame.domain.lockInGuess
 import com.minutesock.wordgame.domain.updateState
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.Option
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +30,25 @@ class DailyWordViewModel : ViewModel() {
     val state = _state.asStateFlow()
 
     val guessWords = mutableStateListOf<GuessWord>()
+
+    private val falseKeyboardKeys: ImmutableList<GuessKey>
+        get() {
+            val keys = hashMapOf<Char, LetterState>()
+            guessWords.forEach { guessWord ->
+                guessWord.letters.forEach { guessLetter ->
+                    val maxOrdinal = keys.filter {
+                        it.key == guessLetter.character && it.value.ordinal > guessLetter.state.ordinal
+                    }.values.maxOfOrNull { it.ordinal }
+                    val newState = if (maxOrdinal != null) {
+                        LetterState.values()[maxOrdinal]
+                    } else {
+                        guessLetter.state
+                    }
+                    keys[guessLetter.character] = newState
+                }
+            }
+            return keys.map { GuessKey(it.key, it.value) }.toImmutableList()
+        }
 
     fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
         if (state.value.gameState == DailyWordGameState.NotStarted) {
@@ -86,7 +108,7 @@ class DailyWordViewModel : ViewModel() {
                             isFinalGuess = isFinalGuess(index)
                         )
                         when (result.type) {
-                            DailyWordValidationResultType.Unknown -> TODO()
+                            DailyWordValidationResultType.Unknown -> {}
                             DailyWordValidationResultType.Error -> {
                                 displayError(result.uiText)
                             }
@@ -99,14 +121,16 @@ class DailyWordViewModel : ViewModel() {
                                         dailyWordStateMessage = DailyWordStateMessage(
                                             uiText = result.uiText,
                                             isError = isFinalGuess(index)
-                                        )
+                                        ),
+                                        falseKeyboardKeys = falseKeyboardKeys
                                     )
                                 }
 
                                 if (isFinalGuess(index)) {
                                     _state.update {
                                         it.copy(
-                                            gameState = DailyWordGameState.Failure
+                                            gameState = DailyWordGameState.Failure,
+                                            falseKeyboardKeys = falseKeyboardKeys
                                         )
                                     }
                                 } else {
@@ -122,6 +146,7 @@ class DailyWordViewModel : ViewModel() {
                                     guessWords[index].lockInGuess(state.value.correctWord!!)
                                 _state.update {
                                     it.copy(
+                                        falseKeyboardKeys = falseKeyboardKeys,
                                         gameState = DailyWordGameState.Success,
                                         dailyWordStateMessage = DailyWordStateMessage(
                                             uiText = result.uiText,

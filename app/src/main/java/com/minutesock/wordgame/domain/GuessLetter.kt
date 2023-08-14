@@ -12,6 +12,7 @@ data class GuessLetter(
     val character get() = _character.lowercaseChar()
 
     fun displayColor(absentBackgroundColor: Color) = when (state) {
+        LetterState.Unknown -> absentBackgroundColor
         LetterState.Absent -> absentBackgroundColor
         LetterState.Present -> guessLetterYellow
         LetterState.Correct -> guessLetterGreen

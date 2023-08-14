@@ -88,6 +88,10 @@ fun DailyWordScreen(
             }
         }
 
-        FalseKeyboard(falseKeyboardKeys = falseKeyboardKeys, onEvent = onEvent)
+        FalseKeyboard(
+            falseKeyboardKeys = falseKeyboardKeys,
+            onEvent = onEvent,
+            guessKeys = state.falseKeyboardKeys
+        )
     }
 }
