@@ -49,16 +49,23 @@ fun DailyWordScreen(
                 shakeController.shake(
                     ShakeConfig.no(1000L) { onEvent(DailyWordEvent.OnErrorAnimationFinished) }
                 )
-            } else if (!state.gameState.isGameOver) {
-                shakeController.shake(
-                    ShakeConfig(
-                        iterations = 1,
-                        intensity = 1_000f,
-                        rotateX = 5f,
-                        translateY = 15f,
-                    )
-                )
+                return@LaunchedEffect
             }
+            if (state.gameState == DailyWordGameState.Success) {
+                shakeController.shake(
+                    ShakeConfig.yes(1000L) { onEvent(DailyWordEvent.OnErrorAnimationFinished) }
+                )
+                return@LaunchedEffect
+            }
+
+            shakeController.shake(
+                ShakeConfig(
+                    iterations = 1,
+                    intensity = 1_000f,
+                    rotateX = 5f,
+                    translateY = 15f,
+                )
+            )
         }
     }
 

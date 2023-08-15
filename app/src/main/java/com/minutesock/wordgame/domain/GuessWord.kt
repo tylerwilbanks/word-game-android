@@ -19,7 +19,9 @@ data class GuessWord(
 enum class GuessWordState {
     Unused,
     Editing,
-    Complete
+    Complete,
+    Correct,
+    Failure
 }
 
 

@@ -52,7 +52,7 @@ class DailyWordViewModel : ViewModel() {
             return keys.map { GuessKey(it.key, it.value) }.toImmutableList()
         }
 
-    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
+    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 1) {
         if (state.value.gameState == DailyWordGameState.NotStarted) {
             val w = List(maxGuessAttempts) {
                 GuessWord(
@@ -68,7 +68,7 @@ class DailyWordViewModel : ViewModel() {
                     gameState = DailyWordGameState.InProgress,
                     wordLength = wordLength,
                     maxGuessAttempts = maxGuessAttempts,
-                    correctWord = "bully",
+                    correctWord = GuessWordValidator.obtainRandomWord(),
                     dailyWordStateMessage = DailyWordStateMessage(
                         uiText = UiText.StringResource(R.string.what_in_da_word)
                     )
@@ -187,6 +187,21 @@ class DailyWordViewModel : ViewModel() {
 
             DailyWordEvent.OnAnsweredWordRowAnimationFinished -> {
                 viewModelScope.launch {
+                    if (state.value.gameState.isGameOver) {
+                        guessWords.indexOfLast { it.state == GuessWordState.Complete }
+                            .let { index ->
+                                guessWords[index] =
+                                    guessWords[index].updateState(
+                                        if (state.value.gameState == DailyWordGameState.Success){
+                                            GuessWordState.Correct
+
+                                        }
+                                    else {
+                                        GuessWordState.Failure
+                                        }
+                                    )
+                            }
+                    }
                     _state.update {
                         it.copy(
                             dailyWordStateMessage = dailyWordStateMessage

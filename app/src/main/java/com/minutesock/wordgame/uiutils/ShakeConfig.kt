@@ -26,6 +26,18 @@ data class ShakeConfig(
             animationFinishDelay = animationFinishDelay,
             onAnimationFinished = onAnimationFinished,
         )
+
+        fun yes(
+            animationFinishDelay: Long? = null,
+            onAnimationFinished: (() -> Unit)? = null
+        ) = ShakeConfig(
+            iterations = 4,
+            intensity = 1_000f,
+            rotateX = -20f,
+            translateY = 20f,
+            animationFinishDelay = animationFinishDelay,
+            onAnimationFinished = onAnimationFinished,
+        )
     }
 
 }

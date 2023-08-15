@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWord
+import com.minutesock.wordgame.domain.GuessWordState
 import com.minutesock.wordgame.presentation.DailyWordEvent
 import com.minutesock.wordgame.presentation.GuessWordError
 import com.minutesock.wordgame.uiutils.ShakeConfig
@@ -27,6 +28,14 @@ fun WordRow(
     LaunchedEffect(guessWord.errorState) {
         if (guessWord.errorState != GuessWordError.None) {
             shakeController.shake(ShakeConfig.no())
+        }
+    }
+
+    LaunchedEffect(guessWord.state) {
+        when (guessWord.state) {
+            GuessWordState.Correct -> shakeController.shake(ShakeConfig.yes())
+            GuessWordState.Failure -> shakeController.shake(ShakeConfig.no())
+            else -> {}
         }
     }
 

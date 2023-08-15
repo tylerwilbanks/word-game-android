@@ -5,6 +5,8 @@ import com.minutesock.wordgame.R
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.FileUtil
 import com.minutesock.wordgame.utils.convertToStringList
+import java.util.Calendar
+import kotlin.random.Random
 
 object GuessWordValidator {
     private var validWords = emptyList<String>()
@@ -54,6 +56,12 @@ object GuessWordValidator {
         validWordsJsonArray?.let {
             validWords = it.convertToStringList()
         }
+    }
+
+    fun obtainRandomWord(): String {
+        return wordSelection[Random(
+            Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+        ).nextInt(from = 0, until = wordSelection.size)]
     }
 
     fun validateGuess(
