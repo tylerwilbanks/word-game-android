@@ -33,12 +33,17 @@ import com.minutesock.wordgame.presentation.DailyWordEvent
 fun LetterBox(
     letter: GuessLetter,
     guessWordState: GuessWordState,
-    onEvent: (DailyWordEvent) -> Unit
+    onEvent: (DailyWordEvent) -> Unit,
+    flipAnimDelay: Int,
+    isFinalLetterInRow: Boolean
 ) {
 
     val animateColor by animateColorAsState(
         targetValue = if (letter.answered) letter.displayColor(MaterialTheme.colorScheme.background) else MaterialTheme.colorScheme.background,
-        animationSpec = tween(durationMillis = 1250 / 2, delayMillis = 750)
+        animationSpec = tween(
+            durationMillis = 1250 / 2 + flipAnimDelay,
+            delayMillis = 750 + flipAnimDelay
+        )
     )
 
     var flipRotation by remember { mutableStateOf(0f) }
@@ -52,13 +57,16 @@ fun LetterBox(
             targetValue = 0f,
             animationSpec =
             tween(
+                delayMillis = flipAnimDelay,
                 durationMillis = 1250,
                 easing = LinearEasing
             )
         ) { value: Float, _: Float ->
             flipRotation = value
         }
-        onEvent(DailyWordEvent.OnAnsweredWordRowAnimationFinished)
+        if (isFinalLetterInRow) {
+            onEvent(DailyWordEvent.OnAnsweredWordRowAnimationFinished)
+        }
     }
 
     Box(

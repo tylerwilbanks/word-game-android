@@ -171,6 +171,9 @@ class DailyWordViewModel : ViewModel() {
             }
 
             DailyWordEvent.OnErrorAnimationFinished -> {
+                if (state.value.gameState.isGameOver) {
+                    return;
+                }
                 viewModelScope.launch {
                     _state.update {
                         it.copy(

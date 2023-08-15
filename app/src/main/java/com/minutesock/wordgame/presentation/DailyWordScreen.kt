@@ -49,7 +49,7 @@ fun DailyWordScreen(
                 shakeController.shake(
                     ShakeConfig.no(1000L) { onEvent(DailyWordEvent.OnErrorAnimationFinished) }
                 )
-            } else {
+            } else if (!state.gameState.isGameOver) {
                 shakeController.shake(
                     ShakeConfig(
                         iterations = 1,

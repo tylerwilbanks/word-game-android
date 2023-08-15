@@ -39,8 +39,14 @@ fun WordRow(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        guessLetters.forEach {
-            LetterBox(letter = it, guessWordState = guessWord.state, onEvent = onEvent)
+        guessLetters.forEachIndexed { index: Int, guessLetter: GuessLetter ->
+            LetterBox(
+                letter = guessLetter,
+                guessWordState = guessWord.state,
+                onEvent = onEvent,
+                flipAnimDelay = index * 200,
+                isFinalLetterInRow = index + 1 == guessLetters.size
+            )
         }
     }
 }
