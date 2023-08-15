@@ -40,7 +40,7 @@ fun WordRow(
         horizontalArrangement = Arrangement.Center
     ) {
         guessLetters.forEach {
-            LetterBox(letter = it)
+            LetterBox(letter = it, guessWordState = guessWord.state, onEvent = onEvent)
         }
     }
 }

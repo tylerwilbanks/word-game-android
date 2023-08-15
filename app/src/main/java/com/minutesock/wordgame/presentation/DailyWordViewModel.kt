@@ -31,6 +31,8 @@ class DailyWordViewModel : ViewModel() {
 
     val guessWords = mutableStateListOf<GuessWord>()
 
+    private var dailyWordStateMessage = DailyWordStateMessage()
+
     private val falseKeyboardKeys: ImmutableList<GuessKey>
         get() {
             val keys = hashMapOf<Char, LetterState>()
@@ -76,13 +78,15 @@ class DailyWordViewModel : ViewModel() {
     }
 
     fun onEvent(event: DailyWordEvent) {
-        if (state.value.gameState == DailyWordGameState.NotStarted ||
-            state.value.gameState.isGameOver
+        if (state.value.gameState == DailyWordGameState.NotStarted
         ) {
             return
         }
         when (event) {
             is DailyWordEvent.OnCharacterPress -> {
+                if (state.value.gameState.isGameOver) {
+                    return
+                }
                 viewModelScope.launch {
                     getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         updateCurrentGuessWord(index, event.character)
@@ -91,6 +95,9 @@ class DailyWordViewModel : ViewModel() {
             }
 
             DailyWordEvent.OnDeletePress -> {
+                if (state.value.gameState.isGameOver) {
+                    return
+                }
                 viewModelScope.launch {
                     getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         eraseLetter(index)
@@ -99,6 +106,9 @@ class DailyWordViewModel : ViewModel() {
             }
 
             DailyWordEvent.OnEnterPress -> {
+                if (state.value.gameState.isGameOver) {
+                    return
+                }
                 viewModelScope.launch {
                     getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         val currentGuessWord = guessWords[index]
@@ -116,12 +126,12 @@ class DailyWordViewModel : ViewModel() {
                             DailyWordValidationResultType.Incorrect -> {
                                 guessWords[index] =
                                     guessWords[index].lockInGuess(state.value.correctWord!!)
+                                dailyWordStateMessage = DailyWordStateMessage(
+                                    uiText = result.uiText,
+                                    isError = isFinalGuess(index)
+                                )
                                 _state.update {
                                     it.copy(
-                                        dailyWordStateMessage = DailyWordStateMessage(
-                                            uiText = result.uiText,
-                                            isError = isFinalGuess(index)
-                                        ),
                                         falseKeyboardKeys = falseKeyboardKeys
                                     )
                                 }
@@ -144,14 +154,14 @@ class DailyWordViewModel : ViewModel() {
                             DailyWordValidationResultType.Success -> {
                                 guessWords[index] =
                                     guessWords[index].lockInGuess(state.value.correctWord!!)
+                                dailyWordStateMessage = DailyWordStateMessage(
+                                    uiText = result.uiText,
+                                    isError = false
+                                )
                                 _state.update {
                                     it.copy(
                                         falseKeyboardKeys = falseKeyboardKeys,
                                         gameState = DailyWordGameState.Success,
-                                        dailyWordStateMessage = DailyWordStateMessage(
-                                            uiText = result.uiText,
-                                            isError = false
-                                        )
                                     )
                                 }
                             }
@@ -171,6 +181,17 @@ class DailyWordViewModel : ViewModel() {
                     }
                 }
             }
+
+            DailyWordEvent.OnAnsweredWordRowAnimationFinished -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            dailyWordStateMessage = dailyWordStateMessage
+                        )
+                    }
+                }
+            }
+
         }
     }
 
