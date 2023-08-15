@@ -52,7 +52,7 @@ class DailyWordViewModel : ViewModel() {
             return keys.map { GuessKey(it.key, it.value) }.toImmutableList()
         }
 
-    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 1) {
+    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
         if (state.value.gameState == DailyWordGameState.NotStarted) {
             val w = List(maxGuessAttempts) {
                 GuessWord(
