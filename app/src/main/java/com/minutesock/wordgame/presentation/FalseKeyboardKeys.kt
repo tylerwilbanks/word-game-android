@@ -1,10 +1,8 @@
 package com.minutesock.wordgame.presentation
 
-import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-@Immutable
 data class FalseKeyboardKeys(
     val row1: ImmutableList<String> = persistentListOf(
         "q",
