@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.presentation.components.FalseKeyboard
 import com.minutesock.wordgame.presentation.components.WordRow
@@ -44,6 +44,7 @@ fun DailyWordScreenGame(
     val defaultMessageDelay by remember {
         mutableStateOf(1000L)
     }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -100,7 +101,10 @@ fun DailyWordScreenGame(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(onClick = { onEvent(DailyWordEventGame.OnStatsPress) }) {
-                    Icon(imageVector = Icons.Default.Share, contentDescription = "Stats")
+                    Icon(
+                        painterResource(id = R.drawable.baseline_bar_chart_24),
+                        contentDescription = "Stats"
+                    )
                 }
             }
 

@@ -253,9 +253,31 @@ class DailyWordViewModel : ViewModel() {
                 }
             }
 
-            DailyWordEventStats.OnShareButtonPressed -> { /*TODO*/
+            DailyWordEventStats.OnShareButtonPressed -> {
+                _state.update {
+                    it.copy(
+                        shareText = buildShareText()
+                    )
+                }
             }
         }
+    }
+
+    private fun buildShareText(): String {
+        val finalIndex =
+            guessWords.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
+        val resultLetter = if (finalIndex + 1 >= guessWords.size) "X" else "${finalIndex + 1}"
+        var text = "$resultLetter/${guessWords.size}\n"
+        guessWords.forEachIndexed { index, guessWord ->
+            if (index > finalIndex) {
+                return@forEachIndexed
+            }
+            guessWord.letters.forEach {
+                text += it.state.emoji
+            }
+            text += "\n"
+        }
+        return text
     }
 
     private fun isFinalGuess(index: Int): Boolean = index + 1 == guessWords.size

@@ -5,4 +5,14 @@ enum class LetterState {
     Absent,
     Present,
     Correct;
+
+    val emoji: String
+        get() {
+            return when (this) {
+                Unknown -> "⬛"
+                Absent -> "⬛"
+                Present -> "🟨"
+                Correct -> "🟩"
+            }
+        }
 }

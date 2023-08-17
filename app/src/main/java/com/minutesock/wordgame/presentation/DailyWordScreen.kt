@@ -36,6 +36,7 @@ fun DailyWordScreen(
             modifier = Modifier.blur(bgBlur)
         )
 
+
         when (state.screenState) {
             DailyWordScreenState.NotStarted -> {}
             DailyWordScreenState.Stats -> {

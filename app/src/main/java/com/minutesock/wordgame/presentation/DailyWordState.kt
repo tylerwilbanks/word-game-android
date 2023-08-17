@@ -9,7 +9,8 @@ data class DailyWordState(
     val maxGuessAttempts: Int = 6,
     val correctWord: String? = null,
     val dailyWordStateMessage: DailyWordStateMessage? = null,
-    val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys()
+    val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys(),
+    val shareText: String? = null
 )
 
 data class DailyWordStateMessage(
