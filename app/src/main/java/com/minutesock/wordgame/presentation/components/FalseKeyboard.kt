@@ -27,19 +27,6 @@ fun FalseKeyboard(
         FalseKeyboardRow(row = falseKeyboardKeys.row1, onEvent = onEvent)
         FalseKeyboardRow(row = falseKeyboardKeys.row2, onEvent = onEvent)
         FalseKeyboardRow(row = falseKeyboardKeys.row3, onEvent = onEvent)
-
-//        Row {
-//            falseKeyboardKeys.row2.forEach {
-//                FalseKeyboardLetter(onEvent = onEvent, displayText = it, guessKeys = guessKeys)
-//            }
-//        }
-//
-//
-//        Row {
-//            falseKeyboardKeys.row3.forEach {
-//                FalseKeyboardLetter(onEvent = onEvent, displayText = it, guessKeys = guessKeys)
-//            }
-//        }
     }
 }
 

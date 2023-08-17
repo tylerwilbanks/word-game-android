@@ -32,7 +32,6 @@ fun DailyWordScreen(
     state: DailyWordState,
     guessWords: SnapshotStateList<GuessWord>,
     onEvent: (DailyWordEvent) -> Unit,
-    falseKeyboardKeys: FalseKeyboardKeys
 ) {
     val shakeController = rememberShakeController()
     val messageColor by animateColorAsState(
@@ -96,7 +95,7 @@ fun DailyWordScreen(
         }
 
         FalseKeyboard(
-            falseKeyboardKeys = falseKeyboardKeys,
+            falseKeyboardKeys = state.falseKeyboardKeys,
             onEvent = onEvent,
         )
     }

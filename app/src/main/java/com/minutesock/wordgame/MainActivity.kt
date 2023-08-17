@@ -9,7 +9,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.minutesock.wordgame.domain.GuessWordValidator
 import com.minutesock.wordgame.presentation.DailyWordScreen
 import com.minutesock.wordgame.presentation.DailyWordViewModel
-import com.minutesock.wordgame.presentation.FalseKeyboardKeys
 import com.minutesock.wordgame.ui.theme.WordGameTheme
 
 
@@ -28,7 +27,6 @@ class MainActivity : ComponentActivity() {
                     state = state,
                     guessWords = viewModel.guessWords,
                     onEvent = viewModel::onEvent,
-                    falseKeyboardKeys = FalseKeyboardKeys()
                 )
             }
         }

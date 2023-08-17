@@ -4,5 +4,5 @@ enum class LetterState {
     Unknown,
     Absent,
     Present,
-    Correct
+    Correct;
 }

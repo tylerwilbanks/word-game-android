@@ -1,7 +1,6 @@
 package com.minutesock.wordgame.presentation.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
@@ -16,14 +15,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,34 +33,21 @@ fun FalseKeyboardLetter(
 ) {
     val isLetter by remember { mutableStateOf(guessKey.keyName.length == 1) }
     val sizeX by remember {
-        mutableStateOf(if (isLetter) 35.dp else 50.dp)
+        mutableStateOf(
+            if (isLetter) 35.dp else 50.dp
+        )
     }
-
-    var flipRotation by remember { mutableStateOf(0f) }
 
     val backgroundColor by animateColorAsState(
         targetValue = guessKey
             .displayColor(MaterialTheme.colorScheme.secondaryContainer),
-        animationSpec = tween(1000), label = "letter background color"
+        animationSpec = tween(3000), label = "letter background color"
     )
-
-    LaunchedEffect(guessKey.state) {
-        animate(
-            initialValue = 0f,
-            targetValue = 360f,
-            animationSpec = tween(1000)
-        ) { value: Float, _: Float ->
-            // flipRotation = value
-        }
-    }
 
     TextButton(
         modifier = Modifier
             .size(sizeX, 55.dp)
-            .padding(2.dp)
-            .graphicsLayer {
-                rotationX = flipRotation
-            },
+            .padding(2.dp),
 
         colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
         shape = RoundedCornerShape(10),
