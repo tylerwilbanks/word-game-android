@@ -69,7 +69,7 @@ class DailyWordViewModel : ViewModel() {
         return mutableRow.toImmutableList()
     }
 
-    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
+    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 6) {
         if (state.value.gameState == DailyWordGameState.NotStarted) {
             val w = List(maxGuessAttempts) {
                 GuessWord(
@@ -223,6 +223,14 @@ class DailyWordViewModel : ViewModel() {
                             dailyWordStateMessage = dailyWordStateMessage
                         )
                     }
+                }
+            }
+
+            DailyWordEvent.OnGameCompleteAnimationFinished -> {
+                _state.update {
+                    it.copy(
+                        screenState = DailyWordScreenState.Complete
+                    )
                 }
             }
 

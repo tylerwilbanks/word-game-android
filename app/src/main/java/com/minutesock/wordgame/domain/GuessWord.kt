@@ -89,7 +89,7 @@ fun GuessWord.lockInGuess(correctWord: String): GuessWord {
         }
         val newState = when {
             guessLetter.character == correctChars[index] -> LetterState.Correct
-            correctChars.contains(guessLetter.character) && processedLetters[guessLetter.character]!! <= duplicateLetterCount -> LetterState.Present
+            correctChars.contains(guessLetter.character) && processedLetters[guessLetter.character]!! < duplicateLetterCount -> LetterState.Present
             !correctChars.contains(guessLetter.character) -> LetterState.Absent
             else -> LetterState.Absent
         }

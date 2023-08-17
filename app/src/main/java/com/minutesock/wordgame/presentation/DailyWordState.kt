@@ -4,6 +4,7 @@ import com.minutesock.wordgame.uiutils.UiText
 
 data class DailyWordState(
     val gameState: DailyWordGameState = DailyWordGameState.NotStarted,
+    val screenState: DailyWordScreenState = DailyWordScreenState.NotStarted,
     val wordLength: Int = 5,
     val maxGuessAttempts: Int = 5,
     val correctWord: String? = null,
@@ -28,6 +29,11 @@ enum class DailyWordGameState {
             Failure -> true
             else -> false
         }
+}
+
+enum class DailyWordScreenState {
+    NotStarted,
+    Complete
 }
 
 

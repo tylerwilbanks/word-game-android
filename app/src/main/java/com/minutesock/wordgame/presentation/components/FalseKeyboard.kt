@@ -17,13 +17,13 @@ import kotlinx.collections.immutable.ImmutableList
 fun FalseKeyboard(
     falseKeyboardKeys: FalseKeyboardKeys,
     onEvent: (DailyWordEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier.padding(bottom = 20.dp),
+        modifier = modifier.padding(bottom = 20.dp),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         FalseKeyboardRow(row = falseKeyboardKeys.row1, onEvent = onEvent)
         FalseKeyboardRow(row = falseKeyboardKeys.row2, onEvent = onEvent)
         FalseKeyboardRow(row = falseKeyboardKeys.row3, onEvent = onEvent)
