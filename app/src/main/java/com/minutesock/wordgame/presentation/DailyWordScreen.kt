@@ -40,7 +40,7 @@ fun DailyWordScreen(
         animationSpec = tween(
             if (state.dailyWordStateMessage?.isError == true) 200 else 1000,
             easing = LinearEasing
-        )
+        ), label = "title message color"
     )
 
     LaunchedEffect(state.dailyWordStateMessage) {
@@ -98,7 +98,6 @@ fun DailyWordScreen(
         FalseKeyboard(
             falseKeyboardKeys = falseKeyboardKeys,
             onEvent = onEvent,
-            guessKeys = state.falseKeyboardKeys
         )
     }
 }

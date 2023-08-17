@@ -17,7 +17,6 @@ import kotlinx.collections.immutable.ImmutableList
 fun FalseKeyboard(
     falseKeyboardKeys: FalseKeyboardKeys,
     onEvent: (DailyWordEvent) -> Unit,
-    guessKeys: ImmutableList<GuessKey>
 ) {
     Column(
         modifier = Modifier.padding(bottom = 20.dp),
@@ -25,23 +24,30 @@ fun FalseKeyboard(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Row {
-            falseKeyboardKeys.row1.forEach {
-                FalseKeyboardLetter(onEvent = onEvent, displayText = it, guessKeys = guessKeys)
-            }
-        }
+        FalseKeyboardRow(row = falseKeyboardKeys.row1, onEvent = onEvent)
+        FalseKeyboardRow(row = falseKeyboardKeys.row2, onEvent = onEvent)
+        FalseKeyboardRow(row = falseKeyboardKeys.row3, onEvent = onEvent)
 
-        Row {
-            falseKeyboardKeys.row2.forEach {
-                FalseKeyboardLetter(onEvent = onEvent, displayText = it, guessKeys = guessKeys)
-            }
-        }
+//        Row {
+//            falseKeyboardKeys.row2.forEach {
+//                FalseKeyboardLetter(onEvent = onEvent, displayText = it, guessKeys = guessKeys)
+//            }
+//        }
+//
+//
+//        Row {
+//            falseKeyboardKeys.row3.forEach {
+//                FalseKeyboardLetter(onEvent = onEvent, displayText = it, guessKeys = guessKeys)
+//            }
+//        }
+    }
+}
 
-
-        Row {
-            falseKeyboardKeys.row3.forEach {
-                FalseKeyboardLetter(onEvent = onEvent, displayText = it, guessKeys = guessKeys)
-            }
+@Composable
+fun FalseKeyboardRow(row: ImmutableList<GuessKey>, onEvent: (DailyWordEvent) -> Unit) {
+    Row {
+        row.forEach {
+            FalseKeyboardLetter(onEvent = onEvent, guessKey = it)
         }
     }
 }

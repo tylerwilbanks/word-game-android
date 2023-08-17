@@ -5,8 +5,9 @@ import com.minutesock.wordgame.ui.theme.guessLetterGreen
 import com.minutesock.wordgame.ui.theme.guessLetterYellow
 
 data class GuessKey(
-    val character: Char,
-    val state: LetterState = LetterState.Unknown
+    val keyName: String,
+    val state: LetterState = LetterState.Unknown,
+    val character: Char = keyName.first()
 ) {
     fun displayColor(defaultColor: Color) = when (state) {
         LetterState.Unknown -> defaultColor

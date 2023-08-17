@@ -33,7 +33,7 @@ class DailyWordViewModel : ViewModel() {
 
     private var dailyWordStateMessage = DailyWordStateMessage()
 
-    private val falseKeyboardKeys: ImmutableList<GuessKey>
+    private val falseKeyboardKeys: FalseKeyboardKeys
         get() {
             val keys = hashMapOf<Char, LetterState>()
             guessWords.forEach { guessWord ->
@@ -49,8 +49,25 @@ class DailyWordViewModel : ViewModel() {
                     keys[guessLetter.character] = newState
                 }
             }
-            return keys.map { GuessKey(it.key, it.value) }.toImmutableList()
+            val keysWithNewState =
+                keys.map { GuessKey(it.key.toString(), it.value) }.toImmutableList()
+            val row1 = getUpdatedKeyboardRow(keysWithNewState, state.value.falseKeyboardKeys.row1)
+            val row2 = getUpdatedKeyboardRow(keysWithNewState, state.value.falseKeyboardKeys.row2)
+            val row3 = getUpdatedKeyboardRow(keysWithNewState, state.value.falseKeyboardKeys.row3)
+            return FalseKeyboardKeys(row1, row2, row3)
         }
+
+    private fun getUpdatedKeyboardRow(
+        keysWithNewState: ImmutableList<GuessKey>,
+        row: ImmutableList<GuessKey>
+    ): ImmutableList<GuessKey> {
+        val mutableRow = row.toMutableList()
+        row.forEachIndexed { index, guessKey ->
+            val a = keysWithNewState.firstOrNull { it.keyName == guessKey.keyName }
+            mutableRow[index] = a ?: guessKey
+        }
+        return mutableRow.toImmutableList()
+    }
 
     fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 5) {
         if (state.value.gameState == DailyWordGameState.NotStarted) {
@@ -192,12 +209,11 @@ class DailyWordViewModel : ViewModel() {
                             .let { index ->
                                 guessWords[index] =
                                     guessWords[index].updateState(
-                                        if (state.value.gameState == DailyWordGameState.Success){
+                                        if (state.value.gameState == DailyWordGameState.Success) {
                                             GuessWordState.Correct
 
-                                        }
-                                    else {
-                                        GuessWordState.Failure
+                                        } else {
+                                            GuessWordState.Failure
                                         }
                                     )
                             }

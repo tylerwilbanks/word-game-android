@@ -1,9 +1,6 @@
 package com.minutesock.wordgame.presentation
 
-import com.minutesock.wordgame.domain.GuessKey
 import com.minutesock.wordgame.uiutils.UiText
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 data class DailyWordState(
     val gameState: DailyWordGameState = DailyWordGameState.NotStarted,
@@ -11,7 +8,7 @@ data class DailyWordState(
     val maxGuessAttempts: Int = 5,
     val correctWord: String? = null,
     val dailyWordStateMessage: DailyWordStateMessage? = null,
-    val falseKeyboardKeys: ImmutableList<GuessKey> = persistentListOf()
+    val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys()
 )
 
 data class DailyWordStateMessage(
