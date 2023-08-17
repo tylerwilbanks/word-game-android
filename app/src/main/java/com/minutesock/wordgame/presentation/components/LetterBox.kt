@@ -27,13 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWordState
-import com.minutesock.wordgame.presentation.DailyWordEvent
+import com.minutesock.wordgame.presentation.DailyWordEventGame
 
 @Composable
 fun LetterBox(
     letter: GuessLetter,
     guessWordState: GuessWordState,
-    onEvent: (DailyWordEvent) -> Unit,
+    onEvent: (DailyWordEventGame) -> Unit,
     flipAnimDelay: Int,
     isFinalLetterInRow: Boolean
 ) {
@@ -65,7 +65,7 @@ fun LetterBox(
             flipRotation = value
         }
         if (isFinalLetterInRow) {
-            onEvent(DailyWordEvent.OnAnsweredWordRowAnimationFinished)
+            onEvent(DailyWordEventGame.OnAnsweredWordRowAnimationFinishedGame)
         }
     }
 

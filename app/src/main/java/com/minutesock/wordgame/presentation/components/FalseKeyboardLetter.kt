@@ -24,11 +24,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.domain.GuessKey
-import com.minutesock.wordgame.presentation.DailyWordEvent
+import com.minutesock.wordgame.presentation.DailyWordEventGame
 
 @Composable
 fun FalseKeyboardLetter(
-    onEvent: (DailyWordEvent) -> Unit,
+    onEvent: (DailyWordEventGame) -> Unit,
     guessKey: GuessKey,
 ) {
     val isLetter by remember { mutableStateOf(guessKey.keyName.length == 1) }
@@ -54,15 +54,15 @@ fun FalseKeyboardLetter(
         onClick = {
             when (guessKey.keyName) {
                 "enter" -> {
-                    onEvent.invoke(DailyWordEvent.OnEnterPress)
+                    onEvent.invoke(DailyWordEventGame.OnEnterPress)
                 }
 
                 "remove" -> {
-                    onEvent.invoke(DailyWordEvent.OnDeletePress)
+                    onEvent.invoke(DailyWordEventGame.OnDeletePress)
                 }
 
                 else -> {
-                    onEvent.invoke(DailyWordEvent.OnCharacterPress(guessKey.character))
+                    onEvent.invoke(DailyWordEventGame.OnCharacterPress(guessKey.character))
                 }
             }
         }

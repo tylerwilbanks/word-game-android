@@ -26,7 +26,8 @@ class MainActivity : ComponentActivity() {
                 DailyWordScreen(
                     state = state,
                     guessWords = viewModel.guessWords,
-                    onEvent = viewModel::onEvent,
+                    onGameEvent = viewModel::onGameEvent,
+                    onStatsEvent = viewModel::onStatsEvent
                 )
             }
         }

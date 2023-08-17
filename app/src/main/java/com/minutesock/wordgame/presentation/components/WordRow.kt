@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.domain.GuessWordState
-import com.minutesock.wordgame.presentation.DailyWordEvent
+import com.minutesock.wordgame.presentation.DailyWordEventGame
 import com.minutesock.wordgame.presentation.GuessWordError
 import com.minutesock.wordgame.uiutils.ShakeConfig
 import com.minutesock.wordgame.uiutils.rememberShakeController
@@ -22,7 +22,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun WordRow(
     guessWord: GuessWord,
     guessLetters: ImmutableList<GuessLetter>,
-    onEvent: (DailyWordEvent) -> Unit
+    onEvent: (DailyWordEventGame) -> Unit
 ) {
     val shakeController = rememberShakeController()
     LaunchedEffect(guessWord.errorState) {

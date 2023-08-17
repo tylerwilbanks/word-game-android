@@ -6,7 +6,7 @@ data class DailyWordState(
     val gameState: DailyWordGameState = DailyWordGameState.NotStarted,
     val screenState: DailyWordScreenState = DailyWordScreenState.NotStarted,
     val wordLength: Int = 5,
-    val maxGuessAttempts: Int = 5,
+    val maxGuessAttempts: Int = 6,
     val correctWord: String? = null,
     val dailyWordStateMessage: DailyWordStateMessage? = null,
     val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys()
@@ -33,7 +33,8 @@ enum class DailyWordGameState {
 
 enum class DailyWordScreenState {
     NotStarted,
-    Complete
+    Game,
+    Stats
 }
 
 
