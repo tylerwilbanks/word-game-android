@@ -39,7 +39,7 @@ import com.minutesock.wordgame.uiutils.shareExternal
 @Composable
 fun DailyWordScreenStats(
     state: DailyWordState,
-    onStatsEvent: (DailyWordEventStats) -> Unit,
+    onEvent: (DailyWordEventStats) -> Unit,
     hasBackgroundScreen: Boolean
 ) {
     val alpha by remember(hasBackgroundScreen) {
@@ -47,10 +47,13 @@ fun DailyWordScreenStats(
     }
 
     var shareEnabled by remember(state.gameState) { mutableStateOf(state.gameState.isGameOver) }
+
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             shareEnabled = true
+            onEvent(DailyWordEventStats.OnShareChooserPresented)
         }
+
     val title = stringResource(id = R.string.what_in_da_word)
 
     LaunchedEffect(state.shareText) {
@@ -79,13 +82,13 @@ fun DailyWordScreenStats(
                 IconButton(
                     onClick = {
                         shareEnabled = false
-                        onStatsEvent(DailyWordEventStats.OnShareButtonPressed)
+                        onEvent(DailyWordEventStats.OnShareButtonPressed)
                     },
                     enabled = shareEnabled
                 ) {
                     Icon(imageVector = Icons.Default.Share, contentDescription = "share")
                 }
-                IconButton(onClick = { onStatsEvent(DailyWordEventStats.OnExitButtonPressed) }) {
+                IconButton(onClick = { onEvent(DailyWordEventStats.OnExitButtonPressed) }) {
                     Icon(imageVector = Icons.Default.Close, contentDescription = "close")
                 }
             }
@@ -126,7 +129,7 @@ fun DailyWordScreenStatsPreview() {
                     )
                 )
             ),
-            onStatsEvent = {},
+            onEvent = {},
             hasBackgroundScreen = false
         )
     }

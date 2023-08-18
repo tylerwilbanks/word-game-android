@@ -1,5 +1,6 @@
 package com.minutesock.wordgame.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,6 +26,11 @@ fun DailyWordScreen(
     val bgBlur by remember(state.screenState) {
         mutableStateOf(if (state.screenState == DailyWordScreenState.Stats) 15.dp else 0.dp)
     }
+
+    val visibleStats by remember(state.screenState) {
+        mutableStateOf(state.screenState == DailyWordScreenState.Stats)
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -36,18 +42,12 @@ fun DailyWordScreen(
             modifier = Modifier.blur(bgBlur)
         )
 
-
-        when (state.screenState) {
-            DailyWordScreenState.NotStarted -> {}
-            DailyWordScreenState.Stats -> {
-                DailyWordScreenStats(
-                    state = state,
-                    onStatsEvent = onStatsEvent,
-                    hasBackgroundScreen = true
-                )
-            }
-
-            else -> {}
+        AnimatedVisibility(visible = visibleStats) {
+            DailyWordScreenStats(
+                state = state,
+                onEvent = onStatsEvent,
+                hasBackgroundScreen = true
+            )
         }
     }
 }

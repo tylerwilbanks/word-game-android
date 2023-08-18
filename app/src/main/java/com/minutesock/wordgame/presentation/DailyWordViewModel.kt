@@ -260,6 +260,14 @@ class DailyWordViewModel : ViewModel() {
                     )
                 }
             }
+
+            DailyWordEventStats.OnShareChooserPresented -> {
+                _state.update {
+                    it.copy(
+                        shareText = null
+                    )
+                }
+            }
         }
     }
 
