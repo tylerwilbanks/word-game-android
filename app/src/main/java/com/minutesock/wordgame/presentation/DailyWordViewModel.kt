@@ -274,7 +274,7 @@ class DailyWordViewModel : ViewModel() {
     private fun buildShareText(): String {
         val finalIndex =
             guessWords.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
-        val resultLetter = if (finalIndex + 1 >= guessWords.size) "X" else "${finalIndex + 1}"
+        val resultLetter = if (finalIndex + 1 >= guessWords.size && state.value.gameState ==  DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
         var text = "$resultLetter/${guessWords.size}\n"
         guessWords.forEachIndexed { index, guessWord ->
             if (index > finalIndex) {
