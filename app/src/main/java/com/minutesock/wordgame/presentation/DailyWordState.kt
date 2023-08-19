@@ -3,6 +3,7 @@ package com.minutesock.wordgame.presentation
 import com.minutesock.wordgame.uiutils.UiText
 
 data class DailyWordState(
+    val wordRowAnimating: Boolean = false,
     val gameState: DailyWordGameState = DailyWordGameState.NotStarted,
     val screenState: DailyWordScreenState = DailyWordScreenState.NotStarted,
     val wordLength: Int = 5,

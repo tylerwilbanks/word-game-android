@@ -150,6 +150,7 @@ class DailyWordViewModel : ViewModel() {
                                 )
                                 _state.update {
                                     it.copy(
+                                        wordRowAnimating = true,
                                         falseKeyboardKeys = falseKeyboardKeys
                                     )
                                 }
@@ -157,6 +158,7 @@ class DailyWordViewModel : ViewModel() {
                                 if (isFinalGuess(index)) {
                                     _state.update {
                                         it.copy(
+                                            wordRowAnimating = true,
                                             gameState = DailyWordGameState.Failure,
                                             falseKeyboardKeys = falseKeyboardKeys
                                         )
@@ -178,6 +180,7 @@ class DailyWordViewModel : ViewModel() {
                                 )
                                 _state.update {
                                     it.copy(
+                                        wordRowAnimating = true,
                                         falseKeyboardKeys = falseKeyboardKeys,
                                         gameState = DailyWordGameState.Success,
                                     )
@@ -203,7 +206,7 @@ class DailyWordViewModel : ViewModel() {
                 }
             }
 
-            DailyWordEventGame.OnAnsweredWordRowAnimationFinishedGame -> {
+            DailyWordEventGame.OnAnsweredWordRowAnimationFinished -> {
                 viewModelScope.launch {
                     if (state.value.gameState.isGameOver) {
                         guessWords.indexOfLast { it.state == GuessWordState.Complete }
@@ -221,13 +224,14 @@ class DailyWordViewModel : ViewModel() {
                     }
                     _state.update {
                         it.copy(
+                            wordRowAnimating = false,
                             dailyWordStateMessage = dailyWordStateMessage
                         )
                     }
                 }
             }
 
-            DailyWordEventGame.OnCompleteAnimationFinishedGame -> {
+            DailyWordEventGame.OnCompleteAnimationFinished -> {
                 _state.update {
                     it.copy(
                         screenState = DailyWordScreenState.Stats
@@ -274,7 +278,8 @@ class DailyWordViewModel : ViewModel() {
     private fun buildShareText(): String {
         val finalIndex =
             guessWords.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
-        val resultLetter = if (finalIndex + 1 >= guessWords.size && state.value.gameState ==  DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
+        val resultLetter =
+            if (finalIndex + 1 >= guessWords.size && state.value.gameState == DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
         var text = "$resultLetter/${guessWords.size}\n"
         guessWords.forEachIndexed { index, guessWord ->
             if (index > finalIndex) {

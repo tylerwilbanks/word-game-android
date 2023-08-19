@@ -30,6 +30,7 @@ import com.minutesock.wordgame.presentation.DailyWordEventGame
 fun FalseKeyboardLetter(
     onEvent: (DailyWordEventGame) -> Unit,
     guessKey: GuessKey,
+    isWordRowAnimating: Boolean = false
 ) {
     val isLetter by remember { mutableStateOf(guessKey.keyName.length == 1) }
     val sizeX by remember {
@@ -43,6 +44,10 @@ fun FalseKeyboardLetter(
             .displayColor(MaterialTheme.colorScheme.secondaryContainer),
         animationSpec = tween(3000), label = "letter background color"
     )
+
+    val buttonEnabled by remember(isWordRowAnimating) {
+        mutableStateOf(!(guessKey.keyName == "enter" && isWordRowAnimating))
+    }
 
     TextButton(
         modifier = Modifier
@@ -65,7 +70,8 @@ fun FalseKeyboardLetter(
                     onEvent.invoke(DailyWordEventGame.OnCharacterPress(guessKey.character))
                 }
             }
-        }
+        },
+        enabled = buttonEnabled
     ) {
         when (guessKey.keyName) {
             "enter" -> Icon(

@@ -65,7 +65,7 @@ fun LetterBox(
             flipRotation = value
         }
         if (isFinalLetterInRow) {
-            onEvent(DailyWordEventGame.OnAnsweredWordRowAnimationFinishedGame)
+            onEvent(DailyWordEventGame.OnAnsweredWordRowAnimationFinished)
         }
     }
 

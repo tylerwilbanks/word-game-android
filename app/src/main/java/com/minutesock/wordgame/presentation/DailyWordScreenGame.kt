@@ -66,7 +66,7 @@ fun DailyWordScreenGame(
                     shakeController.shake(
                         ShakeConfig.no(defaultMessageDelay) {
                             if (state.gameState == DailyWordGameState.Failure) {
-                                onEvent(DailyWordEventGame.OnCompleteAnimationFinishedGame)
+                                onEvent(DailyWordEventGame.OnCompleteAnimationFinished)
                             } else {
                                 onEvent(DailyWordEventGame.OnErrorAnimationFinished)
                             }
@@ -77,7 +77,7 @@ fun DailyWordScreenGame(
             }
             if (state.gameState == DailyWordGameState.Success) {
                 shakeController.shake(
-                    ShakeConfig.yes(defaultMessageDelay) { onEvent(DailyWordEventGame.OnCompleteAnimationFinishedGame) }
+                    ShakeConfig.yes(defaultMessageDelay) { onEvent(DailyWordEventGame.OnCompleteAnimationFinished) }
                 )
                 return@LaunchedEffect
             }
@@ -133,7 +133,8 @@ fun DailyWordScreenGame(
         FalseKeyboard(
             falseKeyboardKeys = state.falseKeyboardKeys,
             onEvent = onEvent,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            isWordRowAnimating = state.wordRowAnimating
         )
     }
 }

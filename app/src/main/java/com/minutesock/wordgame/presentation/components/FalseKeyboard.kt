@@ -18,6 +18,7 @@ fun FalseKeyboard(
     falseKeyboardKeys: FalseKeyboardKeys,
     onEvent: (DailyWordEventGame) -> Unit,
     modifier: Modifier = Modifier,
+    isWordRowAnimating: Boolean = false,
 ) {
     Column(
         modifier = modifier.padding(bottom = 20.dp),
@@ -26,15 +27,27 @@ fun FalseKeyboard(
     ) {
         FalseKeyboardRow(row = falseKeyboardKeys.row1, onEvent = onEvent)
         FalseKeyboardRow(row = falseKeyboardKeys.row2, onEvent = onEvent)
-        FalseKeyboardRow(row = falseKeyboardKeys.row3, onEvent = onEvent)
+        FalseKeyboardRow(
+            row = falseKeyboardKeys.row3,
+            onEvent = onEvent,
+            isWordRowAnimating = isWordRowAnimating
+        )
     }
 }
 
 @Composable
-fun FalseKeyboardRow(row: ImmutableList<GuessKey>, onEvent: (DailyWordEventGame) -> Unit) {
+fun FalseKeyboardRow(
+    row: ImmutableList<GuessKey>,
+    onEvent: (DailyWordEventGame) -> Unit,
+    isWordRowAnimating: Boolean = false
+) {
     Row {
         row.forEach {
-            FalseKeyboardLetter(onEvent = onEvent, guessKey = it)
+            FalseKeyboardLetter(
+                onEvent = onEvent,
+                guessKey = it,
+                isWordRowAnimating = isWordRowAnimating
+            )
         }
     }
 }

@@ -5,9 +5,9 @@ sealed interface DailyWordEventGame {
     object OnEnterPress : DailyWordEventGame
     object OnDeletePress : DailyWordEventGame
     object OnErrorAnimationFinished : DailyWordEventGame
-    object OnAnsweredWordRowAnimationFinishedGame : DailyWordEventGame
+    object OnAnsweredWordRowAnimationFinished : DailyWordEventGame
 
-    object OnCompleteAnimationFinishedGame : DailyWordEventGame
+    object OnCompleteAnimationFinished : DailyWordEventGame
 
     object OnStatsPress : DailyWordEventGame
 }
