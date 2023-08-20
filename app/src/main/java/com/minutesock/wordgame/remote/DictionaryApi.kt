@@ -1,6 +1,6 @@
-package com.minutesock.wordgame.web
+package com.minutesock.wordgame.remote
 
-import com.minutesock.wordgame.web.data.WordDefinition
+import com.minutesock.wordgame.remote.responses.WordDefinition
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

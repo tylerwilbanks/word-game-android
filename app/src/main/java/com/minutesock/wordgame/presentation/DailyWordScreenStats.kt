@@ -171,7 +171,15 @@ fun DailyWordScreenStats(
                     },
                     enabled = spoilerButtonEnabled
                 ) {
-                    Text(text = if (revealSpoiler) "Hide" else "Reveal")
+                    Text(
+                        text = if (revealSpoiler) {
+                            stringResource(R.string.hide)
+                        } else {
+                            stringResource(
+                                R.string.reveal
+                            )
+                        }
+                    )
                 }
             }
 

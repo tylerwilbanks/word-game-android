@@ -16,9 +16,9 @@ import com.minutesock.wordgame.domain.addGuessLetter
 import com.minutesock.wordgame.domain.eraseLetter
 import com.minutesock.wordgame.domain.lockInGuess
 import com.minutesock.wordgame.domain.updateState
+import com.minutesock.wordgame.remote.responses.WordDefinitionItem
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.Option
-import com.minutesock.wordgame.web.data.WordDefinitionItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
