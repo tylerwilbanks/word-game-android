@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.wordgame.R
+import com.minutesock.wordgame.data.DailyWordRepository
 import com.minutesock.wordgame.domain.DailyWordValidationResultType
 import com.minutesock.wordgame.domain.GuessKey
 import com.minutesock.wordgame.domain.GuessLetter
@@ -17,6 +18,7 @@ import com.minutesock.wordgame.domain.lockInGuess
 import com.minutesock.wordgame.domain.updateState
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.Option
+import com.minutesock.wordgame.web.data.WordDefinitionItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +26,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DailyWordViewModel : ViewModel() {
+class DailyWordViewModel(
+    private val dailyWordRepository: DailyWordRepository = DailyWordRepository()
+) : ViewModel() {
 
     private val _state = MutableStateFlow(DailyWordState())
     val state = _state.asStateFlow()
@@ -80,19 +84,70 @@ class DailyWordViewModel : ViewModel() {
             }.toMutableList()
             w[0] = w[0].updateState(GuessWordState.Editing)
             guessWords.addAll(w)
+            val correctWord = GuessWordValidator.obtainRandomWord()
             _state.update { dailyWordState ->
                 dailyWordState.copy(
                     gameState = DailyWordGameState.InProgress,
                     screenState = DailyWordScreenState.Game,
                     wordLength = wordLength,
                     maxGuessAttempts = maxGuessAttempts,
-                    correctWord = GuessWordValidator.obtainRandomWord(),
+                    correctWord = correctWord,
                     dailyWordStateMessage = DailyWordStateMessage(
                         uiText = UiText.StringResource(R.string.what_in_da_word)
                     )
                 )
             }
+            fetchWordDefinition(correctWord)
         }
+    }
+
+    private fun fetchWordDefinition(word: String) {
+        viewModelScope.launch {
+            when (val result = dailyWordRepository.fetchWordDefinition(word)) {
+                is Option.Error -> {
+                    _state.update {
+                        it.copy(
+                            dailyWordStateMessage = DailyWordStateMessage(
+                                UiText.DynamicString(
+                                    result.message ?: "An unexpected error occurred."
+                                )
+                            )
+                        )
+                    }
+                }
+
+                is Option.Success -> {
+
+                    _state.update {
+                        it.copy(
+                            definitionMessage = getDefinitionMessage(result.data)
+                        )
+                    }
+                }
+
+                is Option.UiError -> {
+                    _state.update {
+                        it.copy(
+                            dailyWordStateMessage = DailyWordStateMessage(
+                                result.uiText
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getDefinitionMessage(definitionItems: List<WordDefinitionItem>?): String? {
+        var definitionMessage: String? = null
+        definitionItems?.firstOrNull()?.let { definitionItem ->
+            val defs = definitionItem.meanings.flatMap { it.definitions }
+            val numberedDefs = defs.mapIndexed { index, definition ->
+                "#${index + 1}: ${definition.definition}"
+            }
+            definitionMessage = numberedDefs.joinToString("\n") { it }
+        }
+        return definitionMessage
     }
 
     fun onGameEvent(event: DailyWordEventGame) {

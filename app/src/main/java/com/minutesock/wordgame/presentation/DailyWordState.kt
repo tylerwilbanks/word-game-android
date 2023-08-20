@@ -11,7 +11,8 @@ data class DailyWordState(
     val correctWord: String? = null,
     val dailyWordStateMessage: DailyWordStateMessage? = null,
     val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys(),
-    val shareText: String? = null
+    val shareText: String? = null,
+    val definitionMessage: String? = null
 )
 
 data class DailyWordStateMessage(

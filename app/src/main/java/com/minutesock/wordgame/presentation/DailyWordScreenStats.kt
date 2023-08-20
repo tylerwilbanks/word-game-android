@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
@@ -40,6 +42,7 @@ import com.minutesock.wordgame.R
 import com.minutesock.wordgame.ui.theme.WordGameTheme
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.uiutils.shareExternal
+import java.util.Locale
 
 @Composable
 fun DailyWordScreenStats(
@@ -126,7 +129,8 @@ fun DailyWordScreenStats(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = 20.dp),
+                    .padding(all = 20.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -134,7 +138,7 @@ fun DailyWordScreenStats(
                         .blur(spoilerBlur),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineMedium,
-                    text = state.correctWord ?: "",
+                    text = state.correctWord?.capitalize(Locale.ROOT) ?: "",
                     color = MaterialTheme.colorScheme.secondary
                 )
 
@@ -145,7 +149,7 @@ fun DailyWordScreenStats(
                         .blur(spoilerBlur),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
-                    text = "This is an example definition of the word of what it means and some examples of how it is used.",
+                    text = state.definitionMessage ?: "",
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
