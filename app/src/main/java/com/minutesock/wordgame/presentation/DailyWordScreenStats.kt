@@ -78,6 +78,10 @@ fun DailyWordScreenStats(
         mutableStateOf(if (revealSpoiler) 0.dp else 10.dp)
     }
 
+    val spoilerButtonEnabled by remember(state.gameState) {
+        mutableStateOf(state.gameState.isGameOver)
+    }
+
     Box(
         modifier = Modifier
             .background(
@@ -165,6 +169,7 @@ fun DailyWordScreenStats(
                     onClick = {
                         revealSpoiler = !revealSpoiler
                     },
+                    enabled = spoilerButtonEnabled
                 ) {
                     Text(text = if (revealSpoiler) "Hide" else "Reveal")
                 }
