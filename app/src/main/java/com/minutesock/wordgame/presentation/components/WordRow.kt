@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.minutesock.wordgame.domain.GuessLetter
-import com.minutesock.wordgame.domain.GuessWord
 import com.minutesock.wordgame.domain.GuessWordState
+import com.minutesock.wordgame.domain.UserGuessLetter
+import com.minutesock.wordgame.domain.UserGuessWord
 import com.minutesock.wordgame.presentation.DailyWordEventGame
 import com.minutesock.wordgame.presentation.GuessWordError
 import com.minutesock.wordgame.uiutils.ShakeConfig
@@ -20,19 +20,19 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun WordRow(
-    guessWord: GuessWord,
-    guessLetters: ImmutableList<GuessLetter>,
+    userGuessWord: UserGuessWord,
+    userGuessLetters: ImmutableList<UserGuessLetter>,
     onEvent: (DailyWordEventGame) -> Unit
 ) {
     val shakeController = rememberShakeController()
-    LaunchedEffect(guessWord.errorState) {
-        if (guessWord.errorState != GuessWordError.None) {
+    LaunchedEffect(userGuessWord.errorState) {
+        if (userGuessWord.errorState != GuessWordError.None) {
             shakeController.shake(ShakeConfig.no())
         }
     }
 
-    LaunchedEffect(guessWord.state) {
-        when (guessWord.state) {
+    LaunchedEffect(userGuessWord.state) {
+        when (userGuessWord.state) {
             GuessWordState.Correct -> shakeController.shake(ShakeConfig.yes())
             GuessWordState.Failure -> shakeController.shake(ShakeConfig.no())
             else -> {}
@@ -48,13 +48,13 @@ fun WordRow(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        guessLetters.forEachIndexed { index: Int, guessLetter: GuessLetter ->
+        userGuessLetters.forEachIndexed { index: Int, userGuessLetter: UserGuessLetter ->
             LetterBox(
-                letter = guessLetter,
-                guessWordState = guessWord.state,
+                letter = userGuessLetter,
+                guessWordState = userGuessWord.state,
                 onEvent = onEvent,
                 flipAnimDelay = index * 200,
-                isFinalLetterInRow = index + 1 == guessLetters.size
+                isFinalLetterInRow = index + 1 == userGuessLetters.size
             )
         }
     }

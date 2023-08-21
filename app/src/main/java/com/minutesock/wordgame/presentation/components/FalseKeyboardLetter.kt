@@ -23,16 +23,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minutesock.wordgame.domain.GuessKey
+import com.minutesock.wordgame.domain.UserGuessKey
 import com.minutesock.wordgame.presentation.DailyWordEventGame
 
 @Composable
 fun FalseKeyboardLetter(
     onEvent: (DailyWordEventGame) -> Unit,
-    guessKey: GuessKey,
+    userGuessKey: UserGuessKey,
     isWordRowAnimating: Boolean = false
 ) {
-    val isLetter by remember { mutableStateOf(guessKey.keyName.length == 1) }
+    val isLetter by remember { mutableStateOf(userGuessKey.keyName.length == 1) }
     val sizeX by remember {
         mutableStateOf(
             if (isLetter) 35.dp else 50.dp
@@ -40,13 +40,13 @@ fun FalseKeyboardLetter(
     }
 
     val backgroundColor by animateColorAsState(
-        targetValue = guessKey
+        targetValue = userGuessKey
             .displayColor(MaterialTheme.colorScheme.secondaryContainer),
         animationSpec = tween(3000), label = "letter background color"
     )
 
     val buttonEnabled by remember(isWordRowAnimating) {
-        mutableStateOf(!(guessKey.keyName == "enter" && isWordRowAnimating))
+        mutableStateOf(!(userGuessKey.keyName == "enter" && isWordRowAnimating))
     }
 
     TextButton(
@@ -57,7 +57,7 @@ fun FalseKeyboardLetter(
         colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
         shape = RoundedCornerShape(10),
         onClick = {
-            when (guessKey.keyName) {
+            when (userGuessKey.keyName) {
                 "enter" -> {
                     onEvent.invoke(DailyWordEventGame.OnEnterPress)
                 }
@@ -67,13 +67,13 @@ fun FalseKeyboardLetter(
                 }
 
                 else -> {
-                    onEvent.invoke(DailyWordEventGame.OnCharacterPress(guessKey.character))
+                    onEvent.invoke(DailyWordEventGame.OnCharacterPress(userGuessKey.character))
                 }
             }
         },
         enabled = buttonEnabled
     ) {
-        when (guessKey.keyName) {
+        when (userGuessKey.keyName) {
             "enter" -> Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = "enter",
@@ -88,7 +88,7 @@ fun FalseKeyboardLetter(
 
             else -> Text(
                 textAlign = TextAlign.Center,
-                text = guessKey.character.toString(),
+                text = userGuessKey.character.toString(),
                 color = if (isSystemInDarkTheme()) Color.White else Color.Black,
                 fontSize = 16.sp
             )

@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 DailyWordScreen(
                     state = state,
-                    guessWords = viewModel.guessWords,
+                    userGuessWords = viewModel.userGuessWords,
                     onGameEvent = viewModel::onGameEvent,
                     onStatsEvent = viewModel::onStatsEvent
                 )

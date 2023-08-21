@@ -12,13 +12,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
-import com.minutesock.wordgame.domain.GuessWord
+import com.minutesock.wordgame.domain.UserGuessWord
 
 
 @Composable
 fun DailyWordScreen(
     state: DailyWordState,
-    guessWords: SnapshotStateList<GuessWord>,
+    userGuessWords: SnapshotStateList<UserGuessWord>,
     onGameEvent: (DailyWordEventGame) -> Unit,
     onStatsEvent: (DailyWordEventStats) -> Unit
 ) {
@@ -37,7 +37,7 @@ fun DailyWordScreen(
     ) {
         DailyWordScreenGame(
             state = state,
-            guessWords = guessWords,
+            userGuessWords = userGuessWords,
             onEvent = onGameEvent,
             modifier = Modifier.blur(bgBlur)
         )

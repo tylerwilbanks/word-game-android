@@ -65,18 +65,18 @@ object GuessWordValidator {
     }
 
     fun validateGuess(
-        guessWord: GuessWord,
+        userGuessWord: UserGuessWord,
         correctWord: String,
         isFinalGuess: Boolean,
     ): DailyWordValidationResult {
-        if (guessWord.isIncomplete) {
+        if (userGuessWord.isIncomplete) {
             return DailyWordValidationResult(
                 DailyWordValidationResultType.Error,
                 UiText.StringResource(R.string.word_is_incomplete)
             )
         }
 
-        if (guessWord.word == correctWord) {
+        if (userGuessWord.word == correctWord) {
             val randomMessageResult = getRandomMessage(correctMessages, correctMessagesIndex)
             correctMessagesIndex = randomMessageResult.second
             return DailyWordValidationResult(
@@ -85,13 +85,13 @@ object GuessWordValidator {
             )
         }
 
-        if (!validWords.contains(guessWord.word)) {
+        if (!validWords.contains(userGuessWord.word)) {
             return DailyWordValidationResult(
                 DailyWordValidationResultType.Error,
                 UiText.StringResource(R.string.word_does_not_exist)
             )
         }
-        if (guessWord.word != correctWord && validWords.contains(guessWord.displayWord.lowercase())) {
+        if (userGuessWord.word != correctWord && validWords.contains(userGuessWord.displayWord.lowercase())) {
             val randomMessageResult = getRandomMessage(
                 if (isFinalGuess) failureMessages else encouragingMessages,
                 if (isFinalGuess) failureMessageIndex else encouragingMessageIndex

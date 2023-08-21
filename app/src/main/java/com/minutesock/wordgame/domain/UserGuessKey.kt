@@ -4,15 +4,15 @@ import androidx.compose.ui.graphics.Color
 import com.minutesock.wordgame.ui.theme.guessLetterGreen
 import com.minutesock.wordgame.ui.theme.guessLetterYellow
 
-data class GuessKey(
+data class UserGuessKey(
     val keyName: String,
-    val state: LetterState = LetterState.Unknown,
+    val state: UserLetterState = UserLetterState.Unknown,
     val character: Char = keyName.first()
 ) {
     fun displayColor(defaultColor: Color) = when (state) {
-        LetterState.Unknown -> defaultColor
-        LetterState.Absent -> defaultColor.copy(alpha = 0.25f)
-        LetterState.Present -> guessLetterYellow
-        LetterState.Correct -> guessLetterGreen
+        UserLetterState.Unknown -> defaultColor
+        UserLetterState.Absent -> defaultColor.copy(alpha = 0.25f)
+        UserLetterState.Present -> guessLetterYellow
+        UserLetterState.Correct -> guessLetterGreen
     }
 }

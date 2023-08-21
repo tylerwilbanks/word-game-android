@@ -1,6 +1,6 @@
 package com.minutesock.wordgame.domain
 
-enum class LetterState {
+enum class UserLetterState {
     Unknown,
     Absent,
     Present,

@@ -25,13 +25,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minutesock.wordgame.domain.GuessLetter
 import com.minutesock.wordgame.domain.GuessWordState
+import com.minutesock.wordgame.domain.UserGuessLetter
 import com.minutesock.wordgame.presentation.DailyWordEventGame
 
 @Composable
 fun LetterBox(
-    letter: GuessLetter,
+    letter: UserGuessLetter,
     guessWordState: GuessWordState,
     onEvent: (DailyWordEventGame) -> Unit,
     flipAnimDelay: Int,

@@ -1,4 +1,4 @@
-package com.minutesock.wordgame.data
+package com.minutesock.wordgame.repository
 
 import com.minutesock.wordgame.remote.DictionaryApi
 import com.minutesock.wordgame.remote.RetrofitInstance

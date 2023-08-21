@@ -1,42 +1,42 @@
 package com.minutesock.wordgame.presentation
 
-import com.minutesock.wordgame.domain.GuessKey
+import com.minutesock.wordgame.domain.UserGuessKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 data class FalseKeyboardKeys(
-    val row1: ImmutableList<GuessKey> = persistentListOf(
-        GuessKey("q"),
-        GuessKey("w"),
-        GuessKey("e"),
-        GuessKey("r"),
-        GuessKey("t"),
-        GuessKey("y"),
-        GuessKey("u"),
-        GuessKey("i"),
-        GuessKey("o"),
-        GuessKey("p")
+    val row1: ImmutableList<UserGuessKey> = persistentListOf(
+        UserGuessKey("q"),
+        UserGuessKey("w"),
+        UserGuessKey("e"),
+        UserGuessKey("r"),
+        UserGuessKey("t"),
+        UserGuessKey("y"),
+        UserGuessKey("u"),
+        UserGuessKey("i"),
+        UserGuessKey("o"),
+        UserGuessKey("p")
     ),
-    val row2: ImmutableList<GuessKey> = persistentListOf(
-        GuessKey("a"),
-        GuessKey("s"),
-        GuessKey("d"),
-        GuessKey("f"),
-        GuessKey("g"),
-        GuessKey("h"),
-        GuessKey("j"),
-        GuessKey("k"),
-        GuessKey("l"),
+    val row2: ImmutableList<UserGuessKey> = persistentListOf(
+        UserGuessKey("a"),
+        UserGuessKey("s"),
+        UserGuessKey("d"),
+        UserGuessKey("f"),
+        UserGuessKey("g"),
+        UserGuessKey("h"),
+        UserGuessKey("j"),
+        UserGuessKey("k"),
+        UserGuessKey("l"),
     ),
-    val row3: ImmutableList<GuessKey> = persistentListOf(
-        GuessKey("enter"),
-        GuessKey("z"),
-        GuessKey("x"),
-        GuessKey("c"),
-        GuessKey("v"),
-        GuessKey("b"),
-        GuessKey("n"),
-        GuessKey("m"),
-        GuessKey("remove"),
+    val row3: ImmutableList<UserGuessKey> = persistentListOf(
+        UserGuessKey("enter"),
+        UserGuessKey("z"),
+        UserGuessKey("x"),
+        UserGuessKey("c"),
+        UserGuessKey("v"),
+        UserGuessKey("b"),
+        UserGuessKey("n"),
+        UserGuessKey("m"),
+        UserGuessKey("remove"),
     )
 )
