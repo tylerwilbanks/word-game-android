@@ -8,5 +8,6 @@ data class DailyWordSession(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val date: String,
-    val wordLength: Int,
+    val correctWord: String,
+    val maxAttempts: Int,
 )

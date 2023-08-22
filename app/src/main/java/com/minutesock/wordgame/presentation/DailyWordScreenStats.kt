@@ -3,7 +3,9 @@ package com.minutesock.wordgame.presentation
 import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,15 +16,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,14 +48,16 @@ import com.minutesock.wordgame.R
 import com.minutesock.wordgame.ui.theme.WordGameTheme
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.uiutils.shareExternal
-import java.util.Locale
+import com.minutesock.wordgame.utils.capitalize
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DailyWordScreenStats(
     state: DailyWordState,
     onEvent: (DailyWordEventStats) -> Unit,
     hasBackgroundScreen: Boolean
 ) {
+
     val alpha by remember(hasBackgroundScreen) {
         mutableStateOf(if (hasBackgroundScreen) 0.55f else 1.0f)
     }
@@ -81,6 +89,8 @@ fun DailyWordScreenStats(
     val spoilerButtonEnabled by remember(state.gameState) {
         mutableStateOf(state.gameState.isGameOver)
     }
+
+    val textResultColor = if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier
@@ -122,67 +132,81 @@ fun DailyWordScreenStats(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineMedium,
                     text = state.dailyWordStateMessage?.uiText?.asString() ?: "",
-                    color = if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                    color = textResultColor
                 )
             }
             Spacer(
                 modifier = Modifier
                     .height(20.dp)
             )
-            Divider(thickness = 2.dp, modifier = Modifier.padding(horizontal = 20.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 20.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    modifier = Modifier
-                        .blur(spoilerBlur),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineMedium,
-                    text = state.correctWord?.capitalize(Locale.ROOT) ?: "",
-                    color = MaterialTheme.colorScheme.secondary
-                )
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text(
-                    modifier = Modifier
-                        .blur(spoilerBlur),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    text = state.definitionMessage ?: "",
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Button(
-                    onClick = {
-                        revealSpoiler = !revealSpoiler
-                    },
-                    enabled = spoilerButtonEnabled
-                ) {
-                    Text(
-                        text = if (revealSpoiler) {
-                            stringResource(R.string.hide)
-                        } else {
-                            stringResource(
-                                R.string.reveal
+            Scaffold(
+                topBar = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .border(
+                                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
+                                    shape = RoundedCornerShape(corner = CornerSize(10.dp))
+                                )
+                                .blur(spoilerBlur)
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp, horizontal = 25.dp),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.headlineMedium,
+                            text = state.correctWord?.capitalize() ?: "",
+                            color = textResultColor
+                        )
+                    }
+                },
+                bottomBar = {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Button(
+                            onClick = {
+                                revealSpoiler = !revealSpoiler
+                            },
+                            enabled = spoilerButtonEnabled
+                        ) {
+                            Text(
+                                text = if (revealSpoiler) {
+                                    stringResource(R.string.hide)
+                                } else {
+                                    stringResource(
+                                        R.string.reveal
+                                    )
+                                }
                             )
                         }
-                    )
-                }
-            }
+                    }
 
+                },
+                content = { padding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = padding.calculateBottomPadding(), top = padding.calculateTopPadding() + 20.dp, start = 20.dp, end = 20.dp)
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+
+                        Text(
+                            modifier = Modifier
+                                .blur(spoilerBlur),
+                            textAlign = TextAlign.Start,
+                            style = MaterialTheme.typography.bodyLarge,
+                            text = state.definitionMessage ?: "",
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            )
         }
     }
 }

@@ -145,7 +145,7 @@ class DailyWordViewModel(
             val numberedDefs = defs.mapIndexed { index, definition ->
                 "#${index + 1}: ${definition.definition}"
             }
-            definitionMessage = numberedDefs.joinToString("\n") { it }
+            definitionMessage = numberedDefs.joinToString("\n\n") { it }
         }
         return definitionMessage
     }
