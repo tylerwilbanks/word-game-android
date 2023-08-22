@@ -1,17 +1,11 @@
 package com.minutesock.wordgame.formatters
 
-import android.os.Build
 import com.minutesock.wordgame.data.DatabaseInstance
 import com.minutesock.wordgame.data.models.DailyWordSession
 import com.minutesock.wordgame.domain.UserDailyWordSession
 import com.minutesock.wordgame.utils.toDate
 import com.minutesock.wordgame.utils.toString
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.Locale
 
 fun DailyWordSession.toUserDailyWordSession(): UserDailyWordSession {
