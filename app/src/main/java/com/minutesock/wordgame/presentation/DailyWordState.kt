@@ -1,6 +1,9 @@
 package com.minutesock.wordgame.presentation
 
+import com.minutesock.wordgame.domain.WordInfo
 import com.minutesock.wordgame.uiutils.UiText
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class DailyWordState(
     val wordRowAnimating: Boolean = false,
@@ -12,7 +15,8 @@ data class DailyWordState(
     val dailyWordStateMessage: DailyWordStateMessage? = null,
     val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys(),
     val shareText: String? = null,
-    val definitionMessage: String? = null
+    val definitionMessage: String? = null,
+    val wordInfo: ImmutableList<WordInfo> = persistentListOf()
 )
 
 data class DailyWordStateMessage(

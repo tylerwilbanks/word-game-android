@@ -1,9 +1,12 @@
 package com.minutesock.wordgame.presentation
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.minutesock.wordgame.App
 import com.minutesock.wordgame.R
+import com.minutesock.wordgame.data.repository.DailyWordRepository
 import com.minutesock.wordgame.domain.DailyWordValidationResultType
 import com.minutesock.wordgame.domain.GuessWordState
 import com.minutesock.wordgame.domain.GuessWordValidator
@@ -15,19 +18,21 @@ import com.minutesock.wordgame.domain.addGuessLetter
 import com.minutesock.wordgame.domain.eraseLetter
 import com.minutesock.wordgame.domain.lockInGuess
 import com.minutesock.wordgame.domain.updateState
-import com.minutesock.wordgame.remote.responses.WordDefinitionItem
-import com.minutesock.wordgame.repository.DailyWordRepository
+import com.minutesock.wordgame.remote.dto.WordDefinitionItem
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.Option
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DailyWordViewModel(
-    private val dailyWordRepository: DailyWordRepository = DailyWordRepository()
+    private val dailyWordRepository: DailyWordRepository = DailyWordRepository(wordInfoDao = App.database.WordInfoDao())
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DailyWordState())
@@ -98,6 +103,30 @@ class DailyWordViewModel(
                 )
             }
             fetchWordDefinition(correctWord)
+            getOrFetchWordDefinition(correctWord)
+        }
+    }
+
+    private fun getOrFetchWordDefinition(word: String) {
+        viewModelScope.launch {
+            dailyWordRepository.getOrFetchWordDefinition(word).onEach { option ->
+                Log.d("shovel", "${option.data}")
+                when (option) {
+                    is Option.Error -> { /* todo-tyler handle error */
+                    }
+
+                    is Option.Loading -> { /* todo-tyler handle loading */
+                    }
+
+                    is Option.Success -> {
+                        _state.update {
+                            it.copy(
+                                wordInfo = option.data?.toImmutableList() ?: persistentListOf()
+                            )
+                        }
+                    }
+                }
+            }.launchIn(this)
         }
     }
 
@@ -125,15 +154,7 @@ class DailyWordViewModel(
                     }
                 }
 
-                is Option.UiError -> {
-                    _state.update {
-                        it.copy(
-                            dailyWordStateMessage = DailyWordStateMessage(
-                                result.uiText
-                            )
-                        )
-                    }
-                }
+                is Option.Loading -> {}
             }
         }
     }
@@ -372,7 +393,7 @@ class DailyWordViewModel(
             it.state == GuessWordState.Editing
         }
         return if (index == -1) {
-            Option.UiError(
+            Option.Error(
                 uiText = UiText.StringResource(R.string.there_is_no_more_guess_attempts_left)
             )
         } else {
@@ -382,7 +403,7 @@ class DailyWordViewModel(
 
     private fun getCurrentGuessWordIndexAndHandleError(): Int? {
         return when (val result = getCurrentGuessWordIndex()) {
-            is Option.UiError -> {
+            is Option.Error -> {
                 result.uiText?.let { uiText ->
                     _state.update {
                         it.copy(
@@ -410,7 +431,7 @@ class DailyWordViewModel(
             UserGuessLetter(_character = character)
         )
         when (result) {
-            is Option.UiError -> {
+            is Option.Error -> {
                 result.uiText?.let { uiTextError ->
                     result.errorCode?.let { errorCode ->
                         userGuessWords[index] = userGuessWords[index].copy(
@@ -443,7 +464,7 @@ class DailyWordViewModel(
 
     private fun eraseLetter(index: Int) {
         when (val result = userGuessWords[index].eraseLetter()) {
-            is Option.UiError -> {
+            is Option.Error -> {
                 result.uiText?.let { uiText ->
                     result.errorCode?.let { errorCode ->
                         userGuessWords[index] = userGuessWords[index].copy(

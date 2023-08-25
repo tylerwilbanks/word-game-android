@@ -30,7 +30,7 @@ fun UserGuessWord.addGuessLetter(userGuessLetter: UserGuessLetter): Option<UserG
     newGuessLetterList.indexOfFirst { it.availableForInput }.let { index ->
         if (index == -1) {
             val customError = GuessWordError.NoLettersAvailableForInput
-            return Option.UiError(
+            return Option.Error(
                 uiText = customError.message,
                 errorCode = customError.ordinal
             )
@@ -53,7 +53,7 @@ fun UserGuessWord.eraseLetter(): Option<UserGuessWord?> {
     newGuessLetterList.indexOfLast { it.answered }.let { index ->
         if (index == -1) {
             val customError = GuessWordError.NoLettersToRemove
-            return Option.UiError(
+            return Option.Error(
                 uiText = customError.message,
                 errorCode = customError.ordinal
             )

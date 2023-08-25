@@ -8,19 +8,23 @@ sealed class Option<T>(
     val uiText: UiText? = null,
     val errorCode: Int? = null
 ) {
+
+    class Loading<T>(data: T? = null) : Option<T>(data = data)
+
     class Success<T>(data: T?) : Option<T>(data = data)
 
-    class UiError<T>(uiText: UiText, data: T? = null, errorCode: Int? = null) :
+    class Error<T>(
+        uiText: UiText? = null,
+        message: String? = null,
+        data: T? = null,
+        errorCode: Int? = null
+    ) :
         Option<T>(
             data = data,
             uiText = uiText,
-            errorCode = errorCode
-        )
-
-    class Error<T>(message: String, data: T? = null, errorCode: Int? = null) :
-        Option<T>(
-            data = data,
             message = message,
             errorCode = errorCode
         )
+
+    val hasMessageToDisplay get() = uiText != null
 }

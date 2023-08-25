@@ -39,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,7 +89,8 @@ fun DailyWordScreenStats(
         mutableStateOf(state.gameState.isGameOver)
     }
 
-    val textResultColor = if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val textResultColor =
+        if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier
@@ -150,7 +150,10 @@ fun DailyWordScreenStats(
                         Text(
                             modifier = Modifier
                                 .border(
-                                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
+                                    border = BorderStroke(
+                                        2.dp,
+                                        MaterialTheme.colorScheme.secondary
+                                    ),
                                     shape = RoundedCornerShape(corner = CornerSize(10.dp))
                                 )
                                 .blur(spoilerBlur)
@@ -191,7 +194,12 @@ fun DailyWordScreenStats(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = padding.calculateBottomPadding(), top = padding.calculateTopPadding() + 20.dp, start = 20.dp, end = 20.dp)
+                            .padding(
+                                bottom = padding.calculateBottomPadding(),
+                                top = padding.calculateTopPadding() + 20.dp,
+                                start = 20.dp,
+                                end = 20.dp
+                            )
                             .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {

@@ -1,17 +1,36 @@
 package com.minutesock.wordgame
 
 import android.app.Application
+import android.content.Context
+import com.minutesock.wordgame.data.AppDatabase
+
 
 class App : Application() {
+
+
     override fun onCreate() {
         super.onCreate()
-        instance = this
+        App.applicationContext = applicationContext
     }
 
     companion object {
-        lateinit var instance: App
-        fun get(): App {
-            return instance
-        }
+
+        val database by lazy { AppDatabase.getDatabase(applicationContext) }
+
+        lateinit var applicationContext: Context
+            private set
+    }
+}
+
+class MyApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        appContext = applicationContext
+    }
+
+    companion object {
+        var appContext: Context? = null
+            private set
     }
 }

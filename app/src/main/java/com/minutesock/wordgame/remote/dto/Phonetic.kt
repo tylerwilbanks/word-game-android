@@ -1,4 +1,4 @@
-package com.minutesock.wordgame.remote.responses
+package com.minutesock.wordgame.remote.dto
 
 data class Phonetic(
     val audio: String,

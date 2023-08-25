@@ -7,7 +7,7 @@ object RetrofitInstance {
 
     val dictionaryApi: DictionaryApi by lazy {
         Retrofit.Builder()
-            .baseUrl("https://api.dictionaryapi.dev/api/v2/")
+            .baseUrl(DictionaryApi.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(DictionaryApi::class.java)
