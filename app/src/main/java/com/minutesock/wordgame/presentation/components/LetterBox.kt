@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,10 +44,27 @@ fun LetterBox(
         animationSpec = tween(
             durationMillis = 1250 / 2 + flipAnimDelay,
             delayMillis = 750 + flipAnimDelay
-        )
+        ), label = "animateColor"
     )
 
     var flipRotation by remember { mutableStateOf(0f) }
+    var buttonScale by remember {
+        mutableStateOf(1.0f)
+    }
+
+    LaunchedEffect(letter.character) {
+        animate(
+            initialValue = 0.9f,
+            targetValue = 1.0f,
+            animationSpec =
+            tween(
+                durationMillis = 100,
+                easing = LinearEasing
+            )
+        ) { value: Float, _: Float ->
+            buttonScale = value
+        }
+    }
 
     LaunchedEffect(guessWordState) {
         if (guessWordState != GuessWordState.Complete) {
@@ -71,9 +89,11 @@ fun LetterBox(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.graphicsLayer {
-            rotationX = flipRotation
-        }
+        modifier = Modifier
+            .graphicsLayer {
+                rotationX = flipRotation
+            }
+            .scale(buttonScale)
     ) {
         Card(
             modifier = Modifier
