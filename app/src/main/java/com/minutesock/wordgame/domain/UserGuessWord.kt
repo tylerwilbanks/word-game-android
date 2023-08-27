@@ -81,34 +81,11 @@ fun UserGuessWord.lockInGuess(correctWord: String): UserGuessWord {
     val newUserGuessLetters = mutableListOf<UserGuessLetter>()
     val correctChars: List<Char> = correctWord.map { it.lowercaseChar() }
 
-    // get count of letters in the correct position
-    val correctPositionLetters = hashMapOf<Char, Int>()
-    this.letters.forEachIndexed { index, userGuessLetter ->
-        if (correctPositionLetters[userGuessLetter.character] == null) {
-            correctPositionLetters[userGuessLetter.character] = 0
-        }
-        if (correctChars[index] == userGuessLetter.character) {
-            correctPositionLetters[userGuessLetter.character]?.let {
-                correctPositionLetters[userGuessLetter.character] = it + 1
-            }
-        }
-    }
-
-    val processedLetters = hashMapOf<Char, Int>()
     this.letters.forEachIndexed { index: Int, userGuessLetter: UserGuessLetter ->
-        val duplicateLetterCount = correctChars.count { it == userGuessLetter.character }
-        if (processedLetters.get(userGuessLetter.character) == null) {
-            processedLetters[userGuessLetter.character] = 0
-        }
-        val correctPositionCount = correctPositionLetters[userGuessLetter.character] ?: 0
         val newState = when {
             userGuessLetter.character == correctChars[index] -> UserLetterState.Correct
-            correctChars.contains(userGuessLetter.character) && processedLetters[userGuessLetter.character]!! < duplicateLetterCount - correctPositionCount -> UserLetterState.Present
-            !correctChars.contains(userGuessLetter.character) -> UserLetterState.Absent
+            correctChars.contains(userGuessLetter.character) -> UserLetterState.Present
             else -> UserLetterState.Absent
-        }
-        processedLetters[userGuessLetter.character]?.let {
-            processedLetters[userGuessLetter.character] = it + 1
         }
         newUserGuessLetters.add(
             UserGuessLetter(
@@ -116,6 +93,22 @@ fun UserGuessWord.lockInGuess(correctWord: String): UserGuessWord {
                 state = newState
             )
         )
+    }
+
+    //clean up any extra present letters
+    this.letters.forEachIndexed { index, userGuessLetter ->
+        val correctDuplicateLetterCount = correctChars.count { it == userGuessLetter.character }
+        val currentPresentAndCorrectLetterCount = newUserGuessLetters.count {
+            it.character == this.letters[index].character && it.state == UserLetterState.Correct ||
+                    it.character == this.letters[index].character && it.state == UserLetterState.Present
+        }
+
+        if (newUserGuessLetters[index].state == UserLetterState.Present && currentPresentAndCorrectLetterCount > correctDuplicateLetterCount) {
+            newUserGuessLetters[index] = newUserGuessLetters[index].copy(
+                state = UserLetterState.Absent
+            )
+        }
+
     }
 
     return this.copy(

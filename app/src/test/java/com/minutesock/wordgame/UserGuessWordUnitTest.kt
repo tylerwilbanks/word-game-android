@@ -12,7 +12,7 @@ import org.junit.Test
 class UserGuessWordUnitTest {
 
     @Test
-    fun duplicateCharacters_single_isAbsent() {
+    fun duplicateCharacters_singleIncorrectPositionBeforeCorrectPosition() {
         val correctWord = "cedar"
         val guessWord = "radar"
         val userGuessWord = UserGuessWord(
@@ -26,7 +26,7 @@ class UserGuessWordUnitTest {
     }
 
     @Test
-    fun duplicateCharacters_multipleIncorrectPositions_isPresent() {
+    fun duplicateCharacters_multipleIncorrectPositionsBeforeCorrectPosition() {
         val correctWord = "razor"
         val guessWord = "error"
         val userGuessWord = UserGuessWord(
@@ -36,8 +36,38 @@ class UserGuessWordUnitTest {
             state = GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
-        assertEquals(UserLetterState.Present, updatedGuessWord.letters[1].state)
-        assertEquals(UserLetterState.Absent, updatedGuessWord.letters[2].state)
+        assertEquals(UserLetterState.Absent, updatedGuessWord.letters[1].state)
+        assertEquals(UserLetterState.Present, updatedGuessWord.letters[2].state)
         assertEquals(UserLetterState.Correct, updatedGuessWord.letters[4].state)
+    }
+
+    @Test
+    fun duplicateCharacters_singleIncorrectPositionAfterCorrectPosition() {
+        val correctWord = "maxim"
+        val guessWord = "magma"
+        val userGuessWord = UserGuessWord(
+            letters = List(5) {
+                UserGuessLetter(guessWord[it])
+            }.toImmutableList(),
+            state = GuessWordState.Editing
+        )
+        val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
+        assertEquals(UserLetterState.Correct, updatedGuessWord.letters[0].state)
+        assertEquals(UserLetterState.Present, updatedGuessWord.letters[3].state)
+    }
+
+    @Test
+    fun duplicateCharacters_multipleIncorrectPositionsBeforeAndAfterCorrectPosition() {
+        val correctWord = "maxim"
+        val guessWord = "mummy"
+        val userGuessWord = UserGuessWord(
+            letters = List(5) {
+                UserGuessLetter(guessWord[it])
+            }.toImmutableList(),
+            state = GuessWordState.Editing
+        )
+        val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
+        assertEquals(UserLetterState.Correct, updatedGuessWord.letters[0].state)
+        assertEquals(UserLetterState.Present, updatedGuessWord.letters[3].state)
     }
 }
