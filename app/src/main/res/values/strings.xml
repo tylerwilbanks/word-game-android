@@ -11,4 +11,6 @@
     <string name="hide">Hide</string>
     <string name="reveal">Reveal</string>
     <string name="share">Share</string>
+    <string name="daily">Daily</string>
+    <string name="profile">Profile</string>
 </resources>
