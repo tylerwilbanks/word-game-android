@@ -223,7 +223,7 @@ fun DailyWordScreenStats(
                             if (i > 0) {
                                 Spacer(modifier = Modifier.height(8.dp))
                             }
-                            WordInfoItem(wordInfo = wordInfo)
+                            WordInfoItem(wordInfo = wordInfo, gameState = state.gameState)
                             if (i < state.wordInfos.size - 1) {
                                 Divider()
                             }

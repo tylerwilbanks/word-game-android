@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.minutesock.wordgame.R
 import com.minutesock.wordgame.domain.GuessWordState
 import com.minutesock.wordgame.domain.UserGuessLetter
 import com.minutesock.wordgame.domain.UserGuessWord
@@ -22,11 +24,17 @@ import kotlinx.collections.immutable.ImmutableList
 fun WordRow(
     userGuessWord: UserGuessWord,
     userGuessLetters: ImmutableList<UserGuessLetter>,
+    message: String?,
     onEvent: (DailyWordEventGame) -> Unit
 ) {
     val shakeController = rememberShakeController()
-    LaunchedEffect(userGuessWord.errorState) {
-        if (userGuessWord.errorState != GuessWordError.None) {
+    val defaultMessage = stringResource(id = R.string.what_in_da_word)
+    LaunchedEffect(message) {
+        if (
+            message != defaultMessage &&
+            userGuessWord.state == GuessWordState.Editing &&
+            userGuessWord.errorState != GuessWordError.None
+        ) {
             shakeController.shake(ShakeConfig.no())
         }
     }

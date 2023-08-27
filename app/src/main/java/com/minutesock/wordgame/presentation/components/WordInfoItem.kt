@@ -11,11 +11,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.wordgame.domain.WordInfo
+import com.minutesock.wordgame.presentation.DailyWordGameState
 import com.minutesock.wordgame.utils.capitalize
 
 @Composable
 fun WordInfoItem(
     wordInfo: WordInfo,
+    gameState: DailyWordGameState,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -23,7 +25,7 @@ fun WordInfoItem(
             text = wordInfo.word.capitalize(),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = if (gameState == DailyWordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
         )
         Text(text = wordInfo.phonetic, fontWeight = FontWeight.Light)
         Spacer(modifier = Modifier.height(16.dp))

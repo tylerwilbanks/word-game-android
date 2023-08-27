@@ -25,10 +25,16 @@ object GuessWordValidator {
 
     private val encouragingMessages = listOf(
         "Not quite!",
-        "Guess again, the right word is out there!",
-        "Keep those guesses coming, you're improving!",
-        "Not the word, but you're learning from each attempt!",
-        "Keep the guesses flowing. The puzzle will yield."
+        "The right word is out there!",
+        "You're learning from each attempt!",
+        "Keep the guesses flowing.",
+        "Success is built on persistence.",
+        "Embrace the challenge.",
+        "Mistakes fuel learning.",
+        "Guess by guess!",
+        "Closer with each attempt!",
+        "Resilience: your compass to word victory!",
+        "You're a tenacious one."
     ).shuffled()
 
     private val correctMessages = listOf(

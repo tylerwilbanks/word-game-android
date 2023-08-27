@@ -126,7 +126,12 @@ fun DailyWordScreenGame(
             }
 
             userGuessWords.forEach {
-                WordRow(userGuessWord = it, userGuessLetters = it.letters, onEvent = onEvent)
+                WordRow(
+                    userGuessWord = it,
+                    userGuessLetters = it.letters,
+                    message = state.dailyWordStateMessage?.uiText?.asString(),
+                    onEvent = onEvent
+                )
             }
         }
 
