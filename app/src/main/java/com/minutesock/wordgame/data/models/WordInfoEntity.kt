@@ -9,7 +9,7 @@ data class WordInfoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val word: String,
-    val phonetic: String,
+    val phonetic: String? = null,
     val origin: String? = null,
     val meanings: List<Meaning>,
 )

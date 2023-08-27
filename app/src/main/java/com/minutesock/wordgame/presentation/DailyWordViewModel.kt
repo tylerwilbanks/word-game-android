@@ -111,7 +111,12 @@ class DailyWordViewModel(
                     is Option.Error -> { /* todo-tyler handle error */
                     }
 
-                    is Option.Loading -> { /* todo-tyler handle loading */
+                    is Option.Loading -> {
+                        _state.update {
+                            it.copy(
+                                wordInfos = option.data?.toImmutableList() ?: persistentListOf()
+                            )
+                        }
                     }
 
                     is Option.Success -> {

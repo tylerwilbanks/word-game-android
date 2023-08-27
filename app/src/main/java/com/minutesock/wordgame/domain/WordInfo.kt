@@ -4,7 +4,7 @@ import com.minutesock.wordgame.remote.dto.Meaning
 
 data class WordInfo(
     val word: String,
-    val phonetic: String,
+    val phonetic: String? = null,
     val origin: String? = null,
     val meanings: List<Meaning>,
 )

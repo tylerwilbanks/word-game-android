@@ -27,7 +27,7 @@ fun WordInfoItem(
             fontWeight = FontWeight.Bold,
             color = if (gameState == DailyWordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
         )
-        Text(text = wordInfo.phonetic, fontWeight = FontWeight.Light)
+        Text(text = wordInfo.phonetic ?: "", fontWeight = FontWeight.Light)
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = wordInfo.origin ?: "")
 
