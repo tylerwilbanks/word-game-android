@@ -1,6 +1,5 @@
 package com.minutesock.wordgame.presentation
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,7 +17,6 @@ import com.minutesock.wordgame.domain.addGuessLetter
 import com.minutesock.wordgame.domain.eraseLetter
 import com.minutesock.wordgame.domain.lockInGuess
 import com.minutesock.wordgame.domain.updateState
-import com.minutesock.wordgame.remote.dto.WordDefinitionItem
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.utils.Option
 import kotlinx.collections.immutable.ImmutableList
@@ -102,7 +100,6 @@ class DailyWordViewModel(
                     )
                 )
             }
-            fetchWordDefinition(correctWord)
             getOrFetchWordDefinition(correctWord)
         }
     }
@@ -110,7 +107,6 @@ class DailyWordViewModel(
     private fun getOrFetchWordDefinition(word: String) {
         viewModelScope.launch {
             dailyWordRepository.getOrFetchWordDefinition(word).onEach { option ->
-                Log.d("shovel", "${option.data}")
                 when (option) {
                     is Option.Error -> { /* todo-tyler handle error */
                     }
@@ -121,54 +117,13 @@ class DailyWordViewModel(
                     is Option.Success -> {
                         _state.update {
                             it.copy(
-                                wordInfo = option.data?.toImmutableList() ?: persistentListOf()
+                                wordInfos = option.data?.toImmutableList() ?: persistentListOf()
                             )
                         }
                     }
                 }
             }.launchIn(this)
         }
-    }
-
-    private fun fetchWordDefinition(word: String) {
-        viewModelScope.launch {
-            when (val result = dailyWordRepository.fetchWordDefinition(word)) {
-                is Option.Error -> {
-                    _state.update {
-                        it.copy(
-                            dailyWordStateMessage = DailyWordStateMessage(
-                                UiText.DynamicString(
-                                    result.message ?: "An unexpected error occurred."
-                                )
-                            )
-                        )
-                    }
-                }
-
-                is Option.Success -> {
-
-                    _state.update {
-                        it.copy(
-                            definitionMessage = getDefinitionMessage(result.data)
-                        )
-                    }
-                }
-
-                is Option.Loading -> {}
-            }
-        }
-    }
-
-    private fun getDefinitionMessage(definitionItems: List<WordDefinitionItem>?): String? {
-        var definitionMessage: String? = null
-        definitionItems?.firstOrNull()?.let { definitionItem ->
-            val defs = definitionItem.meanings.flatMap { it.definitions }
-            val numberedDefs = defs.mapIndexed { index, definition ->
-                "#${index + 1}: ${definition.definition}"
-            }
-            definitionMessage = numberedDefs.joinToString("\n\n") { it }
-        }
-        return definitionMessage
     }
 
     fun onGameEvent(event: DailyWordEventGame) {

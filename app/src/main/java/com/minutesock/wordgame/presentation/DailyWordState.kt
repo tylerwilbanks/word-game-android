@@ -16,7 +16,7 @@ data class DailyWordState(
     val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys(),
     val shareText: String? = null,
     val definitionMessage: String? = null,
-    val wordInfo: ImmutableList<WordInfo> = persistentListOf()
+    val wordInfos: ImmutableList<WordInfo> = persistentListOf()
 )
 
 data class DailyWordStateMessage(

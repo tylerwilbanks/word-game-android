@@ -12,7 +12,7 @@ import com.minutesock.wordgame.utils.GsonParser
 
 @Database(
     entities = [DailyWordSessionEntity::class, WordInfoEntity::class],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

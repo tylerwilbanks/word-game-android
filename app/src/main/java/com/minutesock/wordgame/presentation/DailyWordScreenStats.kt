@@ -15,14 +15,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,11 +41,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.minutesock.wordgame.R
+import com.minutesock.wordgame.presentation.components.WordInfoItem
 import com.minutesock.wordgame.ui.theme.WordGameTheme
 import com.minutesock.wordgame.uiutils.UiText
 import com.minutesock.wordgame.uiutils.shareExternal
@@ -109,15 +114,6 @@ fun DailyWordScreenStats(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(
-                    onClick = {
-                        shareEnabled = false
-                        onEvent(DailyWordEventStats.OnShareButtonPressed)
-                    },
-                    enabled = shareEnabled
-                ) {
-                    Icon(imageVector = Icons.Default.Share, contentDescription = "share")
-                }
                 IconButton(onClick = { onEvent(DailyWordEventStats.OnExitButtonPressed) }) {
                     Icon(imageVector = Icons.Default.Close, contentDescription = "close")
                 }
@@ -130,6 +126,7 @@ fun DailyWordScreenStats(
             ) {
                 Text(
                     textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineMedium,
                     text = state.dailyWordStateMessage?.uiText?.asString() ?: "",
                     color = textResultColor
@@ -160,6 +157,7 @@ fun DailyWordScreenStats(
                                 .fillMaxWidth()
                                 .padding(vertical = 10.dp, horizontal = 25.dp),
                             textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.headlineMedium,
                             text = state.correctWord?.capitalize() ?: "",
                             color = textResultColor
@@ -167,16 +165,21 @@ fun DailyWordScreenStats(
                     }
                 },
                 bottomBar = {
-                    Box(
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(
                             onClick = {
                                 revealSpoiler = !revealSpoiler
                             },
-                            enabled = spoilerButtonEnabled
+                            enabled = spoilerButtonEnabled,
                         ) {
+                            Icon(
+                                painterResource(id = if (revealSpoiler) R.drawable.baseline_visibility_off_24 else R.drawable.baseline_visibility_24),
+                                contentDescription = "Show/Hide"
+                            )
+                            Spacer(modifier = Modifier.size(ButtonDefaults.IconSize))
                             Text(
                                 text = if (revealSpoiler) {
                                     stringResource(R.string.hide)
@@ -187,31 +190,44 @@ fun DailyWordScreenStats(
                                 }
                             )
                         }
+                        Button(
+                            onClick = {
+                                shareEnabled = false
+                                onEvent(DailyWordEventStats.OnShareButtonPressed)
+                            },
+                            enabled = shareEnabled,
+                        ) {
+                            Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
+                            Spacer(modifier = Modifier.size(ButtonDefaults.IconSize))
+                            Text(
+                                text = stringResource(R.string.share)
+                            )
+                        }
                     }
 
                 },
                 content = { padding ->
-                    Column(
+                    LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
+                            .blur(spoilerBlur)
                             .padding(
                                 bottom = padding.calculateBottomPadding(),
-                                top = padding.calculateTopPadding() + 20.dp,
+                                top = padding.calculateTopPadding(),
                                 start = 20.dp,
                                 end = 20.dp
                             )
-                            .verticalScroll(rememberScrollState()),
-                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-
-                        Text(
-                            modifier = Modifier
-                                .blur(spoilerBlur),
-                            textAlign = TextAlign.Start,
-                            style = MaterialTheme.typography.bodyLarge,
-                            text = state.definitionMessage ?: "",
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                        items(state.wordInfos.size) { i ->
+                            val wordInfo = state.wordInfos[i]
+                            if (i > 0) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            WordInfoItem(wordInfo = wordInfo)
+                            if (i < state.wordInfos.size - 1) {
+                                Divider()
+                            }
+                        }
                     }
                 }
             )
