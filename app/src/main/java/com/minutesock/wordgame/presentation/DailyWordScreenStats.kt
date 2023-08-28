@@ -166,7 +166,9 @@ fun DailyWordScreenStats(
                 },
                 bottomBar = {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 5.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(

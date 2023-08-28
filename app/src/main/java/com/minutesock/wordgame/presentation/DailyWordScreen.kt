@@ -17,6 +17,7 @@ import com.minutesock.wordgame.domain.UserGuessWord
 
 @Composable
 fun DailyWordScreen(
+    modifier: Modifier = Modifier,
     state: DailyWordState,
     userGuessWords: SnapshotStateList<UserGuessWord>,
     onGameEvent: (DailyWordEventGame) -> Unit,
@@ -32,7 +33,7 @@ fun DailyWordScreen(
     }
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         DailyWordScreenGame(
