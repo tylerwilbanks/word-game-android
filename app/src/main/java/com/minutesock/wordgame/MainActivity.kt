@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
         viewModel.setupGame()
         val bottomNavItems = persistentListOf(
             BottomNavItem.Daily,
+            BottomNavItem.Dictionary,
             BottomNavItem.Profile
         )
         setContent {
@@ -57,6 +58,9 @@ class MainActivity : ComponentActivity() {
                                     onGameEvent = viewModel::onGameEvent,
                                     onStatsEvent = viewModel::onStatsEvent
                                 )
+                            }
+                            composable(BottomNavItem.Dictionary.route) {
+                                Text(text = "Dictionary screen is under construction. \uD83D\uDEA7")
                             }
                             composable(BottomNavItem.Profile.route) {
                                 Text(text = "Profile screen is under construction. \uD83D\uDEA7")
