@@ -22,13 +22,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.minutesock.wordgame.domain.BottomNavItem
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun BottomNavigation(navController: NavController) {
-    val items = listOf(
-        BottomNavItem.Daily,
-        BottomNavItem.Profile
-    )
+fun BottomNavigation(navController: NavController, bottomNavItems: ImmutableList<BottomNavItem>) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -37,11 +34,15 @@ fun BottomNavigation(navController: NavController) {
         modifier = Modifier.height(64.dp),
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
     ) {
-        items.forEach { item ->
+        bottomNavItems.forEach { item ->
             val selected = item.route == currentRoute
             NavigationBarItem(
                 selected = selected,
-                onClick = { navController.navigate(item.route) },
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route)
+                    }
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,

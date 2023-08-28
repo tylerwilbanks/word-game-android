@@ -20,6 +20,7 @@ import com.minutesock.wordgame.presentation.BottomNavigation
 import com.minutesock.wordgame.presentation.DailyWordScreen
 import com.minutesock.wordgame.presentation.DailyWordViewModel
 import com.minutesock.wordgame.ui.theme.WordGameTheme
+import kotlinx.collections.immutable.persistentListOf
 
 
 class MainActivity : ComponentActivity() {
@@ -31,13 +32,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         GuessWordValidator.initValidWords(this)
         viewModel.setupGame()
+        val bottomNavItems = persistentListOf(
+            BottomNavItem.Daily,
+            BottomNavItem.Profile
+        )
         setContent {
             WordGameTheme {
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
                 Scaffold(
                     bottomBar = {
-                        BottomNavigation(navController = navController)
+                        BottomNavigation(
+                            navController = navController,
+                            bottomNavItems = bottomNavItems
+                        )
                     },
                     content = { paddingValues ->
                         NavHost(navController, startDestination = BottomNavItem.Daily.route) {
