@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WordGame</string>
+    <string name="app_name">What in da word?!</string>
     <string name="word_is_incomplete">Word is incomplete.</string>
     <string name="word_does_not_exist">Word does not exist.</string>
     <string name="what_in_da_word">What in da word?!</string>
