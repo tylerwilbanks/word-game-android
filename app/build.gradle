@@ -40,7 +40,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.1'
+        kotlinCompilerExtensionVersion "$kotlin_compiler_extension_version"
     }
     packagingOptions {
         resources {
@@ -50,40 +50,36 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation 'androidx.activity:activity-compose:1.7.2'
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
-    implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_bom_version")
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx_version"
+    implementation "androidx.activity:activity-compose:$activity_compose_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_runtime_compose_version"
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:$kotlinx_collections_immutable_version")
+    implementation platform("androidx.compose:compose-bom:$compose_bom_version")
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.squareup.retrofit2:converter-gson:$converter_gson_version"
 
     implementation project(path: ':profile')
-
-    def room_version = "2.5.2"
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    testImplementation "junit:junit:$test_impl_junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$android_test_impl_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$android_test_impl_espresso_core_version"
+    androidTestImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
-    def nav_version = "2.6.0"
-
-    implementation "androidx.navigation:navigation-compose:$nav_version"
+    implementation "androidx.navigation:navigation-compose:$navigation_compose_version"
 
 }
