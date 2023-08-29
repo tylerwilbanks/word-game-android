@@ -6,6 +6,10 @@ plugins {
     id 'com.google.devtools.ksp' version '1.9.0-1.0.13' apply false
 }
 
+ext {
+    ext.kotlin_bom = '1.8.0'
+}
+
 subprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions {

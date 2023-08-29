@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.minutesock.profile.presentation.ProfileScreen
 import com.minutesock.wordgame.domain.BottomNavItem
 import com.minutesock.wordgame.domain.GuessWordValidator
 import com.minutesock.wordgame.presentation.BottomNavigation
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "Dictionary screen is under construction. \uD83D\uDEA7")
                             }
                             composable(BottomNavItem.Profile.route) {
-                                Text(text = "Profile screen is under construction. \uD83D\uDEA7")
+                                ProfileScreen()
                             }
                         }
                     }
