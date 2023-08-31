@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.minutesock.profile'
+    namespace 'com.minutesock.daily'
     compileSdk 33
 
     defaultConfig {

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.minutesock.wordgame.domain.BottomNavItem
 import kotlinx.collections.immutable.ImmutableList
@@ -40,7 +41,13 @@ fun BottomNavigation(navController: NavController, bottomNavItems: ImmutableList
                 selected = selected,
                 onClick = {
                     if (currentRoute != item.route) {
-                        navController.navigate(item.route)
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(

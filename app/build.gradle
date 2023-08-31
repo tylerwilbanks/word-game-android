@@ -50,6 +50,9 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':profile')
+    implementation project(path: ':daily')
+
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_bom_version")
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx_version"
@@ -64,8 +67,6 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation "com.squareup.retrofit2:converter-gson:$converter_gson_version"
-
-    implementation project(path: ':profile')
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"

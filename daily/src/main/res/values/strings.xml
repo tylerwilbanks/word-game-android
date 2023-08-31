@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="word_is_incomplete">Word is incomplete.</string>
+    <string name="word_does_not_exist">Word does not exist.</string>
+    <string name="what_in_da_word">What in da word?!</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="there_are_no_words_to_edit">There are no words to edit.</string>
+    <string name="this_word_is_full">This word is full.</string>
+    <string name="this_word_is_empty">This word is empty.</string>
+    <string name="there_is_no_more_guess_attempts_left">There is no more guess attempts left.</string>
+    <string name="hide">Hide</string>
+    <string name="reveal">Reveal</string>
+    <string name="share">Share</string>
+    <string name="daily">Daily</string>
+    <string name="profile">Profile</string>
+    <string name="dictionary">Dictionary</string>
+</resources>
