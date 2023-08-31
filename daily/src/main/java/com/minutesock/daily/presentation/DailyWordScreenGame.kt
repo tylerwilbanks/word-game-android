@@ -25,8 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.minutesock.core.uiutils.shake
 import com.minutesock.core.R
+import com.minutesock.core.uiutils.shake
 import com.minutesock.daily.presentation.components.FalseKeyboard
 import com.minutesock.daily.presentation.components.WordRow
 
@@ -74,9 +74,11 @@ fun DailyWordScreenGame(
             }
             if (state.gameState == DailyWordGameState.Success) {
                 shakeController.shake(
-                    com.minutesock.core.uiutils.ShakeConfig.yes(defaultMessageDelay) { onEvent(
-                        DailyWordEventGame.OnCompleteAnimationFinished
-                    ) }
+                    com.minutesock.core.uiutils.ShakeConfig.yes(defaultMessageDelay) {
+                        onEvent(
+                            DailyWordEventGame.OnCompleteAnimationFinished
+                        )
+                    }
                 )
                 return@LaunchedEffect
             }

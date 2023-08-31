@@ -330,7 +330,10 @@ class DailyWordViewModel(
 
     private fun isFinalGuess(index: Int): Boolean = index + 1 == userGuessWords.size
 
-    private fun displayError(uiText: com.minutesock.core.uiutils.UiText, guessWordError: GuessWordError? = null) {
+    private fun displayError(
+        uiText: com.minutesock.core.uiutils.UiText,
+        guessWordError: GuessWordError? = null
+    ) {
         _state.update {
             it.copy(
                 dailyWordStateMessage = DailyWordStateMessage(

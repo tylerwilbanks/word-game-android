@@ -1,6 +1,5 @@
 package com.minutesock.daily.presentation
 
-import com.minutesock.daily.domain.UserGuessKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

@@ -10,8 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.minutesock.core.domain.WordInfo
-import com.minutesock.daily.presentation.DailyWordGameState
 import com.minutesock.core.utils.capitalize
 
 @Composable

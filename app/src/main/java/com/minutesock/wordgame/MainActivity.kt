@@ -11,11 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.minutesock.daily.domain.GuessWordValidator
+import com.minutesock.daily.presentation.DailyWordScreen
 import com.minutesock.profile.presentation.ProfileScreen
 import com.minutesock.wordgame.domain.BottomNavItem
-import com.minutesock.daily.domain.GuessWordValidator
 import com.minutesock.wordgame.presentation.BottomNavigation
-import com.minutesock.daily.presentation.DailyWordScreen
 import com.minutesock.wordgame.theme.WordGameTheme
 import kotlinx.collections.immutable.persistentListOf
 

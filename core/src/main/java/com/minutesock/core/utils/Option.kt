@@ -1,7 +1,5 @@
 package com.minutesock.core.utils
 
-import com.minutesock.core.uiutils.UiText
-
 sealed class Option<T>(
     val data: T? = null,
     val message: String? = null,

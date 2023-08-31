@@ -1,9 +1,5 @@
 package com.minutesock.wordgame
 
-import com.minutesock.daily.domain.GuessWordState
-import com.minutesock.daily.domain.UserGuessLetter
-import com.minutesock.daily.domain.UserGuessWord
-import com.minutesock.daily.domain.UserLetterState
 import com.minutesock.daily.domain.lockInGuess
 import junit.framework.TestCase.assertEquals
 import kotlinx.collections.immutable.toImmutableList
@@ -22,7 +18,10 @@ class UserGuessWordUnitTest {
             state = com.minutesock.daily.domain.GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Absent, updatedGuessWord.letters.first().state)
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Absent,
+            updatedGuessWord.letters.first().state
+        )
     }
 
     @Test
@@ -36,9 +35,18 @@ class UserGuessWordUnitTest {
             state = com.minutesock.daily.domain.GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Absent, updatedGuessWord.letters[1].state)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Present, updatedGuessWord.letters[2].state)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Correct, updatedGuessWord.letters[4].state)
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Absent,
+            updatedGuessWord.letters[1].state
+        )
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Present,
+            updatedGuessWord.letters[2].state
+        )
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Correct,
+            updatedGuessWord.letters[4].state
+        )
     }
 
     @Test
@@ -52,8 +60,14 @@ class UserGuessWordUnitTest {
             state = com.minutesock.daily.domain.GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Correct, updatedGuessWord.letters[0].state)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Present, updatedGuessWord.letters[3].state)
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Correct,
+            updatedGuessWord.letters[0].state
+        )
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Present,
+            updatedGuessWord.letters[3].state
+        )
     }
 
     @Test
@@ -67,7 +81,13 @@ class UserGuessWordUnitTest {
             state = com.minutesock.daily.domain.GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Correct, updatedGuessWord.letters[0].state)
-        assertEquals(com.minutesock.daily.domain.UserLetterState.Present, updatedGuessWord.letters[3].state)
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Correct,
+            updatedGuessWord.letters[0].state
+        )
+        assertEquals(
+            com.minutesock.daily.domain.UserLetterState.Present,
+            updatedGuessWord.letters[3].state
+        )
     }
 }
