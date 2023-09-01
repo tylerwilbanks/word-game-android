@@ -1,5 +1,9 @@
-package com.minutesock.wordgame
+package com.minutesock.core
 
+import com.minutesock.core.domain.GuessLetter
+import com.minutesock.core.domain.GuessWord
+import com.minutesock.core.domain.GuessWordState
+import com.minutesock.core.domain.LetterState
 import com.minutesock.core.domain.lockInGuess
 import junit.framework.TestCase.assertEquals
 import kotlinx.collections.immutable.toImmutableList
@@ -11,15 +15,15 @@ class UserGuessWordUnitTest {
     fun duplicateCharacters_singleIncorrectPositionBeforeCorrectPosition() {
         val correctWord = "cedar"
         val guessWord = "radar"
-        val userGuessWord = com.minutesock.core.domain.UserGuessWord(
+        val userGuessWord = GuessWord(
             letters = List(5) {
-                com.minutesock.core.domain.UserGuessLetter(guessWord[it])
+                GuessLetter(guessWord[it])
             }.toImmutableList(),
-            state = com.minutesock.core.domain.GuessWordState.Editing
+            state = GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Absent,
+            LetterState.Absent,
             updatedGuessWord.letters.first().state
         )
     }
@@ -28,23 +32,23 @@ class UserGuessWordUnitTest {
     fun duplicateCharacters_multipleIncorrectPositionsBeforeCorrectPosition() {
         val correctWord = "razor"
         val guessWord = "error"
-        val userGuessWord = com.minutesock.core.domain.UserGuessWord(
+        val userGuessWord = GuessWord(
             letters = List(5) {
-                com.minutesock.core.domain.UserGuessLetter(guessWord[it])
+                GuessLetter(guessWord[it])
             }.toImmutableList(),
-            state = com.minutesock.core.domain.GuessWordState.Editing
+            state = GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Absent,
+            LetterState.Absent,
             updatedGuessWord.letters[1].state
         )
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Present,
+            LetterState.Present,
             updatedGuessWord.letters[2].state
         )
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Correct,
+            LetterState.Correct,
             updatedGuessWord.letters[4].state
         )
     }
@@ -53,19 +57,19 @@ class UserGuessWordUnitTest {
     fun duplicateCharacters_singleIncorrectPositionAfterCorrectPosition() {
         val correctWord = "maxim"
         val guessWord = "magma"
-        val userGuessWord = com.minutesock.core.domain.UserGuessWord(
+        val userGuessWord = GuessWord(
             letters = List(5) {
-                com.minutesock.core.domain.UserGuessLetter(guessWord[it])
+                GuessLetter(guessWord[it])
             }.toImmutableList(),
-            state = com.minutesock.core.domain.GuessWordState.Editing
+            state = GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Correct,
+            LetterState.Correct,
             updatedGuessWord.letters[0].state
         )
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Present,
+            LetterState.Present,
             updatedGuessWord.letters[3].state
         )
     }
@@ -74,19 +78,19 @@ class UserGuessWordUnitTest {
     fun duplicateCharacters_multipleIncorrectPositionsBeforeAndAfterCorrectPosition() {
         val correctWord = "maxim"
         val guessWord = "mummy"
-        val userGuessWord = com.minutesock.core.domain.UserGuessWord(
+        val userGuessWord = GuessWord(
             letters = List(5) {
-                com.minutesock.core.domain.UserGuessLetter(guessWord[it])
+                GuessLetter(guessWord[it])
             }.toImmutableList(),
-            state = com.minutesock.core.domain.GuessWordState.Editing
+            state = GuessWordState.Editing
         )
         val updatedGuessWord = userGuessWord.lockInGuess(correctWord)
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Correct,
+            LetterState.Correct,
             updatedGuessWord.letters[0].state
         )
         assertEquals(
-            com.minutesock.core.domain.UserLetterState.Present,
+            LetterState.Present,
             updatedGuessWord.letters[3].state
         )
     }
