@@ -26,11 +26,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.minutesock.core.domain.GuessLetter
+import com.minutesock.core.domain.GuessWordState
 
 @Composable
 fun LetterBox(
-    letter: com.minutesock.daily.domain.UserGuessLetter,
-    guessWordState: com.minutesock.daily.domain.GuessWordState,
+    letter: GuessLetter,
+    guessWordState: GuessWordState,
     onEvent: (com.minutesock.daily.presentation.DailyWordEventGame) -> Unit,
     flipAnimDelay: Int,
     isFinalLetterInRow: Boolean
@@ -64,7 +66,7 @@ fun LetterBox(
     }
 
     LaunchedEffect(guessWordState) {
-        if (guessWordState != com.minutesock.daily.domain.GuessWordState.Complete) {
+        if (guessWordState != GuessWordState.Complete) {
             return@LaunchedEffect
         }
         animate(

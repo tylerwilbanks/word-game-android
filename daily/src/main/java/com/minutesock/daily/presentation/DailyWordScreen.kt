@@ -18,6 +18,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.minutesock.core.domain.DailyWordScreenState
 
 
 @Composable
@@ -57,7 +58,7 @@ fun DailyWordScreen(
     ) {
         DailyWordScreenGame(
             state = state,
-            userGuessWords = dailyWordViewModel.userGuessWords,
+            guessWords = dailyWordViewModel.guessWords,
             onEvent = dailyWordViewModel::onGameEvent,
             modifier = Modifier.blur(bgBlur)
         )

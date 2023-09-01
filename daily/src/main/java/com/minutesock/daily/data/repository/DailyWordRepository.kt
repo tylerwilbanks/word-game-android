@@ -1,23 +1,31 @@
 package com.minutesock.daily.data.repository
 
+import com.minutesock.core.data.DailyWordSessionDao
 import com.minutesock.core.data.WordInfoDao
+import com.minutesock.core.domain.DailyWordSession
 import com.minutesock.core.domain.WordInfo
+import com.minutesock.core.mappers.toDailyWordSession
+import com.minutesock.core.mappers.toDailyWordSessionEntity
 import com.minutesock.core.mappers.toWordInfo
 import com.minutesock.core.mappers.toWordInfoEntity
 import com.minutesock.core.remote.DictionaryApi
 import com.minutesock.core.remote.RetrofitInstance
+import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.utils.Option
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import java.util.Date
 
 class DailyWordRepository(
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val dictionaryApi: DictionaryApi = RetrofitInstance.dictionaryApi,
-    private val wordInfoDao: WordInfoDao
+    private val wordInfoDao: WordInfoDao,
+    private val dailyWordSessionDao: DailyWordSessionDao
 ) {
 
     suspend fun getOrFetchWordDefinition(word: String): Flow<Option<List<WordInfo>>> = flow {
@@ -45,7 +53,7 @@ class DailyWordRepository(
             }
             emit(
                 Option.Error(
-                    uiText = com.minutesock.core.uiutils.UiText.DynamicString(message),
+                    uiText = UiText.DynamicString(message),
                     message = e.message ?: message
                 )
             )
@@ -54,4 +62,17 @@ class DailyWordRepository(
         val newWordInfos = wordInfoDao.getWordInfos(word).map { it.toWordInfo() }
         emit(Option.Success(newWordInfos))
     }
+
+    suspend fun saveDailySession(dailyWordSession: DailyWordSession) {
+        withContext(defaultDispatcher) {
+            dailyWordSessionDao.insert(dailyWordSession.toDailyWordSessionEntity())
+        }
+    }
+
+    suspend fun loadDailySession(todayDate: Date): DailyWordSession? {
+        return withContext(defaultDispatcher) {
+            dailyWordSessionDao.getTodaySession(todayDate.toString())?.toDailyWordSession()
+        }
+    }
+
 }

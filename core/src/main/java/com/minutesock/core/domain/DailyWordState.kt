@@ -1,5 +1,6 @@
-package com.minutesock.daily.presentation
+package com.minutesock.core.domain
 
+import com.minutesock.core.presentation.FalseKeyboardKeys
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -14,7 +15,7 @@ data class DailyWordState(
     val falseKeyboardKeys: FalseKeyboardKeys = FalseKeyboardKeys(),
     val shareText: String? = null,
     val definitionMessage: String? = null,
-    val wordInfos: ImmutableList<com.minutesock.core.domain.WordInfo> = persistentListOf()
+    val wordInfos: ImmutableList<WordInfo> = persistentListOf()
 )
 
 data class DailyWordStateMessage(
@@ -34,6 +35,10 @@ enum class DailyWordGameState {
             Failure -> true
             else -> false
         }
+
+    companion object {
+        fun fromInt(ordinal: Int) = DailyWordGameState.values().first { it.ordinal == ordinal }
+    }
 }
 
 enum class DailyWordScreenState {

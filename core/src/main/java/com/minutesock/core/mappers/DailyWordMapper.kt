@@ -2,30 +2,39 @@ package com.minutesock.core.mappers
 
 import com.minutesock.core.data.models.DailyWordSessionEntity
 import com.minutesock.core.data.models.WordInfoEntity
-import com.minutesock.core.domain.UserDailyWordSession
+import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.DailyWordSession
 import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.remote.dto.WordDefinitionItem
 import com.minutesock.core.utils.toDate
+import kotlinx.collections.immutable.toImmutableList
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 const val DATE_FORMAT_PATTERN = "dd/MM/yyyy"
 
-fun DailyWordSessionEntity.toUserDailyWordSession(): UserDailyWordSession {
-    return UserDailyWordSession(
+fun DailyWordSessionEntity.toDailyWordSession(): DailyWordSession {
+    return DailyWordSession(
+        id = this.id,
         date = this.date.toDate(DATE_FORMAT_PATTERN),
         correctWord = this.correctWord,
-        maxAttempts = this.maxAttempts
+        maxAttempts = this.maxAttempts,
+        guesses = this.guesses.toImmutableList(),
+        isDaily = isDaily,
+        gameState = DailyWordGameState.fromInt(this.gameState)
     )
 }
 
-fun UserDailyWordSession.toDailyWordSession(): DailyWordSessionEntity {
+fun DailyWordSession.toDailyWordSessionEntity(): DailyWordSessionEntity {
     return DailyWordSessionEntity(
-        id = 0,
+        id = this.id,
         date = SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault()).format(this.date),
         correctWord = this.correctWord,
-        maxAttempts = this.maxAttempts
+        maxAttempts = this.maxAttempts,
+        guesses = this.guesses,
+        isDaily = isDaily,
+        gameState = this.gameState.ordinal
     )
 }
 

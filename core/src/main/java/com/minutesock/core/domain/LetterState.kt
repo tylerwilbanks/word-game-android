@@ -1,6 +1,6 @@
-package com.minutesock.daily.domain
+package com.minutesock.core.domain
 
-enum class UserLetterState {
+enum class LetterState {
     Unknown,
     Absent,
     Present,

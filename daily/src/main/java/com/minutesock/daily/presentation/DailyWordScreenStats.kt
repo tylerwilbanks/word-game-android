@@ -47,6 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.DailyWordScreenState
+import com.minutesock.core.domain.DailyWordState
+import com.minutesock.core.domain.DailyWordStateMessage
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.uiutils.shareExternal

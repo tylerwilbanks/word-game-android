@@ -9,14 +9,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.minutesock.core.domain.GuessLetter
+import com.minutesock.core.domain.GuessWord
+import com.minutesock.core.domain.GuessWordState
+import com.minutesock.core.presentation.GuessWordError
 import com.minutesock.core.uiutils.shake
 import com.minutesock.daily.R
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun WordRow(
-    userGuessWord: com.minutesock.daily.domain.UserGuessWord,
-    userGuessLetters: ImmutableList<com.minutesock.daily.domain.UserGuessLetter>,
+    guessWord: GuessWord,
+    guessLetters: ImmutableList<GuessLetter>,
     message: String?,
     onEvent: (com.minutesock.daily.presentation.DailyWordEventGame) -> Unit
 ) {
@@ -25,17 +29,17 @@ fun WordRow(
     LaunchedEffect(message) {
         if (
             message != defaultMessage &&
-            userGuessWord.state == com.minutesock.daily.domain.GuessWordState.Editing &&
-            userGuessWord.errorState != com.minutesock.daily.presentation.GuessWordError.None
+            guessWord.state == GuessWordState.Editing &&
+            guessWord.errorState != GuessWordError.None
         ) {
             shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.no())
         }
     }
 
-    LaunchedEffect(userGuessWord.state) {
-        when (userGuessWord.state) {
-            com.minutesock.daily.domain.GuessWordState.Correct -> shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.yes())
-            com.minutesock.daily.domain.GuessWordState.Failure -> shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.no())
+    LaunchedEffect(guessWord.state) {
+        when (guessWord.state) {
+            GuessWordState.Correct -> shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.yes())
+            GuessWordState.Failure -> shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.no())
             else -> {}
         }
     }
@@ -49,13 +53,13 @@ fun WordRow(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        userGuessLetters.forEachIndexed { index: Int, userGuessLetter: com.minutesock.daily.domain.UserGuessLetter ->
+        guessLetters.forEachIndexed { index: Int, guessLetter: GuessLetter ->
             LetterBox(
-                letter = userGuessLetter,
-                guessWordState = userGuessWord.state,
+                letter = guessLetter,
+                guessWordState = guessWord.state,
                 onEvent = onEvent,
                 flipAnimDelay = index * 200,
-                isFinalLetterInRow = index + 1 == userGuessLetters.size
+                isFinalLetterInRow = index + 1 == guessLetters.size
             )
         }
     }

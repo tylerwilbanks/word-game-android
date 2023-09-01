@@ -1,21 +1,21 @@
-package com.minutesock.daily.domain
+package com.minutesock.core.domain
 
 import androidx.compose.ui.graphics.Color
 import com.minutesock.core.theme.guessLetterGreen
 import com.minutesock.core.theme.guessLetterYellow
 
-data class UserGuessLetter(
+data class GuessLetter(
     private val _character: Char = AvailableChar,
-    val state: UserLetterState = UserLetterState.Absent
+    val state: LetterState = LetterState.Absent
 ) {
     val displayCharacter get() = character.toString().uppercase()
     val character get() = _character.lowercaseChar()
 
     fun displayColor(absentBackgroundColor: Color) = when (state) {
-        UserLetterState.Unknown -> absentBackgroundColor
-        UserLetterState.Absent -> absentBackgroundColor
-        UserLetterState.Present -> guessLetterYellow
-        UserLetterState.Correct -> guessLetterGreen
+        LetterState.Unknown -> absentBackgroundColor
+        LetterState.Absent -> absentBackgroundColor
+        LetterState.Present -> guessLetterYellow
+        LetterState.Correct -> guessLetterGreen
     }
 
     val availableForInput get() = character == AvailableChar
@@ -27,8 +27,8 @@ data class UserGuessLetter(
     }
 }
 
-fun UserGuessLetter.erase(): UserGuessLetter {
+fun GuessLetter.erase(): GuessLetter {
     return this.copy(
-        _character = UserGuessLetter.AvailableChar
+        _character = GuessLetter.AvailableChar
     )
 }

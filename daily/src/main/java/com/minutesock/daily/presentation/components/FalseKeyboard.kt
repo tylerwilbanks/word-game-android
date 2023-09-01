@@ -8,12 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.minutesock.core.domain.GuessKeyboardLetter
+import com.minutesock.core.presentation.FalseKeyboardKeys
+import com.minutesock.daily.presentation.DailyWordEventGame
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun FalseKeyboard(
-    falseKeyboardKeys: com.minutesock.daily.presentation.FalseKeyboardKeys,
-    onEvent: (com.minutesock.daily.presentation.DailyWordEventGame) -> Unit,
+    falseKeyboardKeys: FalseKeyboardKeys,
+    onEvent: (DailyWordEventGame) -> Unit,
     modifier: Modifier = Modifier,
     isWordRowAnimating: Boolean = false,
 ) {
@@ -34,15 +37,15 @@ fun FalseKeyboard(
 
 @Composable
 fun FalseKeyboardRow(
-    row: ImmutableList<com.minutesock.daily.domain.UserGuessKey>,
-    onEvent: (com.minutesock.daily.presentation.DailyWordEventGame) -> Unit,
+    row: ImmutableList<GuessKeyboardLetter>,
+    onEvent: (DailyWordEventGame) -> Unit,
     isWordRowAnimating: Boolean = false
 ) {
     Row {
         row.forEach {
             FalseKeyboardLetter(
                 onEvent = onEvent,
-                userGuessKey = it,
+                guessKeyboardLetter = it,
                 isWordRowAnimating = isWordRowAnimating
             )
         }

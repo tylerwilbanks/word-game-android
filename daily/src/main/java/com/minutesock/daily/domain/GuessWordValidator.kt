@@ -1,6 +1,7 @@
 package com.minutesock.daily.domain
 
 import android.content.Context
+import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.utils.FileUtil
 import com.minutesock.core.utils.convertToStringList
@@ -71,18 +72,18 @@ object GuessWordValidator {
     }
 
     fun validateGuess(
-        userGuessWord: UserGuessWord,
+        guessWord: GuessWord,
         correctWord: String,
         isFinalGuess: Boolean,
     ): DailyWordValidationResult {
-        if (userGuessWord.isIncomplete) {
+        if (guessWord.isIncomplete) {
             return DailyWordValidationResult(
                 DailyWordValidationResultType.Error,
                 UiText.StringResource(R.string.word_is_incomplete)
             )
         }
 
-        if (userGuessWord.word == correctWord) {
+        if (guessWord.word == correctWord) {
             val randomMessageResult = getRandomMessage(correctMessages, correctMessagesIndex)
             correctMessagesIndex = randomMessageResult.second
             return DailyWordValidationResult(
@@ -91,13 +92,13 @@ object GuessWordValidator {
             )
         }
 
-        if (!validWords.contains(userGuessWord.word)) {
+        if (!validWords.contains(guessWord.word)) {
             return DailyWordValidationResult(
                 DailyWordValidationResultType.Error,
                 UiText.StringResource(R.string.word_does_not_exist)
             )
         }
-        if (userGuessWord.word != correctWord && validWords.contains(userGuessWord.displayWord.lowercase())) {
+        if (guessWord.word != correctWord && validWords.contains(guessWord.displayWord.lowercase())) {
             val randomMessageResult = getRandomMessage(
                 if (isFinalGuess) failureMessages else encouragingMessages,
                 if (isFinalGuess) failureMessageIndex else encouragingMessageIndex

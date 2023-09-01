@@ -26,6 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.R
+import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.DailyWordState
+import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.uiutils.shake
 import com.minutesock.daily.presentation.components.FalseKeyboard
 import com.minutesock.daily.presentation.components.WordRow
@@ -34,7 +37,7 @@ import com.minutesock.daily.presentation.components.WordRow
 @Composable
 fun DailyWordScreenGame(
     state: DailyWordState,
-    userGuessWords: SnapshotStateList<com.minutesock.daily.domain.UserGuessWord>,
+    guessWords: SnapshotStateList<GuessWord>,
     onEvent: (DailyWordEventGame) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -126,10 +129,10 @@ fun DailyWordScreenGame(
                 )
             }
 
-            userGuessWords.forEach {
+            guessWords.forEach {
                 WordRow(
-                    userGuessWord = it,
-                    userGuessLetters = it.letters,
+                    guessWord = it,
+                    guessLetters = it.letters,
                     message = state.dailyWordStateMessage?.uiText?.asString(),
                     onEvent = onEvent
                 )

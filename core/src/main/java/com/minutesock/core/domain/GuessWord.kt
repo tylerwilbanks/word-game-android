@@ -1,11 +1,11 @@
-package com.minutesock.daily.domain
+package com.minutesock.core.domain
 
-import com.minutesock.daily.presentation.GuessWordError
+import com.minutesock.core.presentation.GuessWordError
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-data class UserGuessWord(
-    val letters: ImmutableList<UserGuessLetter>,
+data class GuessWord(
+    val letters: ImmutableList<GuessLetter>,
     val state: GuessWordState = GuessWordState.Unused,
     val errorState: GuessWordError = GuessWordError.None
 ) {
@@ -24,7 +24,7 @@ enum class GuessWordState {
 }
 
 
-fun UserGuessWord.addGuessLetter(userGuessLetter: UserGuessLetter): com.minutesock.core.utils.Option<UserGuessWord?> {
+fun GuessWord.addGuessLetter(guessLetter: GuessLetter): com.minutesock.core.utils.Option<GuessWord?> {
     val newGuessLetterList = this.letters.toMutableList()
     newGuessLetterList.indexOfFirst { it.availableForInput }.let { index ->
         if (index == -1) {
@@ -35,8 +35,8 @@ fun UserGuessWord.addGuessLetter(userGuessLetter: UserGuessLetter): com.minuteso
             )
         }
         newGuessLetterList[index] = newGuessLetterList[index].copy(
-            _character = userGuessLetter.character,
-            state = userGuessLetter.state
+            _character = guessLetter.character,
+            state = guessLetter.state
         )
     }
     return com.minutesock.core.utils.Option.Success(
@@ -47,7 +47,7 @@ fun UserGuessWord.addGuessLetter(userGuessLetter: UserGuessLetter): com.minuteso
     )
 }
 
-fun UserGuessWord.eraseLetter(): com.minutesock.core.utils.Option<UserGuessWord?> {
+fun GuessWord.eraseLetter(): com.minutesock.core.utils.Option<GuessWord?> {
     val newGuessLetterList = this.letters.toMutableList()
     newGuessLetterList.indexOfLast { it.answered }.let { index ->
         if (index == -1) {
@@ -69,26 +69,26 @@ fun UserGuessWord.eraseLetter(): com.minutesock.core.utils.Option<UserGuessWord?
     )
 }
 
-fun UserGuessWord.updateState(newState: GuessWordState): UserGuessWord {
+fun GuessWord.updateState(newState: GuessWordState): GuessWord {
     return this.copy(
         letters = this.letters,
         state = newState
     )
 }
 
-fun UserGuessWord.lockInGuess(correctWord: String): UserGuessWord {
-    val newUserGuessLetters = mutableListOf<UserGuessLetter>()
+fun GuessWord.lockInGuess(correctWord: String): GuessWord {
+    val newGuessLetters = mutableListOf<GuessLetter>()
     val correctChars: List<Char> = correctWord.map { it.lowercaseChar() }
 
-    this.letters.forEachIndexed { index: Int, userGuessLetter: UserGuessLetter ->
+    this.letters.forEachIndexed { index: Int, guessLetter: GuessLetter ->
         val newState = when {
-            userGuessLetter.character == correctChars[index] -> UserLetterState.Correct
-            correctChars.contains(userGuessLetter.character) -> UserLetterState.Present
-            else -> UserLetterState.Absent
+            guessLetter.character == correctChars[index] -> LetterState.Correct
+            correctChars.contains(guessLetter.character) -> LetterState.Present
+            else -> LetterState.Absent
         }
-        newUserGuessLetters.add(
-            UserGuessLetter(
-                _character = userGuessLetter.character,
+        newGuessLetters.add(
+            GuessLetter(
+                _character = guessLetter.character,
                 state = newState
             )
         )
@@ -97,21 +97,21 @@ fun UserGuessWord.lockInGuess(correctWord: String): UserGuessWord {
     //clean up any extra present letters
     this.letters.forEachIndexed { index, userGuessLetter ->
         val correctDuplicateLetterCount = correctChars.count { it == userGuessLetter.character }
-        val currentPresentAndCorrectLetterCount = newUserGuessLetters.count {
-            it.character == this.letters[index].character && it.state == UserLetterState.Correct ||
-                    it.character == this.letters[index].character && it.state == UserLetterState.Present
+        val currentPresentAndCorrectLetterCount = newGuessLetters.count {
+            it.character == this.letters[index].character && it.state == LetterState.Correct ||
+                    it.character == this.letters[index].character && it.state == LetterState.Present
         }
 
-        if (newUserGuessLetters[index].state == UserLetterState.Present && currentPresentAndCorrectLetterCount > correctDuplicateLetterCount) {
-            newUserGuessLetters[index] = newUserGuessLetters[index].copy(
-                state = UserLetterState.Absent
+        if (newGuessLetters[index].state == LetterState.Present && currentPresentAndCorrectLetterCount > correctDuplicateLetterCount) {
+            newGuessLetters[index] = newGuessLetters[index].copy(
+                state = LetterState.Absent
             )
         }
 
     }
 
     return this.copy(
-        letters = newUserGuessLetters.toImmutableList(),
+        letters = newGuessLetters.toImmutableList(),
         state = GuessWordState.Complete
     )
 }
