@@ -19,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,15 +28,18 @@ import com.minutesock.core.R
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.GuessWord
+import com.minutesock.core.uiutils.ShakeConfig
+import com.minutesock.core.uiutils.rememberShakeController
 import com.minutesock.core.uiutils.shake
 import com.minutesock.daily.presentation.components.FalseKeyboard
 import com.minutesock.daily.presentation.components.WordRow
+import kotlinx.collections.immutable.ImmutableList
 
 
 @Composable
 fun DailyWordScreenGame(
     state: DailyWordState,
-    guessWords: SnapshotStateList<GuessWord>,
+    guessWords: ImmutableList<GuessWord>,
     onEvent: (DailyWordEventGame) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -51,7 +53,7 @@ fun DailyWordScreenGame(
     ) {
 
 
-        val shakeController = com.minutesock.core.uiutils.rememberShakeController()
+        val shakeController = rememberShakeController()
         val messageColor by animateColorAsState(
             targetValue = if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
             animationSpec = tween(
@@ -64,7 +66,7 @@ fun DailyWordScreenGame(
             state.dailyWordStateMessage?.let {
                 if (it.isError) {
                     shakeController.shake(
-                        com.minutesock.core.uiutils.ShakeConfig.no(defaultMessageDelay) {
+                        ShakeConfig.no(defaultMessageDelay) {
                             if (state.gameState == DailyWordGameState.Failure) {
                                 onEvent(DailyWordEventGame.OnCompleteAnimationFinished)
                             } else {
@@ -77,7 +79,7 @@ fun DailyWordScreenGame(
             }
             if (state.gameState == DailyWordGameState.Success) {
                 shakeController.shake(
-                    com.minutesock.core.uiutils.ShakeConfig.yes(defaultMessageDelay) {
+                    ShakeConfig.yes(defaultMessageDelay) {
                         onEvent(
                             DailyWordEventGame.OnCompleteAnimationFinished
                         )
@@ -87,7 +89,7 @@ fun DailyWordScreenGame(
             }
 
             shakeController.shake(
-                com.minutesock.core.uiutils.ShakeConfig(
+                ShakeConfig(
                     iterations = 1,
                     intensity = 1_000f,
                     rotateX = 5f,

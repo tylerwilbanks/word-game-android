@@ -1,9 +1,11 @@
 package com.minutesock.core.mappers
 
+import com.minutesock.core.data.GuessWordStorage
 import com.minutesock.core.data.models.DailyWordSessionEntity
 import com.minutesock.core.data.models.WordInfoEntity
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordSession
+import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.remote.dto.WordDefinitionItem
 import com.minutesock.core.utils.toDate
@@ -20,7 +22,7 @@ fun DailyWordSessionEntity.toDailyWordSession(): DailyWordSession {
         date = this.date.toDate(DATE_FORMAT_PATTERN),
         correctWord = this.correctWord,
         maxAttempts = this.maxAttempts,
-        guesses = this.guesses.toImmutableList(),
+        guesses = this.guesses.map { it.toGuessWord() }.toImmutableList(),
         isDaily = isDaily,
         gameState = DailyWordGameState.fromInt(this.gameState)
     )
@@ -32,7 +34,7 @@ fun DailyWordSession.toDailyWordSessionEntity(): DailyWordSessionEntity {
         date = SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault()).format(this.date),
         correctWord = this.correctWord,
         maxAttempts = this.maxAttempts,
-        guesses = this.guesses,
+        guesses = this.guesses.map { it.toGuessWordStorage() }.toList(),
         isDaily = isDaily,
         gameState = this.gameState.ordinal
     )
@@ -53,5 +55,21 @@ fun WordDefinitionItem.toWordInfoEntity(): WordInfoEntity {
         word = word,
         origin = origin,
         phonetic = phonetic
+    )
+}
+
+fun GuessWordStorage.toGuessWord(): GuessWord {
+    return GuessWord(
+        letters = this.letters.toImmutableList(),
+        state = this.state,
+        errorState = this.errorState
+    )
+}
+
+fun GuessWord.toGuessWordStorage(): GuessWordStorage {
+    return GuessWordStorage(
+        letters = this.letters.toList(),
+        state = this.state,
+        errorState = this.errorState
     )
 }

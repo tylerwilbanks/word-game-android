@@ -1,6 +1,5 @@
 package com.minutesock.daily.presentation
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.core.App
@@ -50,37 +49,22 @@ class DailyWordViewModel(
     private val _state = MutableStateFlow(DailyWordState())
     val state = _state.asStateFlow()
 
-    val guessWords = mutableStateListOf<GuessWord>()
+    private var dailyWordSession = DailyWordSession(
+        date = Date(),
+        correctWord = state.value.correctWord
+            ?: "",
+        maxAttempts = state.value.maxGuessAttempts,
+        guesses = state.value.guessWords.toImmutableList(),
+        isDaily = true,
+        gameState = state.value.gameState
+    )
 
     private var dailyWordStateMessage = DailyWordStateMessage()
-
-    init {
-        updateDailyWordStateWithSavedDailySession()
-    }
-
-    private fun updateDailyWordStateWithSavedDailySession() {
-        viewModelScope.launch {
-            dailyWordRepository.loadDailySession(Date())?.let { dailyWordSession ->
-                _state.update {
-                    it.copy(
-                        gameState = dailyWordSession.gameState,
-                        screenState = DailyWordScreenState.Game,
-                        wordLength = dailyWordSession.correctWord.length,
-                        maxGuessAttempts = dailyWordSession.maxAttempts,
-                        correctWord = dailyWordSession.correctWord,
-                        dailyWordStateMessage = DailyWordStateMessage(
-                            uiText = UiText.StringResource(R.string.what_in_da_word)
-                        )
-                    )
-                }
-            }
-        }
-    }
 
     private val falseKeyboardKeys: FalseKeyboardKeys
         get() {
             val keys = hashMapOf<Char, LetterState>()
-            guessWords.forEach { guessWord ->
+            state.value.guessWords.forEach { guessWord ->
                 guessWord.letters.forEach { guessLetter ->
                     val maxOrdinal = keys.filter {
                         it.key == guessLetter.character && it.value.ordinal > guessLetter.state.ordinal
@@ -100,6 +84,41 @@ class DailyWordViewModel(
             val row3 = getUpdatedKeyboardRow(keysWithNewState, state.value.falseKeyboardKeys.row3)
             return FalseKeyboardKeys(row1, row2, row3)
         }
+
+    init {
+        initDailyWordSessionAndState()
+    }
+
+    private fun initDailyWordSessionAndState() {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateDailyWordSession()
+            _state.update {
+                it.copy(
+                    gameState = dailyWordSession.gameState,
+                    screenState = DailyWordScreenState.Game,
+                    wordLength = dailyWordSession.correctWord.length,
+                    maxGuessAttempts = dailyWordSession.maxAttempts,
+                    correctWord = dailyWordSession.correctWord,
+                    dailyWordStateMessage = DailyWordStateMessage(
+                        uiText = UiText.StringResource(R.string.what_in_da_word)
+                    ),
+                    guessWords = dailyWordSession.guesses
+                )
+            }
+        }
+    }
+
+    private suspend fun updateDailyWordSession() {
+        dailyWordSession = dailyWordRepository.loadDailySession(Date()) ?: DailyWordSession(
+            date = Date(),
+            correctWord = state.value.correctWord
+                ?: "",
+            maxAttempts = state.value.maxGuessAttempts,
+            guesses = state.value.guessWords.toImmutableList(),
+            isDaily = true,
+            gameState = state.value.gameState
+        )
+    }
 
     private fun getUpdatedKeyboardRow(
         keysWithNewState: ImmutableList<GuessKeyboardLetter>,
@@ -123,7 +142,6 @@ class DailyWordViewModel(
                 )
             }.toMutableList()
             w[0] = w[0].updateState(GuessWordState.Editing)
-            guessWords.addAll(w)
             val correctWord = GuessWordValidator.obtainRandomWord()
             _state.update { dailyWordState ->
                 dailyWordState.copy(
@@ -134,7 +152,8 @@ class DailyWordViewModel(
                     correctWord = correctWord,
                     dailyWordStateMessage = DailyWordStateMessage(
                         uiText = UiText.StringResource(R.string.what_in_da_word)
-                    )
+                    ),
+                    guessWords = w.toImmutableList()
                 )
             }
             getOrFetchWordDefinition(correctWord)
@@ -166,6 +185,13 @@ class DailyWordViewModel(
                 }
             }.launchIn(this)
         }
+    }
+
+    private fun getUpdatedWordRows(index: Int, guessWord: GuessWord): ImmutableList<GuessWord> {
+        val mut = mutableListOf<GuessWord>()
+        mut.addAll(state.value.guessWords)
+        mut[index] = guessWord
+        return mut.toImmutableList()
     }
 
     fun onGameEvent(event: DailyWordEventGame) {
@@ -202,7 +228,7 @@ class DailyWordViewModel(
                 }
                 viewModelScope.launch {
                     getCurrentGuessWordIndexAndHandleError()?.let { index ->
-                        val currentGuessWord = guessWords[index]
+                        val currentGuessWord = state.value.guessWords[index]
                         val result = GuessWordValidator.validateGuess(
                             guessWord = currentGuessWord,
                             correctWord = state.value.correctWord!!,
@@ -215,8 +241,6 @@ class DailyWordViewModel(
                             }
 
                             DailyWordValidationResultType.Incorrect -> {
-                                guessWords[index] =
-                                    guessWords[index].lockInGuess(state.value.correctWord!!)
                                 dailyWordStateMessage = DailyWordStateMessage(
                                     uiText = result.uiText,
                                     isError = isFinalGuess(index)
@@ -224,16 +248,27 @@ class DailyWordViewModel(
                                 _state.update {
                                     it.copy(
                                         wordRowAnimating = true,
-                                        falseKeyboardKeys = falseKeyboardKeys
+                                        falseKeyboardKeys = falseKeyboardKeys,
+                                        guessWords = getUpdatedWordRows(
+                                            index,
+                                            state.value.guessWords[index].lockInGuess(state.value.correctWord!!)
+                                        )
                                     )
                                 }
-
+                                saveDailyWordSession()
                                 if (isFinalGuess(index)) {
                                     onGameFinishedFailure()
                                 } else {
-                                    guessWords[index + 1] = guessWords[index + 1].copy(
-                                        state = GuessWordState.Editing
-                                    )
+                                    _state.update {
+                                        it.copy(
+                                            guessWords = getUpdatedWordRows(
+                                                index + 1, state.value.guessWords[index + 1].copy(
+                                                    state = GuessWordState.Editing
+                                                )
+                                            )
+                                        )
+                                    }
+                                    saveDailyWordSession()
                                 }
 
                             }
@@ -264,23 +299,35 @@ class DailyWordViewModel(
             DailyWordEventGame.OnAnsweredWordRowAnimationFinished -> {
                 viewModelScope.launch {
                     if (state.value.gameState.isGameOver) {
-                        guessWords.indexOfLast { it.state == GuessWordState.Complete }
+                        state.value.guessWords.indexOfLast { it.state == GuessWordState.Complete }
                             .let { index ->
-                                guessWords[index] =
-                                    guessWords[index].updateState(
-                                        if (state.value.gameState == DailyWordGameState.Success) {
-                                            GuessWordState.Correct
-
-                                        } else {
-                                            GuessWordState.Failure
-                                        }
+                                _state.update {
+                                    it.copy(
+                                        guessWords = getUpdatedWordRows(
+                                            index, state.value.guessWords[index].updateState(
+                                                if (state.value.gameState == DailyWordGameState.Success) {
+                                                    GuessWordState.Correct
+                                                } else {
+                                                    GuessWordState.Failure
+                                                }
+                                            )
+                                        )
                                     )
+                                }
                             }
                     }
                     _state.update {
                         it.copy(
                             wordRowAnimating = false,
-                            dailyWordStateMessage = dailyWordStateMessage
+                            dailyWordStateMessage = if (dailyWordStateMessage.uiText == null) {
+                                // todo-tyler obtain an appropriate message based on game state
+                                DailyWordStateMessage(
+                                    uiText = UiText.StringResource(R.string.what_in_da_word)
+                                )
+                            } else {
+                                dailyWordStateMessage
+                            }
+
                         )
                     }
                 }
@@ -331,7 +378,7 @@ class DailyWordViewModel(
     }
 
     private suspend fun onGameFinishedFailure() {
-        saveUserDailyWordSession()
+        saveDailyWordSession()
         _state.update {
             it.copy(
                 wordRowAnimating = true,
@@ -345,9 +392,7 @@ class DailyWordViewModel(
         userGuessWordIndex: Int,
         dailyWordValidationResult: DailyWordValidationResult
     ) {
-        guessWords[userGuessWordIndex] =
-            guessWords[userGuessWordIndex].lockInGuess(state.value.correctWord!!)
-        saveUserDailyWordSession()
+        saveDailyWordSession()
         dailyWordStateMessage = DailyWordStateMessage(
             uiText = dailyWordValidationResult.uiText,
             isError = false
@@ -357,33 +402,32 @@ class DailyWordViewModel(
                 wordRowAnimating = true,
                 falseKeyboardKeys = falseKeyboardKeys,
                 gameState = DailyWordGameState.Success,
-            )
-        }
-    }
-
-    private suspend fun saveUserDailyWordSession() {
-        withContext(Dispatchers.IO) {
-            dailyWordRepository.saveDailySession(
-                dailyWordSession = DailyWordSession(
-                    date = Date(),
-                    correctWord = state.value.correctWord
-                        ?: "THE CORRECT WORD IS NULL FOR SOME REASON",
-                    maxAttempts = state.value.maxGuessAttempts,
-                    guesses = guessWords.toImmutableList(),
-                    isDaily = true,
-                    gameState = state.value.gameState
+                guessWords = getUpdatedWordRows(
+                    userGuessWordIndex,
+                    state.value.guessWords[userGuessWordIndex].lockInGuess(state.value.correctWord!!)
                 )
             )
         }
     }
 
+    private suspend fun saveDailyWordSession() {
+        withContext(Dispatchers.IO) {
+            dailyWordRepository.saveDailySession(
+                dailyWordSession = dailyWordSession.copy(
+                    guesses = state.value.guessWords
+                )
+            )
+            updateDailyWordSession()
+        }
+    }
+
     private fun buildShareText(): String {
         val finalIndex =
-            guessWords.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
+            state.value.guessWords.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
         val resultLetter =
-            if (finalIndex + 1 >= guessWords.size && state.value.gameState == DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
-        var text = "$resultLetter/${guessWords.size}\n"
-        guessWords.forEachIndexed { index, guessWord ->
+            if (finalIndex + 1 >= state.value.guessWords.size && state.value.gameState == DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
+        var text = "$resultLetter/${state.value.guessWords.size}\n"
+        state.value.guessWords.forEachIndexed { index, guessWord ->
             if (index > finalIndex) {
                 return@forEachIndexed
             }
@@ -395,10 +439,10 @@ class DailyWordViewModel(
         return text
     }
 
-    private fun isFinalGuess(index: Int): Boolean = index + 1 == guessWords.size
+    private fun isFinalGuess(index: Int): Boolean = index + 1 == state.value.guessWords.size
 
     private fun displayError(
-        uiText: com.minutesock.core.uiutils.UiText,
+        uiText: UiText,
         guessWordError: GuessWordError? = null
     ) {
         _state.update {
@@ -411,19 +455,25 @@ class DailyWordViewModel(
         }
 
         getCurrentGuessWordIndexAndHandleError()?.let { index ->
-            guessWords[index] = guessWords[index].copy(
-                errorState = guessWordError ?: GuessWordError.Unknown
-            )
+            _state.update {
+                it.copy(
+                    guessWords = getUpdatedWordRows(
+                        index, state.value.guessWords[index].copy(
+                            errorState = guessWordError ?: GuessWordError.Unknown
+                        )
+                    )
+                )
+            }
         }
     }
 
     private fun getCurrentGuessWordIndex(): Option<Int> {
-        val index = guessWords.indexOfFirst {
+        val index = state.value.guessWords.indexOfFirst {
             it.state == GuessWordState.Editing
         }
         return if (index == -1) {
             Option.Error(
-                uiText = com.minutesock.core.uiutils.UiText.StringResource(R.string.there_is_no_more_guess_attempts_left)
+                uiText = UiText.StringResource(R.string.there_is_no_more_guess_attempts_left)
             )
         } else {
             Option.Success(index)
@@ -456,16 +506,23 @@ class DailyWordViewModel(
     }
 
     private fun updateCurrentGuessWord(index: Int, character: Char) {
-        val result = guessWords[index].addGuessLetter(
+        val result = state.value.guessWords[index].addGuessLetter(
             GuessLetter(_character = character)
         )
         when (result) {
             is Option.Error -> {
                 result.uiText?.let { uiTextError ->
                     result.errorCode?.let { errorCode ->
-                        guessWords[index] = guessWords[index].copy(
-                            errorState = GuessWordError.values()[errorCode]
-                        )
+                        _state.update {
+                            it.copy(
+                                guessWords = getUpdatedWordRows(
+                                    index, state.value.guessWords[index].copy(
+                                        errorState = GuessWordError.values()[errorCode]
+                                    )
+                                )
+                            )
+                        }
+
                     }
                     _state.update {
                         it.copy(
@@ -480,8 +537,12 @@ class DailyWordViewModel(
             }
 
             is Option.Success -> {
-                result.data?.let {
-                    guessWords[index] = it
+                result.data?.let { newGuessWord ->
+                    _state.update {
+                        it.copy(
+                            guessWords = getUpdatedWordRows(index, newGuessWord)
+                        )
+                    }
                 }
             }
 
@@ -492,13 +553,19 @@ class DailyWordViewModel(
     }
 
     private fun eraseLetter(index: Int) {
-        when (val result = guessWords[index].eraseLetter()) {
+        when (val result = state.value.guessWords[index].eraseLetter()) {
             is Option.Error -> {
                 result.uiText?.let { uiText ->
                     result.errorCode?.let { errorCode ->
-                        guessWords[index] = guessWords[index].copy(
-                            errorState = GuessWordError.values()[errorCode]
-                        )
+                        _state.update {
+                            it.copy(
+                                guessWords = getUpdatedWordRows(
+                                    index, state.value.guessWords[index].copy(
+                                        errorState = GuessWordError.values()[errorCode]
+                                    )
+                                )
+                            )
+                        }
                     }
                     _state.update {
                         it.copy(
@@ -514,7 +581,11 @@ class DailyWordViewModel(
 
             is Option.Success -> {
                 result.data?.let { guessWord ->
-                    guessWords[index] = guessWord
+                    _state.update {
+                        it.copy(
+                            guessWords = getUpdatedWordRows(index, guessWord)
+                        )
+                    }
                 }
             }
 

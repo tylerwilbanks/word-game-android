@@ -58,7 +58,7 @@ fun DailyWordScreen(
     ) {
         DailyWordScreenGame(
             state = state,
-            guessWords = dailyWordViewModel.guessWords,
+            guessWords = state.guessWords,
             onEvent = dailyWordViewModel::onGameEvent,
             modifier = Modifier.blur(bgBlur)
         )

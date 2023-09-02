@@ -4,6 +4,7 @@ import com.minutesock.core.data.DailyWordSessionDao
 import com.minutesock.core.data.WordInfoDao
 import com.minutesock.core.domain.DailyWordSession
 import com.minutesock.core.domain.WordInfo
+import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
 import com.minutesock.core.mappers.toDailyWordSession
 import com.minutesock.core.mappers.toDailyWordSessionEntity
 import com.minutesock.core.mappers.toWordInfo
@@ -12,6 +13,7 @@ import com.minutesock.core.remote.DictionaryApi
 import com.minutesock.core.remote.RetrofitInstance
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.utils.Option
+import com.minutesock.core.utils.toString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -71,7 +73,8 @@ class DailyWordRepository(
 
     suspend fun loadDailySession(todayDate: Date): DailyWordSession? {
         return withContext(defaultDispatcher) {
-            dailyWordSessionDao.getTodaySession(todayDate.toString())?.toDailyWordSession()
+            dailyWordSessionDao.getTodaySession(todayDate.toString(DATE_FORMAT_PATTERN))
+                ?.toDailyWordSession()
         }
     }
 

@@ -9,7 +9,7 @@ import com.minutesock.core.data.models.DailyWordSessionEntity
 @Dao
 interface DailyWordSessionDao {
 
-    @Query("SELECT * FROM DailyWordSessionEntity WHERE date LIKE :date LIMIT 1")
+    @Query("SELECT * FROM DailyWordSessionEntity WHERE date = :date LIMIT 1")
     fun getTodaySession(date: String): DailyWordSessionEntity?
 
     @Upsert

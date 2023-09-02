@@ -3,7 +3,6 @@ package com.minutesock.core.data
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
-import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.remote.dto.Meaning
 import com.minutesock.core.utils.JsonParser
 
@@ -28,18 +27,18 @@ class Converters(
     }
 
     @TypeConverter
-    fun fromGuessWordJson(json: String): List<GuessWord> {
-        return jsonParser.fromJson<ArrayList<GuessWord>>(
+    fun fromGuessWordStorageJson(json: String): List<GuessWordStorage> {
+        return jsonParser.fromJson<ArrayList<GuessWordStorage>>(
             json,
-            object : TypeToken<ArrayList<GuessWord>>() {}.type
+            object : TypeToken<ArrayList<GuessWordStorage>>() {}.type
         ) ?: emptyList()
     }
 
     @TypeConverter
-    fun toGuessWordJson(guesses: List<GuessWord>): String {
+    fun toGuessWordStorageJson(guesses: List<GuessWordStorage>): String {
         return jsonParser.toJson(
             guesses,
-            object : TypeToken<ArrayList<GuessWord>>() {}.type
+            object : TypeToken<ArrayList<GuessWordStorage>>() {}.type
         ) ?: "[]"
     }
 }
