@@ -1,5 +1,6 @@
 package com.minutesock.daily.presentation
 
+import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -41,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +58,7 @@ import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.uiutils.shareExternal
 import com.minutesock.core.utils.capitalize
+import com.minutesock.daily.BuildConfig
 import com.minutesock.daily.R
 import com.minutesock.daily.presentation.components.WordInfoItem
 
@@ -185,7 +189,7 @@ fun DailyWordScreenStats(
                                 painterResource(id = if (revealSpoiler) com.minutesock.core.R.drawable.baseline_visibility_off_24 else com.minutesock.core.R.drawable.baseline_visibility_24),
                                 contentDescription = "Show/Hide"
                             )
-                            Spacer(modifier = Modifier.size(ButtonDefaults.IconSize))
+                            Spacer(modifier = Modifier.size(5.dp))
                             Text(
                                 text = if (revealSpoiler) {
                                     stringResource(R.string.hide)
@@ -204,11 +208,26 @@ fun DailyWordScreenStats(
                             enabled = shareEnabled,
                         ) {
                             Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
-                            Spacer(modifier = Modifier.size(ButtonDefaults.IconSize))
+                            Spacer(modifier = Modifier.size(5.dp))
                             Text(
                                 text = stringResource(R.string.share)
                             )
                         }
+                        if (BuildConfig.DEBUG) {
+                                Button(
+                                    onClick = {
+                                        onEvent(DailyWordEventStats.OnDeleteAndRestartSessionPressed)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                ) {
+                                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Restart")
+                                    Spacer(modifier = Modifier.size(2.dp))
+                                    Text(
+                                        text = "Reset"
+                                    )
+                                }
+                            }
+
                     }
 
                 },

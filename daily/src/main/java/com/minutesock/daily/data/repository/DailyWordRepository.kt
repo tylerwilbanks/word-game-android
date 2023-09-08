@@ -78,4 +78,12 @@ class DailyWordRepository(
         }
     }
 
+    suspend fun deleteDailySession(todayDate: Date) {
+        withContext(defaultDispatcher) {
+            loadDailySession(todayDate)?.let {
+                dailyWordSessionDao.delete(it.toDailyWordSessionEntity())
+            }
+        }
+    }
+
 }
