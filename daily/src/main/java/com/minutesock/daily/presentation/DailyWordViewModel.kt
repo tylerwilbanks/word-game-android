@@ -61,28 +61,31 @@ class DailyWordViewModel(
 
     private var dailyWordStateMessage = DailyWordStateMessage()
 
-    private fun getUpdatedFalseKeyboardKeys(guessWords: List<GuessWord>, falseKeyboardKeys: FalseKeyboardKeys): FalseKeyboardKeys {
-            val keys = hashMapOf<Char, LetterState>()
-            guessWords.forEach { guessWord ->
-                guessWord.letters.forEach { guessLetter ->
-                    val maxOrdinal = keys.filter {
-                        it.key == guessLetter.character && it.value.ordinal > guessLetter.state.ordinal
-                    }.values.maxOfOrNull { it.ordinal }
-                    val newState = if (maxOrdinal != null) {
-                        LetterState.values()[maxOrdinal]
-                    } else {
-                        guessLetter.state
-                    }
-                    keys[guessLetter.character] = newState
+    private fun getUpdatedFalseKeyboardKeys(
+        guessWords: List<GuessWord>,
+        falseKeyboardKeys: FalseKeyboardKeys
+    ): FalseKeyboardKeys {
+        val keys = hashMapOf<Char, LetterState>()
+        guessWords.forEach { guessWord ->
+            guessWord.letters.forEach { guessLetter ->
+                val maxOrdinal = keys.filter {
+                    it.key == guessLetter.character && it.value.ordinal > guessLetter.state.ordinal
+                }.values.maxOfOrNull { it.ordinal }
+                val newState = if (maxOrdinal != null) {
+                    LetterState.values()[maxOrdinal]
+                } else {
+                    guessLetter.state
                 }
+                keys[guessLetter.character] = newState
             }
-            val keysWithNewState =
-                keys.map { GuessKeyboardLetter(it.key.toString(), it.value) }.toImmutableList()
-            val row1 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row1)
-            val row2 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row2)
-            val row3 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row3)
-            return FalseKeyboardKeys(row1, row2, row3)
         }
+        val keysWithNewState =
+            keys.map { GuessKeyboardLetter(it.key.toString(), it.value) }.toImmutableList()
+        val row1 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row1)
+        val row2 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row2)
+        val row3 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row3)
+        return FalseKeyboardKeys(row1, row2, row3)
+    }
 
     private suspend fun initDailyWordSessionAndState() {
         withContext(Dispatchers.IO) {
@@ -105,7 +108,10 @@ class DailyWordViewModel(
                         uiText = UiText.StringResource(R.string.what_in_da_word)
                     ),
                     guessWords = dailyWordSession.guesses,
-                    falseKeyboardKeys = getUpdatedFalseKeyboardKeys(dailyWordSession.guesses, state.value.falseKeyboardKeys)
+                    falseKeyboardKeys = getUpdatedFalseKeyboardKeys(
+                        dailyWordSession.guesses,
+                        state.value.falseKeyboardKeys
+                    )
                 )
             }
         }
@@ -215,13 +221,17 @@ class DailyWordViewModel(
         return mut.toImmutableList()
     }
 
-    private suspend fun runItThroughThePipes(index: Int, guessWord: GuessWord): ImmutableList<GuessWord> {
+    private suspend fun runItThroughThePipes(
+        index: Int,
+        guessWord: GuessWord
+    ): ImmutableList<GuessWord> {
         val newDailyWordSession = dailyWordSession.copy(
             gameState = state.value.gameState,
             guesses = getUpdatedWordRows(index, guessWord)
         )
         dailyWordRepository.saveDailySession(newDailyWordSession)
-        return dailyWordRepository.loadDailySession(newDailyWordSession.date)?.guesses ?: persistentListOf()
+        return dailyWordRepository.loadDailySession(newDailyWordSession.date)?.guesses
+            ?: persistentListOf()
     }
 
     fun onGameEvent(event: DailyWordEventGame) {
@@ -277,12 +287,16 @@ class DailyWordViewModel(
                                 )
                                 val updatedGuessWords = runItThroughThePipes(
                                     index,
-                                    state.value.guessWords[index].lockInGuess(state.value.correctWord!!))
+                                    state.value.guessWords[index].lockInGuess(state.value.correctWord!!)
+                                )
                                 _state.update {
                                     it.copy(
                                         wordRowAnimating = true,
                                         guessWords = updatedGuessWords,
-                                        falseKeyboardKeys = getUpdatedFalseKeyboardKeys(updatedGuessWords, state.value.falseKeyboardKeys),
+                                        falseKeyboardKeys = getUpdatedFalseKeyboardKeys(
+                                            updatedGuessWords,
+                                            state.value.falseKeyboardKeys
+                                        ),
                                     )
                                 }
                                 if (isFinalGuess(index)) {
@@ -423,7 +437,10 @@ class DailyWordViewModel(
                 it.copy(
                     wordRowAnimating = true,
                     gameState = DailyWordGameState.Failure,
-                    falseKeyboardKeys = getUpdatedFalseKeyboardKeys(state.value.guessWords, state.value.falseKeyboardKeys)
+                    falseKeyboardKeys = getUpdatedFalseKeyboardKeys(
+                        state.value.guessWords,
+                        state.value.falseKeyboardKeys
+                    )
                 )
             }
             updateDailyWordSession()
@@ -447,7 +464,10 @@ class DailyWordViewModel(
                 wordRowAnimating = true,
                 gameState = DailyWordGameState.Success,
                 guessWords = updatedGuessWords,
-                falseKeyboardKeys = getUpdatedFalseKeyboardKeys(updatedGuessWords, state.value.falseKeyboardKeys),
+                falseKeyboardKeys = getUpdatedFalseKeyboardKeys(
+                    updatedGuessWords,
+                    state.value.falseKeyboardKeys
+                ),
             )
         }
         updateDailyWordSession()

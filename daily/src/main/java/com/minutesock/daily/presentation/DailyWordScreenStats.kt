@@ -1,6 +1,5 @@
 package com.minutesock.daily.presentation
 
-import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -214,19 +212,22 @@ fun DailyWordScreenStats(
                             )
                         }
                         if (BuildConfig.DEBUG) {
-                                Button(
-                                    onClick = {
-                                        onEvent(DailyWordEventStats.OnDeleteAndRestartSessionPressed)
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                                ) {
-                                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Restart")
-                                    Spacer(modifier = Modifier.size(2.dp))
-                                    Text(
-                                        text = "Reset"
-                                    )
-                                }
+                            Button(
+                                onClick = {
+                                    onEvent(DailyWordEventStats.OnDeleteAndRestartSessionPressed)
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Restart"
+                                )
+                                Spacer(modifier = Modifier.size(2.dp))
+                                Text(
+                                    text = "Reset"
+                                )
                             }
+                        }
 
                     }
 
