@@ -1,5 +1,6 @@
 package com.minutesock.daily.data.repository
 
+import android.util.Log
 import com.minutesock.core.data.DailyWordSessionDao
 import com.minutesock.core.data.WordInfoDao
 import com.minutesock.core.domain.DailyWordSession
@@ -13,6 +14,7 @@ import com.minutesock.core.remote.DictionaryApi
 import com.minutesock.core.remote.RetrofitInstance
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.utils.Option
+import com.minutesock.core.utils.asDaysToMillis
 import com.minutesock.core.utils.toString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +23,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import java.time.ZonedDateTime
 import java.util.Date
+import kotlin.time.Duration.Companion.days
+import kotlin.time.toDuration
 
 class DailyWordRepository(
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -36,12 +41,20 @@ class DailyWordRepository(
         val data = wordInfoDao.getWordInfos(word).map { it.toWordInfo() }
         emit(Option.Loading(data = data))
 
+        val throttleExpireDate = data.firstOrNull()?.fetchDate?.time?.plus(14L.asDaysToMillis())
+
+        if (throttleExpireDate != null && Date().before(Date(throttleExpireDate))) {
+            Log.e(null, "Fetch definition throttled!")
+            return@flow
+        }
+
         try {
+            Log.e(null, "Fetching definition!")
             val response = dictionaryApi.fetchWordDefinition(word)
             if (response.isSuccessful) {
                 response.body()?.let { remoteWordDefinitions ->
                     wordInfoDao.deleteWordInfos(remoteWordDefinitions.map { it.word })
-                    wordInfoDao.insertWordInfos(remoteWordDefinitions.map { it.toWordInfoEntity() })
+                    wordInfoDao.insertWordInfos(remoteWordDefinitions.map { it.toWordInfoEntity(Date()) })
                 }
             }
         } catch (e: Exception) {

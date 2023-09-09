@@ -9,8 +9,10 @@ import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.remote.dto.WordDefinitionItem
 import com.minutesock.core.utils.toDate
+import com.minutesock.core.utils.toString
 import kotlinx.collections.immutable.toImmutableList
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 
@@ -42,6 +44,7 @@ fun DailyWordSession.toDailyWordSessionEntity(): DailyWordSessionEntity {
 
 fun WordInfoEntity.toWordInfo(): WordInfo {
     return WordInfo(
+        fetchDate = fetchDate?.toDate(DATE_FORMAT_PATTERN),
         meanings = meanings,
         word = word,
         origin = origin,
@@ -49,8 +52,9 @@ fun WordInfoEntity.toWordInfo(): WordInfo {
     )
 }
 
-fun WordDefinitionItem.toWordInfoEntity(): WordInfoEntity {
+fun WordDefinitionItem.toWordInfoEntity(fetchDate: Date? = null): WordInfoEntity {
     return WordInfoEntity(
+        fetchDate = fetchDate?.toString(DATE_FORMAT_PATTERN),
         meanings = meanings,
         word = word,
         origin = origin,

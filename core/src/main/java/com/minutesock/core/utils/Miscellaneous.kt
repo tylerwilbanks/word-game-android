@@ -32,3 +32,5 @@ fun Date.toString(dateFormat: String): String {
         ""
     }
 }
+
+fun Long.asDaysToMillis(): Long = this * 24 * 60 * 60 * 1000
