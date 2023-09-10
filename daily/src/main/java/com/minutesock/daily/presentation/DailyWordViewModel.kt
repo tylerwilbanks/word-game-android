@@ -351,7 +351,7 @@ class DailyWordViewModel(
                             .let { index ->
                                 _state.update {
                                     it.copy(
-                                        guessWords = getUpdatedWordRows(
+                                        guessWords = runItThroughThePipes(
                                             index, state.value.guessWords[index].updateState(
                                                 if (state.value.gameState == DailyWordGameState.Success) {
                                                     GuessWordState.Correct
