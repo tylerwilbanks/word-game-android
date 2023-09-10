@@ -101,7 +101,7 @@ fun DailyWordScreenStats(
     }
 
     val textResultColor =
-        if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        if (state.dailyWordStateMessage?.isError == true || state.gameState == DailyWordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier

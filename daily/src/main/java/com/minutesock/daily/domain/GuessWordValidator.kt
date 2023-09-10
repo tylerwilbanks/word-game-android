@@ -1,6 +1,7 @@
 package com.minutesock.daily.domain
 
 import android.content.Context
+import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.utils.FileUtil
@@ -69,6 +70,36 @@ object GuessWordValidator {
         return wordSelection[Random(
             Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
         ).nextInt(from = 0, until = wordSelection.size)]
+    }
+
+    fun obtainRandomMessageBasedOnGameState(gameState: DailyWordGameState): UiText {
+        return when (gameState) {
+            DailyWordGameState.NotStarted -> UiText.StringResource(R.string.what_in_da_word)
+            DailyWordGameState.InProgress -> {
+                UiText.DynamicString(
+                    getRandomMessage(
+                        encouragingMessages, encouragingMessageIndex
+                    ).first
+                )
+            }
+
+            DailyWordGameState.Success
+            -> {
+                UiText.DynamicString(
+                    getRandomMessage(
+                        correctMessages, correctMessagesIndex
+                    ).first
+                )
+            }
+
+            DailyWordGameState.Failure -> {
+                UiText.DynamicString(
+                    getRandomMessage(
+                        failureMessages, failureMessageIndex
+                    ).first
+                )
+            }
+        }
     }
 
     fun validateGuess(

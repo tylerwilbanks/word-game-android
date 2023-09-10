@@ -23,10 +23,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
-import java.time.ZonedDateTime
 import java.util.Date
-import kotlin.time.Duration.Companion.days
-import kotlin.time.toDuration
 
 class DailyWordRepository(
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,

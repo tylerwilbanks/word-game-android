@@ -3,7 +3,6 @@ package com.minutesock.core.data.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.minutesock.core.remote.dto.Meaning
-import java.util.Date
 
 @Entity
 data class WordInfoEntity(

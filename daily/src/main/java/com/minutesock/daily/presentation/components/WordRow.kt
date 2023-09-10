@@ -13,8 +13,11 @@ import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.presentation.GuessWordError
+import com.minutesock.core.uiutils.ShakeConfig
+import com.minutesock.core.uiutils.rememberShakeController
 import com.minutesock.core.uiutils.shake
 import com.minutesock.daily.R
+import com.minutesock.daily.presentation.DailyWordEventGame
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -22,9 +25,10 @@ fun WordRow(
     guessWord: GuessWord,
     guessLetters: ImmutableList<GuessLetter>,
     message: String?,
-    onEvent: (com.minutesock.daily.presentation.DailyWordEventGame) -> Unit
+    wordRowAnimating: Boolean,
+    onEvent: (DailyWordEventGame) -> Unit
 ) {
-    val shakeController = com.minutesock.core.uiutils.rememberShakeController()
+    val shakeController = rememberShakeController()
     val defaultMessage = stringResource(id = R.string.what_in_da_word)
     LaunchedEffect(message) {
         if (
@@ -32,14 +36,17 @@ fun WordRow(
             guessWord.state == GuessWordState.Editing &&
             guessWord.errorState != GuessWordError.None
         ) {
-            shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.no())
+            shakeController.shake(ShakeConfig.no())
         }
     }
 
     LaunchedEffect(guessWord.state) {
+        if (wordRowAnimating) {
+            return@LaunchedEffect
+        }
         when (guessWord.state) {
-            GuessWordState.Correct -> shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.yes())
-            GuessWordState.Failure -> shakeController.shake(com.minutesock.core.uiutils.ShakeConfig.no())
+            GuessWordState.Correct -> shakeController.shake(ShakeConfig.yes())
+            GuessWordState.Failure -> shakeController.shake(ShakeConfig.no())
             else -> {}
         }
     }

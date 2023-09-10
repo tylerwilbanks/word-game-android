@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.R
@@ -55,7 +56,11 @@ fun DailyWordScreenGame(
 
         val shakeController = rememberShakeController()
         val messageColor by animateColorAsState(
-            targetValue = if (state.dailyWordStateMessage?.isError == true) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            targetValue = if (
+                state.dailyWordStateMessage?.uiText?.asString() != stringResource(id = R.string.what_in_da_word) &&
+                (state.dailyWordStateMessage?.isError == true ||
+                        state.gameState == DailyWordGameState.Failure)
+            ) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
             animationSpec = tween(
                 if (state.dailyWordStateMessage?.isError == true) 200 else 1000,
                 easing = LinearEasing
@@ -64,7 +69,7 @@ fun DailyWordScreenGame(
 
         LaunchedEffect(state.dailyWordStateMessage) {
             state.dailyWordStateMessage?.let {
-                if (it.isError) {
+                if (it.isError || state.gameState == DailyWordGameState.Failure) {
                     shakeController.shake(
                         ShakeConfig.no(defaultMessageDelay) {
                             if (state.gameState == DailyWordGameState.Failure) {
@@ -96,6 +101,7 @@ fun DailyWordScreenGame(
                     translateY = 15f,
                 )
             )
+
         }
         Column(
             verticalArrangement = Arrangement.Top,
@@ -136,6 +142,7 @@ fun DailyWordScreenGame(
                     guessWord = it,
                     guessLetters = it.letters,
                     message = state.dailyWordStateMessage?.uiText?.asString(),
+                    wordRowAnimating = state.wordRowAnimating,
                     onEvent = onEvent
                 )
             }

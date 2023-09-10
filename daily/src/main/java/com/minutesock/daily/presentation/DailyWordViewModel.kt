@@ -60,6 +60,7 @@ class DailyWordViewModel(
     )
 
     private var dailyWordStateMessage = DailyWordStateMessage()
+    private var gameHasAlreadyBeenPlayed = false
 
     private fun getUpdatedFalseKeyboardKeys(
         guessWords: List<GuessWord>,
@@ -147,6 +148,8 @@ class DailyWordViewModel(
             initDailyWordSessionAndState()
             if (state.value.gameState == DailyWordGameState.NotStarted) {
                 setupNewGame(wordLength, maxGuessAttempts)
+            } else if (state.value.gameState.isGameOver) {
+                gameHasAlreadyBeenPlayed = true
             }
             state.value.correctWord?.let {
                 getOrFetchWordDefinition(it)
@@ -340,7 +343,10 @@ class DailyWordViewModel(
 
             DailyWordEventGame.OnAnsweredWordRowAnimationFinished -> {
                 viewModelScope.launch {
-                    if (state.value.gameState.isGameOver) {
+                    if (
+                        state.value.gameState.isGameOver &&
+                        !state.value.guessWords.any { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
+                    ) {
                         state.value.guessWords.indexOfLast { it.state == GuessWordState.Complete }
                             .let { index ->
                                 _state.update {
@@ -358,13 +364,15 @@ class DailyWordViewModel(
                                 }
                             }
                     }
+
                     _state.update {
                         it.copy(
                             wordRowAnimating = false,
                             dailyWordStateMessage = if (dailyWordStateMessage.uiText == null) {
-                                // todo-tyler obtain an appropriate message based on game state
                                 DailyWordStateMessage(
-                                    uiText = UiText.StringResource(R.string.what_in_da_word)
+                                    uiText = GuessWordValidator.obtainRandomMessageBasedOnGameState(
+                                        state.value.gameState
+                                    )
                                 )
                             } else {
                                 dailyWordStateMessage
@@ -376,6 +384,9 @@ class DailyWordViewModel(
             }
 
             DailyWordEventGame.OnCompleteAnimationFinished -> {
+                if (gameHasAlreadyBeenPlayed) {
+                    return
+                }
                 _state.update {
                     it.copy(
                         screenState = DailyWordScreenState.Stats
@@ -419,6 +430,7 @@ class DailyWordViewModel(
 
             DailyWordEventStats.OnDeleteAndRestartSessionPressed -> {
                 viewModelScope.launch {
+                    gameHasAlreadyBeenPlayed = false
                     val wordLength = dailyWordSession.wordLength
                     val maxAttempts = dailyWordSession.maxAttempts
                     dailyWordRepository.deleteDailySession(Date())
