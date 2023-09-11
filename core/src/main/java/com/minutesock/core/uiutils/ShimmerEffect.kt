@@ -17,31 +17,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 
-fun Modifier.shimmerEffect(color1: Color? = null, color2: Color? = null): Modifier = composed {
+fun Modifier.shimmerEffect(
+    color1: Color = Color(0xFFB8B5B5),
+    color2: Color = Color(0xFF8F8B8B),
+    duration: Int = 1000
+): Modifier = composed {
     var size by remember {
         mutableStateOf(IntSize.Zero)
-    }
-    val col1 by remember(color1) {
-        mutableStateOf(color1 ?: Color(0xFFB8B5B5))
-    }
-    val col2 by remember(color2) {
-        mutableStateOf(color2 ?: Color(0xFF8F8B8B))
     }
     val transition = rememberInfiniteTransition()
     val startOffsetX by transition.animateFloat(
         initialValue = -2 * size.width.toFloat(),
         targetValue = 2 * size.width.toFloat(),
         animationSpec = infiniteRepeatable(
-            animation = tween(1000)
+            animation = tween(duration)
         )
     )
 
     background(
         brush = Brush.linearGradient(
             colors = listOf(
-                col1,
-                col2,
-                col1,
+                color1,
+                color2,
+                color1,
             ),
             start = Offset(startOffsetX, 0f),
             end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())

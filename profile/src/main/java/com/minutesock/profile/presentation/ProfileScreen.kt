@@ -118,7 +118,11 @@ fun GuessDistributionStat(
                 .fillMaxWidth(currentPercent.value.coerceAtLeast(0.15f))
                 .fillMaxHeight()
                 .background(rowColor)
-                .shimmerEffect(color1 = rowColor, color2 = blendColors(rowColor, Color.White, 0.1f))
+                .shimmerEffect(
+                    color1 = rowColor,
+                    color2 = blendColors(rowColor, Color.White, 0.1f),
+                    duration = 2500
+                )
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
