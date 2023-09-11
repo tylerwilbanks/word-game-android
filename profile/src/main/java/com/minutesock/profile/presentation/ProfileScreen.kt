@@ -46,6 +46,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.theme.WordGameTheme
+import com.minutesock.core.uiutils.blendColors
+import com.minutesock.core.uiutils.shimmerEffect
 import com.minutesock.profile.R
 import com.minutesock.profile.domain.GuessDistribution
 import com.minutesock.profile.domain.GuessDistributionState
@@ -116,6 +118,7 @@ fun GuessDistributionStat(
                 .fillMaxWidth(currentPercent.value.coerceAtLeast(0.15f))
                 .fillMaxHeight()
                 .background(rowColor)
+                .shimmerEffect(color1 = rowColor, color2 = blendColors(rowColor, Color.White, 0.1f))
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
