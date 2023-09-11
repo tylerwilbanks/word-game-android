@@ -121,7 +121,7 @@ fun GuessDistributionStat(
                 .shimmerEffect(
                     color1 = rowColor,
                     color2 = blendColors(rowColor, Color.White, 0.1f),
-                    duration = 2500
+                    duration = 2000
                 )
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
