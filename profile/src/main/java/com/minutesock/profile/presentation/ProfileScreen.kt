@@ -1,5 +1,7 @@
 package com.minutesock.profile.presentation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -35,7 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,6 +83,8 @@ internal fun ProfileScreen(
     }
 
     val openDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.minutesock.com/")) }
 
     Column(
         modifier = modifier,
@@ -87,7 +93,9 @@ internal fun ProfileScreen(
         GuessDistributionPanel(guessDistributionState = state)
 
         Button(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp),
             onClick = {
                 // todo implement game history
                 openDialog.value = true
@@ -117,6 +125,17 @@ internal fun ProfileScreen(
                     }
                 }
             )
+        }
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp),
+            onClick = {
+                context.startActivity(intent)
+            }
+        ) {
+            Text(text = "More Games")
         }
     }
 }
