@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import java.util.Date
 
 class DailyWordViewModel(
@@ -56,7 +57,8 @@ class DailyWordViewModel(
         maxAttempts = state.value.maxGuessAttempts,
         guesses = state.value.guessWords.toImmutableList(),
         isDaily = true,
-        gameState = state.value.gameState
+        gameState = state.value.gameState,
+        startTime = Clock.System.now()
     )
 
     private var dailyWordStateMessage = DailyWordStateMessage()
@@ -96,7 +98,8 @@ class DailyWordViewModel(
                 maxAttempts = state.value.maxGuessAttempts,
                 guesses = state.value.guessWords.toImmutableList(),
                 isDaily = true,
-                gameState = state.value.gameState
+                gameState = state.value.gameState,
+                startTime = Clock.System.now()
             )
             _state.update {
                 it.copy(

@@ -3,11 +3,14 @@ package com.minutesock.core.domain
 import com.minutesock.core.presentation.GuessWordError
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 data class GuessWord(
     val letters: ImmutableList<GuessLetter>,
     val state: GuessWordState = GuessWordState.Unused,
-    val errorState: GuessWordError = GuessWordError.None
+    val errorState: GuessWordError = GuessWordError.None,
+    val completeTime: Instant? = null,
 ) {
     val word: String get() = letters.joinToString("") { it.displayCharacter }.lowercase()
     val displayWord: String get() = letters.joinToString("") { it.displayCharacter }.uppercase()
@@ -112,6 +115,7 @@ fun GuessWord.lockInGuess(correctWord: String): GuessWord {
 
     return this.copy(
         letters = newGuessLetters.toImmutableList(),
-        state = GuessWordState.Complete
+        state = GuessWordState.Complete,
+        completeTime = Clock.System.now()
     )
 }

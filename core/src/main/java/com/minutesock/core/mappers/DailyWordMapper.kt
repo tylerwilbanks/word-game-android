@@ -11,12 +11,13 @@ import com.minutesock.core.remote.dto.WordDefinitionItem
 import com.minutesock.core.utils.toDate
 import com.minutesock.core.utils.toString
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
-const val DATE_FORMAT_PATTERN = "dd/mm/yyyy"
+const val DATE_FORMAT_PATTERN = "dd/MM/yyyy"
 
 fun DailyWordSessionEntity.toDailyWordSession(): DailyWordSession {
     return DailyWordSession(
@@ -26,7 +27,8 @@ fun DailyWordSessionEntity.toDailyWordSession(): DailyWordSession {
         maxAttempts = this.maxAttempts,
         guesses = this.guesses.map { it.toGuessWord() }.toImmutableList(),
         isDaily = isDaily,
-        gameState = DailyWordGameState.fromInt(this.gameState)
+        gameState = DailyWordGameState.fromInt(this.gameState),
+        startTime = if (startTime != null) Instant.parse(startTime) else null
     )
 }
 
@@ -38,7 +40,9 @@ fun DailyWordSession.toDailyWordSessionEntity(): DailyWordSessionEntity {
         maxAttempts = this.maxAttempts,
         guesses = this.guesses.map { it.toGuessWordStorage() }.toList(),
         isDaily = isDaily,
-        gameState = this.gameState.ordinal
+        gameState = this.gameState.ordinal,
+        startTime = startTime?.toString()
+
     )
 }
 

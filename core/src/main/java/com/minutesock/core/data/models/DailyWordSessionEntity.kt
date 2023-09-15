@@ -13,5 +13,6 @@ data class DailyWordSessionEntity(
     val maxAttempts: Int,
     val guesses: List<GuessWordStorage>,
     val isDaily: Boolean,
-    val gameState: Int
+    val gameState: Int,
+    val startTime: String? = null,
 )
