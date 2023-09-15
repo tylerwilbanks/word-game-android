@@ -7,7 +7,7 @@
     <string name="there_are_no_words_to_edit">There are no words to edit.</string>
     <string name="this_word_is_full">This word is full.</string>
     <string name="this_word_is_empty">This word is empty.</string>
-    <string name="there_is_no_more_guess_attempts_left">There is no more guess attempts left.</string>
+    <string name="there_is_no_more_guess_attempts_left">there are no more guess attempts left.</string>
     <string name="hide">Hide</string>
     <string name="reveal">Reveal</string>
     <string name="share">Share</string>
