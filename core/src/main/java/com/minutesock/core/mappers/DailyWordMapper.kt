@@ -16,7 +16,7 @@ import java.util.Date
 import java.util.Locale
 
 
-const val DATE_FORMAT_PATTERN = "dd/MM/yyyy"
+const val DATE_FORMAT_PATTERN = "dd/MM/yyyy hh:mm:ss"
 
 fun DailyWordSessionEntity.toDailyWordSession(): DailyWordSession {
     return DailyWordSession(

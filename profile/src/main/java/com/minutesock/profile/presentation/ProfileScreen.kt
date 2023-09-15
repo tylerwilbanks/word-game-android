@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -76,7 +78,47 @@ internal fun ProfileScreen(
         }
     }
 
-    GuessDistributionPanel(guessDistributionState = state)
+    val openDialog = remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        GuessDistributionPanel(guessDistributionState = state)
+
+        Button(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp),
+            onClick = {
+                // todo implement game history
+                openDialog.value = true
+            }
+        ) {
+            Text("History")
+        }
+
+        if (openDialog.value) {
+            AlertDialog(
+                onDismissRequest = {
+                    openDialog.value = false
+                },
+                title = {
+                    Text(text = "Coming soon!")
+                },
+                text = {
+                    Text("Game history has not been implemented yet.")
+                },
+                confirmButton = { },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            openDialog.value = false
+                        }) {
+                        Text("Ok")
+                    }
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -123,7 +165,11 @@ internal fun GuessDistributionStat(
                 .background(rowColor)
                 .shimmerEffect(
                     color1 = rowColor,
-                    color2 = if (shouldShimmer) blendColors(rowColor, Color.White, 0.1f) else rowColor,
+                    color2 = if (shouldShimmer) blendColors(
+                        rowColor,
+                        Color.White,
+                        0.1f
+                    ) else rowColor,
                     duration = 1500
                 )
                 .padding(horizontal = 8.dp),

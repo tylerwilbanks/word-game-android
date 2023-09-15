@@ -25,6 +25,7 @@ ext {
     ext.test_impl_junit_version = '4.13.2'
     ext.android_test_impl_junit_version = '1.1.5'
     ext.android_test_impl_espresso_core_version = '3.5.1'
+    ext.datastore_preferences_version = '1.0.0'
 }
 
 subprojects {
