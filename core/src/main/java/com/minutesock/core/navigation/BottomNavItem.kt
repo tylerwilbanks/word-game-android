@@ -1,6 +1,6 @@
-package com.minutesock.wordgame.domain
+package com.minutesock.core.navigation
 
-import com.minutesock.wordgame.R
+import com.minutesock.core.R
 
 sealed class BottomNavItem(
     val titleId: Int,

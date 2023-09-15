@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':core')
     implementation project(path: ':profile')
     implementation project(path: ':daily')
 

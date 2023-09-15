@@ -4,11 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -19,12 +16,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.daily.domain.GuessWordValidator
 import com.minutesock.daily.presentation.DailyWordScreen
-import com.minutesock.profile.presentation.ProfileScreen
-import com.minutesock.wordgame.domain.BottomNavItem
+import com.minutesock.profile.navigation.profileScreen
+import com.minutesock.core.navigation.BottomNavItem
+import com.minutesock.daily.navigation.dailWordScreen
 import com.minutesock.wordgame.presentation.BottomNavigation
-import com.minutesock.wordgame.theme.WordGameTheme
 import kotlinx.collections.immutable.persistentListOf
 
 
@@ -52,11 +50,8 @@ class MainActivity : ComponentActivity() {
                     },
                     content = { paddingValues ->
                         NavHost(navController, startDestination = BottomNavItem.Daily.route) {
-                            composable(BottomNavItem.Daily.route) {
-                                DailyWordScreen(
-                                    modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
-                                )
-                            }
+                            val bottomModifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                            dailWordScreen(modifier = bottomModifier)
                             composable(BottomNavItem.Dictionary.route) {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
@@ -69,9 +64,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
-                            composable(BottomNavItem.Profile.route) {
-                                ProfileScreen()
-                            }
+                            profileScreen(modifier = bottomModifier)
                         }
                     }
                 )

@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.blendColors
@@ -53,8 +56,10 @@ import com.minutesock.profile.domain.GuessDistribution
 import com.minutesock.profile.domain.GuessDistributionState
 import kotlinx.collections.immutable.toImmutableList
 
+
 @Composable
-fun ProfileScreen(
+internal fun ProfileScreen(
+    modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     profileViewModel: ProfileViewModel = viewModel()
 ) {
@@ -78,7 +83,7 @@ fun ProfileScreen(
 }
 
 @Composable
-fun GuessDistributionStat(
+internal fun GuessDistributionStat(
     correctAttemptCount: Int,
     rowColor: Color,
     textColor: Color,
@@ -141,7 +146,7 @@ fun GuessDistributionStat(
 }
 
 @Composable
-fun GuessDistributionPanel(
+internal fun GuessDistributionPanel(
     guessDistributionState: GuessDistributionState
 ) {
     Card(
@@ -204,7 +209,7 @@ fun GuessDistributionPanel(
 
 @Preview
 @Composable
-fun ProfileScreenPreview() {
+internal fun ProfileScreenPreview() {
     val dummyState = createDummyGuessDistributionState()
 
     WordGameTheme {

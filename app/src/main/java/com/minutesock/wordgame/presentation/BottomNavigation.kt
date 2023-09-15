@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.minutesock.wordgame.domain.BottomNavItem
+import com.minutesock.core.navigation.BottomNavItem
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
