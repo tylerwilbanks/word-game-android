@@ -50,6 +50,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.blendColors
@@ -57,6 +58,7 @@ import com.minutesock.core.uiutils.shimmerEffect
 import com.minutesock.profile.R
 import com.minutesock.profile.domain.GuessDistribution
 import com.minutesock.profile.domain.GuessDistributionState
+import com.minutesock.profile.navigation.HISTORY_ROUTE
 import kotlinx.collections.immutable.toImmutableList
 
 
@@ -85,6 +87,8 @@ internal fun ProfileScreen(
     val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.minutesock.com/")) }
+    val navController = rememberNavController()
+
 
     Column(
         modifier = modifier,
@@ -99,6 +103,8 @@ internal fun ProfileScreen(
             onClick = {
                 // todo implement game history
                 openDialog.value = true
+                // navController.navigate(HISTORY_ROUTE)
+
             }
         ) {
             Text("History")
