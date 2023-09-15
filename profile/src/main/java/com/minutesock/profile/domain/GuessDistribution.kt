@@ -9,6 +9,7 @@ data class GuessDistribution(
     val correctAttemptCount: Int = 0,
     val gameState: DailyWordGameState,
     val maxGuessAttempts: Int,
+    val isMostRecentGame: Boolean = false
 )
 
 data class GuessDistributionState(

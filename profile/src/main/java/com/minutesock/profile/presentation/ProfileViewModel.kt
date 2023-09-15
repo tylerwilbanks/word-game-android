@@ -28,12 +28,7 @@ class ProfileViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.getGuessDistribution().onEach { incomingGuessDistributionState ->
                 _guessDistributionState.update {
-                    it.copy(
-                        loading = incomingGuessDistributionState.loading,
-                        guessDistributions = incomingGuessDistributionState.guessDistributions,
-                        failedGameSessionsCount = incomingGuessDistributionState.failedGameSessionsCount,
-                        maxCorrectAttemptCount = incomingGuessDistributionState.maxCorrectAttemptCount
-                    )
+                    incomingGuessDistributionState
                 }
             }.launchIn(this)
         }

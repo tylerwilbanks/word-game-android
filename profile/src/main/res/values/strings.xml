@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="guess_distribution">Guess Distribution</string>
+    <string name="daily_guess_distribution">Daily Guess Distribution</string>
 </resources>

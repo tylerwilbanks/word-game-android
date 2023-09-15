@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,8 +44,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.blendColors
@@ -90,6 +87,7 @@ internal fun GuessDistributionStat(
     attemptText: String,
     maxCorrectAttemptCount: Int,
     animDelay: Int,
+    shouldShimmer: Boolean = false,
 ) {
 
     var animationPlayed by remember {
@@ -125,8 +123,8 @@ internal fun GuessDistributionStat(
                 .background(rowColor)
                 .shimmerEffect(
                     color1 = rowColor,
-                    color2 = blendColors(rowColor, Color.White, 0.1f),
-                    duration = 2000
+                    color2 = if (shouldShimmer) blendColors(rowColor, Color.White, 0.1f) else rowColor,
+                    duration = 1500
                 )
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -169,7 +167,7 @@ internal fun GuessDistributionPanel(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.guess_distribution),
+                text = stringResource(R.string.daily_guess_distribution),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp
             )
@@ -191,7 +189,8 @@ internal fun GuessDistributionPanel(
                     ),
                     maxCorrectAttemptCount = guessDistributionState.maxCorrectAttemptCount,
                     animDelay = (guessDistributionState.guessDistributions.size * 100) - (index * 100),
-                    attemptText = guessDistribution.correctAttempt.toString()
+                    attemptText = guessDistribution.correctAttempt.toString(),
+                    shouldShimmer = guessDistribution.isMostRecentGame
                 )
             }
 
