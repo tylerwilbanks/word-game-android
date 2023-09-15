@@ -187,9 +187,9 @@ internal fun GuessDistributionStat(
                     color2 = if (shouldShimmer) blendColors(
                         rowColor,
                         Color.White,
-                        0.1f
+                        0.5f
                     ) else rowColor,
-                    duration = 1500
+                    duration = 1000
                 )
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -243,13 +243,13 @@ internal fun GuessDistributionPanel(
                 GuessDistributionStat(
                     correctAttemptCount = guessDistribution.correctAttemptCount,
                     rowColor = lerp(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.tertiaryContainer,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary,
                         (index + 1) / guessDistributionState.guessDistributions.size.toFloat()
                     ),
                     textColor = lerp(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.tertiary,
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.secondaryContainer,
                         (index + 1) / guessDistributionState.guessDistributions.size.toFloat()
                     ),
                     maxCorrectAttemptCount = guessDistributionState.maxCorrectAttemptCount,
