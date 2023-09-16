@@ -1,6 +1,7 @@
 package com.minutesock.core.domain
 
 import com.minutesock.core.presentation.GuessWordError
+import com.minutesock.core.utils.Option
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Clock
@@ -27,12 +28,12 @@ enum class GuessWordState {
 }
 
 
-fun GuessWord.addGuessLetter(guessLetter: GuessLetter): com.minutesock.core.utils.Option<GuessWord?> {
+fun GuessWord.addGuessLetter(guessLetter: GuessLetter): Option<GuessWord?> {
     val newGuessLetterList = this.letters.toMutableList()
     newGuessLetterList.indexOfFirst { it.availableForInput }.let { index ->
         if (index == -1) {
             val customError = GuessWordError.NoLettersAvailableForInput
-            return com.minutesock.core.utils.Option.Error(
+            return Option.Error(
                 uiText = customError.message,
                 errorCode = customError.ordinal
             )
@@ -42,7 +43,7 @@ fun GuessWord.addGuessLetter(guessLetter: GuessLetter): com.minutesock.core.util
             state = guessLetter.state
         )
     }
-    return com.minutesock.core.utils.Option.Success(
+    return Option.Success(
         data = this.copy(
             letters = newGuessLetterList.toImmutableList(),
             state = this.state
@@ -50,12 +51,12 @@ fun GuessWord.addGuessLetter(guessLetter: GuessLetter): com.minutesock.core.util
     )
 }
 
-fun GuessWord.eraseLetter(): com.minutesock.core.utils.Option<GuessWord?> {
+fun GuessWord.eraseLetter(): Option<GuessWord?> {
     val newGuessLetterList = this.letters.toMutableList()
     newGuessLetterList.indexOfLast { it.answered }.let { index ->
         if (index == -1) {
             val customError = GuessWordError.NoLettersToRemove
-            return com.minutesock.core.utils.Option.Error(
+            return Option.Error(
                 uiText = customError.message,
                 errorCode = customError.ordinal
             )
@@ -64,7 +65,7 @@ fun GuessWord.eraseLetter(): com.minutesock.core.utils.Option<GuessWord?> {
         newGuessLetterList[index] = newGuessLetterList[index].erase()
 
     }
-    return com.minutesock.core.utils.Option.Success(
+    return Option.Success(
         data = this.copy(
             letters = newGuessLetterList.toImmutableList(),
             state = this.state
@@ -79,7 +80,7 @@ fun GuessWord.updateState(newState: GuessWordState): GuessWord {
     )
 }
 
-fun GuessWord.lockInGuess(correctWord: String): GuessWord {
+fun GuessWord.lockInGuess(correctWord: String, isFinalGuess: Boolean): GuessWord {
     val newGuessLetters = mutableListOf<GuessLetter>()
     val correctChars: List<Char> = correctWord.map { it.lowercaseChar() }
 
@@ -115,7 +116,16 @@ fun GuessWord.lockInGuess(correctWord: String): GuessWord {
 
     return this.copy(
         letters = newGuessLetters.toImmutableList(),
-        state = GuessWordState.Complete,
+        state = updateStateAfterGuess(correctWord, isFinalGuess),
         completeTime = Clock.System.now()
     )
+}
+
+private fun GuessWord.updateStateAfterGuess(correctWord: String, isFinalGuess: Boolean): GuessWordState {
+    return when {
+        this.word.lowercase() == correctWord.lowercase() -> GuessWordState.Correct
+        !isFinalGuess && this.word.lowercase() != correctWord.lowercase() -> GuessWordState.Complete
+        isFinalGuess && this.word.lowercase() != correctWord.lowercase() -> GuessWordState.Failure
+        else -> GuessWordState.Complete
+    }
 }

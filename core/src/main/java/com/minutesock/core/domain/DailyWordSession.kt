@@ -2,6 +2,8 @@ package com.minutesock.core.domain
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.util.Date
 
 data class DailyWordSession(
@@ -17,6 +19,8 @@ data class DailyWordSession(
     val wordLength = correctWord.length
 
     val completeTime = guesses.lastOrNull { it.completeTime != null }?.completeTime
+
+    val formattedTime = completeTime?.toLocalDateTime(TimeZone.currentSystemDefault())?.date
 
     val successTime = guesses.lastOrNull { it.completeTime != null && it.state == GuessWordState.Correct }?.completeTime
 }
