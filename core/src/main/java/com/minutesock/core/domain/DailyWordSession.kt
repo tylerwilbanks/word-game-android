@@ -16,7 +16,7 @@ data class DailyWordSession(
 ) {
     val wordLength = correctWord.length
 
-    val completeTime = guesses.lastOrNull { it.completeTime != null }
+    val completeTime = guesses.lastOrNull { it.completeTime != null }?.completeTime
 
-    val successTime = guesses.lastOrNull { it.completeTime != null && it.state == GuessWordState.Correct }
+    val successTime = guesses.lastOrNull { it.completeTime != null && it.state == GuessWordState.Correct }?.completeTime
 }

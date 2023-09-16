@@ -2,6 +2,7 @@ import com.minutesock.core.data.DailyWordSessionDao
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
+import com.minutesock.core.mappers.toDailyWordSession
 import com.minutesock.core.utils.toDate
 import com.minutesock.core.utils.toString
 import com.minutesock.profile.domain.GuessDistribution
@@ -63,5 +64,13 @@ class ProfileRepository(
             maxCorrectAttemptCount = maxCorrectAttemptCount
         )
         emit(guessDistributionState)
+    }
+
+    fun getDailyWordSessions(pageSize: Int, offset: Int) = flow {
+        emit(
+            dailyWordSessionDao.getPaginatedSessionsByRecency(pageSize, offset).map {
+                it.toDailyWordSession()
+            }
+        )
     }
 }

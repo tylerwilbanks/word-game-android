@@ -64,6 +64,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun ProfileScreen(
+    onHistoryButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     profileViewModel: ProfileViewModel = viewModel()
@@ -84,11 +85,8 @@ internal fun ProfileScreen(
         }
     }
 
-    val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.minutesock.com/")) }
-    val navController = rememberNavController()
-
 
     Column(
         modifier = modifier,
@@ -96,47 +94,22 @@ internal fun ProfileScreen(
     ) {
         GuessDistributionPanel(guessDistributionState = state)
 
+        val buttonModifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp)
+
         Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 30.dp),
+            modifier = buttonModifier,
             onClick = {
                 // todo implement game history
-                openDialog.value = true
-                // navController.navigate(HISTORY_ROUTE)
-
+                onHistoryButtonClicked()
             }
         ) {
             Text("History")
         }
 
-        if (openDialog.value) {
-            AlertDialog(
-                onDismissRequest = {
-                    openDialog.value = false
-                },
-                title = {
-                    Text(text = "Coming soon!")
-                },
-                text = {
-                    Text("Game history has not been implemented yet.")
-                },
-                confirmButton = { },
-                dismissButton = {
-                    Button(
-                        onClick = {
-                            openDialog.value = false
-                        }) {
-                        Text("Ok")
-                    }
-                }
-            )
-        }
-
         Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 30.dp),
+            modifier = buttonModifier,
             onClick = {
                 context.startActivity(intent)
             }

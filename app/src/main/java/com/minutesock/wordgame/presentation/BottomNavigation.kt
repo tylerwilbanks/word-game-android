@@ -12,6 +12,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,9 +32,18 @@ fun BottomNavigation(navController: NavController, bottomNavItems: ImmutableList
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val currentRouteIsBottomBarDestination by remember(currentRoute) {
+        mutableStateOf(bottomNavItems.any { it.route == currentRoute })
+    }
+
+    val bottomBarSize by remember(currentRouteIsBottomBarDestination) {
+        mutableStateOf(if (currentRouteIsBottomBarDestination) 64.dp else 0.dp)
+    }
 
     NavigationBar(
-        modifier = Modifier.height(64.dp),
+        modifier = Modifier
+            .height(bottomBarSize)
+            .animateContentSize(),
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
     ) {
         bottomNavItems.forEach { item ->
@@ -40,7 +51,7 @@ fun BottomNavigation(navController: NavController, bottomNavItems: ImmutableList
             NavigationBarItem(
                 selected = selected,
                 onClick = {
-                    if (currentRoute != item.route) {
+                    if (currentRoute != item.route && currentRouteIsBottomBarDestination) {
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true

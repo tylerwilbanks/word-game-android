@@ -1,9 +1,13 @@
 package com.minutesock.profile.presentation
 
 import ProfileRepository
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.core.App
+import com.minutesock.core.domain.DailyWordSession
 import com.minutesock.profile.domain.GuessDistributionState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +24,12 @@ class ProfileViewModel(
     private val _guessDistributionState = MutableStateFlow(GuessDistributionState())
     val guessDistributionState = _guessDistributionState.asStateFlow()
 
+    private var currentHistoryPage = 0
+
+    val historyList = mutableStateListOf<DailyWordSession>()
+    private val historyPageSize = 20
+    private val endOfPageReached = mutableStateOf(false)
+
     init {
         updateGuessDistribution()
     }
@@ -31,6 +41,18 @@ class ProfileViewModel(
                     incomingGuessDistributionState
                 }
             }.launchIn(this)
+        }
+    }
+
+    fun loadPaginatedHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            profileRepository.getDailyWordSessions(historyPageSize, currentHistoryPage).onEach {
+                historyList.addAll(it)
+            }.launchIn(this)
+            if (endOfPageReached.value) {
+                currentHistoryPage += 1
+                endOfPageReached.value = false
+            }
         }
     }
 }
