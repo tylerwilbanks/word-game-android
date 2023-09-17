@@ -41,6 +41,7 @@ import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.domain.lockInGuess
 import com.minutesock.core.domain.updateState
+import com.minutesock.core.presentation.SmallTopAppBar
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.theme.guessLetterGreen
 import com.minutesock.core.theme.guessLetterYellow
@@ -53,7 +54,8 @@ import java.util.Date
 @Composable
 internal fun HistoryRoute(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    profileViewModel: ProfileViewModel = viewModel()
+    profileViewModel: ProfileViewModel = viewModel(),
+    onBackButtonClicked: () -> Unit,
 ) {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -70,27 +72,40 @@ internal fun HistoryRoute(
     }
 
     HistoryScreen(
-        historyList = profileViewModel.historyList
+        historyList = profileViewModel.historyList,
+        onEvent = profileViewModel::onHistoryEvent,
+        onBackButtonClicked = onBackButtonClicked,
     )
 }
 
 @Composable
 internal fun HistoryScreen(
-    historyList: SnapshotStateList<DailyWordSession>
+    historyList: SnapshotStateList<DailyWordSession>,
+    onEvent: (HistoryScreenEvent) -> Unit,
+    onBackButtonClicked: () -> Unit,
 ) {
 
-    HistoryList(historyList = historyList)
+    SmallTopAppBar(title = "History", onBackButtonClicked = onBackButtonClicked) {
+        HistoryList(
+            historyList = historyList,
+            onEvent = onEvent,
+            modifier = Modifier.padding(top = it.calculateTopPadding())
+        )
+    }
 }
 
 @Composable
 internal fun HistoryList(
-    historyList: SnapshotStateList<DailyWordSession>
+    historyList: SnapshotStateList<DailyWordSession>,
+    onEvent: (HistoryScreenEvent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(10.dp)
     ) {
         items(historyList.size) { index ->
+            onEvent(HistoryScreenEvent.UpdateScrollPosition(index))
             HistoryListItem(dailyWordSession = historyList[index])
             if (index < historyList.lastIndex) {
                 Spacer(modifier = Modifier.height(15.dp))
@@ -272,7 +287,9 @@ internal fun HistoryScreenPreview() {
 
     WordGameTheme(useDarkTheme = true) {
         HistoryScreen(
-            historyList = historyList
+            historyList = historyList,
+            onEvent = {},
+            onBackButtonClicked = {}
         )
     }
 }

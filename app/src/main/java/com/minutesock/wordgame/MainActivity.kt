@@ -65,7 +65,11 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
-                            profileScreen(modifier = bottomModifier, onHistoryButtonClicked = navController::navigateToHistory)
+                            profileScreen(
+                                modifier = bottomModifier,
+                                onHistoryButtonClicked = navController::navigateToHistory,
+                                onBackButtonClicked = navController::popBackStack
+                            )
                         }
                     }
                 )

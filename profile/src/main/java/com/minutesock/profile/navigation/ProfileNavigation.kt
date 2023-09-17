@@ -17,13 +17,14 @@ fun NavController.navigateToHistory() {
 
 fun NavGraphBuilder.profileScreen(
     onHistoryButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackButtonClicked: () -> Unit,
 ) {
     composable(route = BASE_ROUTE) {
         ProfileScreen(onHistoryButtonClicked = onHistoryButtonClicked, modifier = modifier)
     }
 
     composable(route = HISTORY_ROUTE) {
-        HistoryRoute()
+        HistoryRoute(onBackButtonClicked = onBackButtonClicked)
     }
 }

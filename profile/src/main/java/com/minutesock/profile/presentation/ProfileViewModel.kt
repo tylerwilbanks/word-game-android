@@ -1,6 +1,7 @@
 package com.minutesock.profile.presentation
 
 import ProfileRepository
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -23,14 +24,29 @@ class ProfileViewModel(
     private val _guessDistributionState = MutableStateFlow(GuessDistributionState())
     val guessDistributionState = _guessDistributionState.asStateFlow()
 
-    private var currentHistoryPage = 0
+    private var currentHistoryPage = mutableStateOf(0)
 
     val historyList = mutableStateListOf<DailyWordSession>()
     private val historyPageSize = 20
     private val endOfPageReached = mutableStateOf(false)
 
+    private var historyScrollPosition = 0
+
     init {
         updateGuessDistribution()
+    }
+
+    fun onHistoryEvent(event: HistoryScreenEvent) {
+        viewModelScope.launch {
+            when (event) {
+                is HistoryScreenEvent.UpdateScrollPosition -> {
+                    historyScrollPosition = event.scrollPosition
+                    if (historyScrollPosition + 1 >= (currentHistoryPage.value * historyPageSize)) {
+                        loadPaginatedHistory()
+                    }
+                }
+            }
+        }
     }
 
     fun updateGuessDistribution() {
@@ -45,13 +61,13 @@ class ProfileViewModel(
 
     fun loadPaginatedHistory() {
         viewModelScope.launch(Dispatchers.IO) {
-            profileRepository.getDailyWordSessions(historyPageSize, currentHistoryPage).onEach {
-                historyList.addAll(it)
-            }.launchIn(this)
-            if (endOfPageReached.value) {
-                currentHistoryPage += 1
-                endOfPageReached.value = false
-            }
+            Log.e("shovel", "loading new paginated history. page#: ${currentHistoryPage.value}")
+            profileRepository.getDailyWordSessions(historyPageSize, currentHistoryPage.value)
+                .onEach {
+                    historyList.addAll(it)
+                }.launchIn(this)
+            currentHistoryPage.value += 1
+            endOfPageReached.value = false
         }
     }
 }

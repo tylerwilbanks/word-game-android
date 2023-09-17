@@ -1,9 +1,11 @@
 package com.minutesock.core.utils
 
+import com.minutesock.core.uiutils.UiText
+
 sealed class Option<T>(
     val data: T? = null,
     val message: String? = null,
-    val uiText: com.minutesock.core.uiutils.UiText? = null,
+    val uiText: UiText? = null,
     val errorCode: Int? = null
 ) {
 
@@ -12,7 +14,7 @@ sealed class Option<T>(
     class Success<T>(data: T?) : Option<T>(data = data)
 
     class Error<T>(
-        uiText: com.minutesock.core.uiutils.UiText? = null,
+        uiText: UiText? = null,
         message: String? = null,
         data: T? = null,
         errorCode: Int? = null
