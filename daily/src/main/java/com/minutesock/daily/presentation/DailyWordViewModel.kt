@@ -423,7 +423,7 @@ class DailyWordViewModel(
             DailyWordEventStats.OnShareButtonPressed -> {
                 _state.update {
                     it.copy(
-                        shareText = buildShareText()
+                        shareText = dailyWordSession.shareText
                     )
                 }
             }
@@ -494,24 +494,6 @@ class DailyWordViewModel(
             )
         }
         updateDailyWordSession()
-    }
-
-    private fun buildShareText(): String {
-        val finalIndex =
-            state.value.guessWords.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
-        val resultLetter =
-            if (finalIndex + 1 >= state.value.guessWords.size && state.value.gameState == DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
-        var text = "$resultLetter/${state.value.guessWords.size}\n"
-        state.value.guessWords.forEachIndexed { index, guessWord ->
-            if (index > finalIndex) {
-                return@forEachIndexed
-            }
-            guessWord.letters.forEach {
-                text += it.state.emoji
-            }
-            text += "\n"
-        }
-        return text
     }
 
     private fun isFinalGuess(index: Int): Boolean = index + 1 == state.value.guessWords.size

@@ -40,7 +40,19 @@ data class DailyWordSession(
                 }
                 text += "\n"
             }
-            return text.removeRange(text.length - 1, text.length)
+            return text.trimEnd('\n')
+        }
+
+    val shareText: String
+        get() {
+            val finalIndex =
+                guesses.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
+            val resultLetter =
+                if (finalIndex + 1 >= guesses.size && gameState == DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
+
+            return "$resultLetter/${guesses.size}\n" +
+                    "$formattedElapsedTime\n" +
+                    emojiRepresentation
         }
 
     val elapsedTime: Duration
