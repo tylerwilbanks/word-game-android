@@ -18,7 +18,7 @@ data class DailyWordSession(
 ) {
     val wordLength = correctWord.length
 
-    val completeTime = guesses.lastOrNull { it.completeTime != null }?.completeTime
+    val completeTime = guesses.findLast { it.completeTime != null }?.completeTime
 
     val formattedTime = completeTime?.toLocalDateTime(TimeZone.currentSystemDefault())?.date
 

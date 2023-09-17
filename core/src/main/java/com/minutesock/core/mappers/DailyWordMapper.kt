@@ -70,7 +70,8 @@ fun GuessWordStorage.toGuessWord(): GuessWord {
     return GuessWord(
         letters = this.letters.toImmutableList(),
         state = this.state,
-        errorState = this.errorState
+        errorState = this.errorState,
+        completeTime = if (this.completeTime != null) Instant.parse(this.completeTime) else null
     )
 }
 
@@ -78,6 +79,7 @@ fun GuessWord.toGuessWordStorage(): GuessWordStorage {
     return GuessWordStorage(
         letters = this.letters.toList(),
         state = this.state,
-        errorState = this.errorState
+        errorState = this.errorState,
+        completeTime = this.completeTime?.toString()
     )
 }
