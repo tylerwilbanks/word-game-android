@@ -3,7 +3,6 @@ import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
 import com.minutesock.core.mappers.toDailyWordSession
-import com.minutesock.core.utils.toDate
 import com.minutesock.core.utils.toString
 import com.minutesock.profile.domain.GuessDistribution
 import com.minutesock.profile.domain.GuessDistributionState
@@ -28,7 +27,9 @@ class ProfileRepository(
                     correctAttempt = if (correctAttemptIndex == -1) 0 else correctAttemptIndex + 1,
                     gameState = DailyWordGameState.fromInt(dailyWordSessionEntity.gameState),
                     maxGuessAttempts = dailyWordSessionEntity.maxAttempts,
-                    isMostRecentGame = dailyWordSessionEntity.isDaily && dailyWordSessionEntity.date == Date().toString(DATE_FORMAT_PATTERN)
+                    isMostRecentGame = dailyWordSessionEntity.isDaily && dailyWordSessionEntity.date == Date().toString(
+                        DATE_FORMAT_PATTERN
+                    )
                 )
             }
 

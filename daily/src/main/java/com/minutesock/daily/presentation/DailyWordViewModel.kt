@@ -295,7 +295,10 @@ class DailyWordViewModel(
                                 )
                                 val updatedGuessWords = runItThroughThePipes(
                                     index,
-                                    state.value.guessWords[index].lockInGuess(state.value.correctWord!!, isFinalGuess(index))
+                                    state.value.guessWords[index].lockInGuess(
+                                        state.value.correctWord!!,
+                                        isFinalGuess(index)
+                                    )
                                 )
                                 _state.update {
                                     it.copy(
@@ -474,7 +477,10 @@ class DailyWordViewModel(
         )
         val updatedGuessWords = getUpdatedWordRows(
             userGuessWordIndex,
-            state.value.guessWords[userGuessWordIndex].lockInGuess(state.value.correctWord!!, isFinalGuess(userGuessWordIndex))
+            state.value.guessWords[userGuessWordIndex].lockInGuess(
+                state.value.correctWord!!,
+                isFinalGuess(userGuessWordIndex)
+            )
         )
         _state.update {
             it.copy(

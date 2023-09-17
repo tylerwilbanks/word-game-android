@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.minutesock.core.data.models.DailyWordSessionEntity
-import java.util.Date
 
 @Dao
 interface DailyWordSessionDao {

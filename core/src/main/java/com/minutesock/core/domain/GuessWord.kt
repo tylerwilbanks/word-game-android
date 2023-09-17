@@ -121,7 +121,10 @@ fun GuessWord.lockInGuess(correctWord: String, isFinalGuess: Boolean): GuessWord
     )
 }
 
-private fun GuessWord.updateStateAfterGuess(correctWord: String, isFinalGuess: Boolean): GuessWordState {
+private fun GuessWord.updateStateAfterGuess(
+    correctWord: String,
+    isFinalGuess: Boolean
+): GuessWordState {
     return when {
         this.word.lowercase() == correctWord.lowercase() -> GuessWordState.Correct
         !isFinalGuess && this.word.lowercase() != correctWord.lowercase() -> GuessWordState.Complete

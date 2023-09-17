@@ -1,7 +1,10 @@
 package com.minutesock.profile.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,11 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,15 +25,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordSession
 import com.minutesock.core.domain.GuessLetter
@@ -46,11 +45,8 @@ import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.theme.guessLetterGreen
 import com.minutesock.core.theme.guessLetterYellow
 import com.minutesock.core.utils.capitalize
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import java.util.Date
 
 
@@ -108,7 +104,7 @@ internal fun HistoryList(
 internal fun HistoryListItem(
     dailyWordSession: DailyWordSession
 ) {
-   val errorColor = MaterialTheme.colorScheme.error
+    val errorColor = MaterialTheme.colorScheme.error
     val a = MaterialTheme.colorScheme.outline
 
     val borderColor by remember(dailyWordSession.gameState) {
@@ -122,8 +118,8 @@ internal fun HistoryListItem(
     }
 
     val backgroundColor = when (dailyWordSession.gameState) {
-        DailyWordGameState.NotStarted -> MaterialTheme.colorScheme.outlineVariant
-        DailyWordGameState.InProgress -> MaterialTheme.colorScheme.outlineVariant
+        DailyWordGameState.NotStarted -> MaterialTheme.colorScheme.scrim
+        DailyWordGameState.InProgress -> MaterialTheme.colorScheme.secondaryContainer
         DailyWordGameState.Success -> MaterialTheme.colorScheme.primaryContainer
         DailyWordGameState.Failure -> MaterialTheme.colorScheme.errorContainer
     }
@@ -138,34 +134,70 @@ internal fun HistoryListItem(
         )
     }
 
-    Card(
+    val brush =
+        Brush.verticalGradient(listOf(MaterialTheme.colorScheme.outlineVariant, backgroundColor))
+    val textColor = MaterialTheme.colorScheme.secondary
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .background(
+                brush = brush,
+                shape = RoundedCornerShape(10.dp)
+            )
             .border(
                 1.dp,
                 color = borderColor,
                 shape = RoundedCornerShape(10.dp)
             ),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(
+            Row(
                 modifier = Modifier
-                    .blur(if (dailyWordSession.gameState.isGameOver) 0.dp else 15.dp),
-                text = dailyWordSession.correctWord.capitalize()
-            )
-            Text(text = completeTime)
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    modifier = Modifier
+                        .blur(if (dailyWordSession.gameState.isGameOver) 0.dp else 15.dp),
+                    text = dailyWordSession.correctWord.capitalize(),
+                    color = textColor,
+                    fontSize = 16.sp
+                )
+                Text(text = completeTime, color = textColor, fontSize = 16.sp)
+
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, top = 10.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = dailyWordSession.emojiRepresentation
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp, end = 10.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = dailyWordSession.formattedElapsedTime,
+                    color = textColor,
+                    fontSize = 16.sp
+                )
+            }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 internal fun HistoryScreenPreview() {
     val historyList = remember {
@@ -238,13 +270,9 @@ internal fun HistoryScreenPreview() {
         )
     )
 
-    WordGameTheme {
+    WordGameTheme(useDarkTheme = true) {
         HistoryScreen(
             historyList = historyList
         )
     }
-}
-
-private fun createDummyWordSessions() {
-
 }
