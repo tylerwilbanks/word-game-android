@@ -31,6 +31,9 @@ fun WordRow(
     val shakeController = rememberShakeController()
     val defaultMessage = stringResource(id = R.string.what_in_da_word)
     LaunchedEffect(message) {
+        if (wordRowAnimating) {
+            return@LaunchedEffect
+        }
         if (
             message != defaultMessage &&
             guessWord.state == GuessWordState.Editing &&
@@ -38,12 +41,7 @@ fun WordRow(
         ) {
             shakeController.shake(ShakeConfig.no())
         }
-    }
 
-    LaunchedEffect(guessWord.state) {
-        if (wordRowAnimating) {
-            return@LaunchedEffect
-        }
         when (guessWord.state) {
             GuessWordState.Correct -> shakeController.shake(ShakeConfig.yes())
             GuessWordState.Failure -> shakeController.shake(ShakeConfig.no())

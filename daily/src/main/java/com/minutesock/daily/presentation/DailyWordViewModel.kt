@@ -116,8 +116,7 @@ class DailyWordViewModel(
                         dailyWordSession.guesses,
                         state.value.falseKeyboardKeys
                     ),
-                    // todo figure out word row animation
-                    // wordRowAnimating = dailyWordSession.gameState.isGameOver
+                    wordRowAnimating = dailyWordSession.gameState.isGameOver
                 )
             }
         }
@@ -199,9 +198,7 @@ class DailyWordViewModel(
         withContext(Dispatchers.IO) {
             dailyWordRepository.getOrFetchWordDefinition(word).onEach { option ->
                 when (option) {
-                    is Option.Error -> { /* todo-tyler handle error */
-                    }
-
+                    is Option.Error -> {}
                     is Option.Loading -> {
                         _state.update {
                             it.copy(

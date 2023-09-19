@@ -68,6 +68,9 @@ fun DailyWordScreenGame(
         )
 
         LaunchedEffect(state.dailyWordStateMessage) {
+            if (state.wordRowAnimating) {
+                return@LaunchedEffect
+            }
             state.dailyWordStateMessage?.let {
                 if (it.isError || state.gameState == DailyWordGameState.Failure) {
                     shakeController.shake(
@@ -101,8 +104,9 @@ fun DailyWordScreenGame(
                     translateY = 15f,
                 )
             )
-
         }
+
+
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
