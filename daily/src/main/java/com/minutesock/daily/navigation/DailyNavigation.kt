@@ -6,8 +6,10 @@ import androidx.navigation.compose.composable
 import com.minutesock.core.navigation.BottomNavItem
 import com.minutesock.daily.presentation.DailyWordScreen
 
-fun NavGraphBuilder.dailWordScreen(modifier: Modifier = Modifier) {
-    composable(route = BottomNavItem.Daily.route) {
+val BASE_ROUTE = BottomNavItem.Daily.route
+
+fun NavGraphBuilder.dailyRoute(modifier: Modifier = Modifier) {
+    composable(route = BASE_ROUTE) {
         DailyWordScreen(modifier = modifier)
     }
 }

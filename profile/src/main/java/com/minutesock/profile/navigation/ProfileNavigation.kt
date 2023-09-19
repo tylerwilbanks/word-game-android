@@ -15,7 +15,7 @@ fun NavController.navigateToHistory() {
     this.navigate(HISTORY_ROUTE)
 }
 
-fun NavGraphBuilder.profileScreen(
+fun NavGraphBuilder.profileRoute(
     onHistoryButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     onBackButtonClicked: () -> Unit,

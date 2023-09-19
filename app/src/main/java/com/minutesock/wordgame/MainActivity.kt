@@ -18,10 +18,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.daily.domain.GuessWordValidator
-import com.minutesock.daily.presentation.DailyWordScreen
-import com.minutesock.profile.navigation.profileScreen
+import com.minutesock.profile.navigation.profileRoute
 import com.minutesock.core.navigation.BottomNavItem
-import com.minutesock.daily.navigation.dailWordScreen
+import com.minutesock.daily.navigation.dailyRoute
 import com.minutesock.infinity.navigation.infinityRoute
 import com.minutesock.profile.navigation.navigateToHistory
 import com.minutesock.wordgame.presentation.BottomNavigation
@@ -54,7 +53,7 @@ class MainActivity : ComponentActivity() {
                     content = { paddingValues ->
                         NavHost(navController, startDestination = BottomNavItem.Daily.route) {
                             val bottomModifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                            dailWordScreen(modifier = bottomModifier)
+                            dailyRoute(modifier = bottomModifier)
                             infinityRoute(modifier = bottomModifier)
                             composable(BottomNavItem.Dictionary.route) {
                                 Column(
@@ -68,7 +67,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
-                            profileScreen(
+                            profileRoute(
                                 modifier = bottomModifier,
                                 onHistoryButtonClicked = navController::navigateToHistory,
                                 onBackButtonClicked = navController::popBackStack
