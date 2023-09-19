@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.minutesock.core.data.GuessWordStorage
 
 @Entity
-data class DailyWordSessionEntity(
+data class WordSessionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val date: String,

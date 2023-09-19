@@ -1,15 +1,16 @@
-package com.minutesock.daily.data.repository
+package com.minutesock.core.data.repository
 
 import android.util.Log
-import com.minutesock.core.data.DailyWordSessionDao
 import com.minutesock.core.data.WordInfoDao
-import com.minutesock.core.domain.DailyWordSession
+import com.minutesock.core.data.WordSessionDao
+import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.WordInfo
+import com.minutesock.core.domain.WordSession
 import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
-import com.minutesock.core.mappers.toDailyWordSession
-import com.minutesock.core.mappers.toDailyWordSessionEntity
 import com.minutesock.core.mappers.toWordInfo
 import com.minutesock.core.mappers.toWordInfoEntity
+import com.minutesock.core.mappers.toWordSession
+import com.minutesock.core.mappers.toWordSessionEntity
 import com.minutesock.core.remote.DictionaryApi
 import com.minutesock.core.remote.RetrofitInstance
 import com.minutesock.core.uiutils.UiText
@@ -25,11 +26,11 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.util.Date
 
-class DailyWordRepository(
+class WordGameRepository(
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val dictionaryApi: DictionaryApi = RetrofitInstance.dictionaryApi,
     private val wordInfoDao: WordInfoDao,
-    private val dailyWordSessionDao: DailyWordSessionDao
+    private val wordSessionDao: WordSessionDao
 ) {
 
     suspend fun getOrFetchWordDefinition(word: String): Flow<Option<List<WordInfo>>> = flow {
@@ -75,24 +76,35 @@ class DailyWordRepository(
         emit(Option.Success(newWordInfos))
     }
 
-    suspend fun saveDailySession(dailyWordSession: DailyWordSession) {
+    suspend fun saveDailySession(wordSession: WordSession) {
         withContext(defaultDispatcher) {
-            dailyWordSessionDao.insert(dailyWordSession.toDailyWordSessionEntity())
+            wordSessionDao.insert(wordSession.toWordSessionEntity())
         }
     }
 
-    suspend fun loadDailySession(todayDate: Date): DailyWordSession? {
+    suspend fun loadDailySession(todayDate: Date): WordSession? {
         return withContext(defaultDispatcher) {
-            dailyWordSessionDao.getTodaySession(todayDate.toString(DATE_FORMAT_PATTERN))
-                ?.toDailyWordSession()
+            wordSessionDao.getTodayDailyWordSession(todayDate.toString(DATE_FORMAT_PATTERN))
+                ?.toWordSession()
         }
     }
 
     suspend fun deleteDailySession(todayDate: Date) {
         withContext(defaultDispatcher) {
             loadDailySession(todayDate)?.let {
-                dailyWordSessionDao.delete(it.toDailyWordSessionEntity())
+                wordSessionDao.delete(it.toWordSessionEntity())
             }
+        }
+    }
+
+    suspend fun loadLatestInfinitySession(): WordSession? {
+        return withContext(defaultDispatcher) {
+            wordSessionDao.getLatestInfinityWordSession(
+                listOf(
+                    DailyWordGameState.NotStarted.ordinal,
+                    DailyWordGameState.InProgress.ordinal
+                )
+            )?.toWordSession()
         }
     }
 

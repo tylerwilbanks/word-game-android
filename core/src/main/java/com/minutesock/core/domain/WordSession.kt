@@ -7,7 +7,7 @@ import kotlinx.datetime.toLocalDateTime
 import java.util.Date
 import kotlin.time.Duration
 
-data class DailyWordSession(
+data class WordSession(
     val id: Int = 0,
     val date: Date,
     val correctWord: String,

@@ -1,4 +1,4 @@
-package com.minutesock.daily.presentation.components
+package com.minutesock.core.presentation.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -24,10 +24,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.core.domain.GuessKeyboardLetter
+import com.minutesock.core.presentation.WordEventGame
 
 @Composable
 fun FalseKeyboardLetter(
-    onEvent: (com.minutesock.daily.presentation.DailyWordEventGame) -> Unit,
+    onEvent: (WordEventGame) -> Unit,
     guessKeyboardLetter: GuessKeyboardLetter,
     isWordRowAnimating: Boolean = false
 ) {
@@ -58,16 +59,16 @@ fun FalseKeyboardLetter(
         onClick = {
             when (guessKeyboardLetter.keyName) {
                 "enter" -> {
-                    onEvent.invoke(com.minutesock.daily.presentation.DailyWordEventGame.OnEnterPress)
+                    onEvent.invoke(WordEventGame.OnEnterPress)
                 }
 
                 "remove" -> {
-                    onEvent.invoke(com.minutesock.daily.presentation.DailyWordEventGame.OnDeletePress)
+                    onEvent.invoke(WordEventGame.OnDeletePress)
                 }
 
                 else -> {
                     onEvent.invoke(
-                        com.minutesock.daily.presentation.DailyWordEventGame.OnCharacterPress(
+                        WordEventGame.OnCharacterPress(
                             guessKeyboardLetter.character
                         )
                     )

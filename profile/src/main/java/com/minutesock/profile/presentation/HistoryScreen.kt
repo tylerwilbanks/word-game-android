@@ -37,11 +37,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.minutesock.core.R
 import com.minutesock.core.domain.DailyWordGameState
-import com.minutesock.core.domain.DailyWordSession
 import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
+import com.minutesock.core.domain.WordSession
 import com.minutesock.core.domain.lockInGuess
 import com.minutesock.core.domain.updateState
 import com.minutesock.core.presentation.SmallTopAppBar
@@ -49,7 +50,6 @@ import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.theme.guessLetterGreen
 import com.minutesock.core.theme.guessLetterYellow
 import com.minutesock.core.utils.capitalize
-import com.minutesock.core.R
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Clock
 import java.util.Date
@@ -84,7 +84,7 @@ internal fun HistoryRoute(
 
 @Composable
 internal fun HistoryScreen(
-    historyList: SnapshotStateList<DailyWordSession>,
+    historyList: SnapshotStateList<WordSession>,
     onEvent: (HistoryScreenEvent) -> Unit,
     onBackButtonClicked: () -> Unit,
 ) {
@@ -100,7 +100,7 @@ internal fun HistoryScreen(
 
 @Composable
 internal fun HistoryList(
-    historyList: SnapshotStateList<DailyWordSession>,
+    historyList: SnapshotStateList<WordSession>,
     onEvent: (HistoryScreenEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -110,7 +110,7 @@ internal fun HistoryList(
     ) {
         items(historyList.size) { index ->
             onEvent(HistoryScreenEvent.UpdateScrollPosition(index))
-            HistoryListItem(dailyWordSession = historyList[index])
+            HistoryListItem(wordSession = historyList[index])
             if (index < historyList.lastIndex) {
                 Spacer(modifier = Modifier.height(15.dp))
                 Spacer(modifier = Modifier.height(15.dp))
@@ -121,13 +121,13 @@ internal fun HistoryList(
 
 @Composable
 internal fun HistoryListItem(
-    dailyWordSession: DailyWordSession
+    wordSession: WordSession
 ) {
     val errorColor = MaterialTheme.colorScheme.error
     val a = MaterialTheme.colorScheme.outline
 
-    val borderColor by remember(dailyWordSession.gameState) {
-        val color = when (dailyWordSession.gameState) {
+    val borderColor by remember(wordSession.gameState) {
+        val color = when (wordSession.gameState) {
             DailyWordGameState.Success -> guessLetterGreen
             DailyWordGameState.InProgress -> guessLetterYellow
             DailyWordGameState.Failure -> errorColor
@@ -136,19 +136,19 @@ internal fun HistoryListItem(
         mutableStateOf(color)
     }
 
-    val backgroundColor = when (dailyWordSession.gameState) {
+    val backgroundColor = when (wordSession.gameState) {
         DailyWordGameState.NotStarted -> MaterialTheme.colorScheme.scrim
         DailyWordGameState.InProgress -> MaterialTheme.colorScheme.secondaryContainer
         DailyWordGameState.Success -> MaterialTheme.colorScheme.primaryContainer
         DailyWordGameState.Failure -> MaterialTheme.colorScheme.errorContainer
     }
 
-    val completeTime by remember(dailyWordSession.completeTime) {
+    val completeTime by remember(wordSession.completeTime) {
         mutableStateOf(
-            if (dailyWordSession.formattedTime == null) {
+            if (wordSession.formattedTime == null) {
                 "Incomplete"
             } else {
-                dailyWordSession.formattedTime?.toString() ?: ""
+                wordSession.formattedTime?.toString() ?: ""
             }
         )
     }
@@ -159,7 +159,7 @@ internal fun HistoryListItem(
 
     val iconId by remember {
         mutableStateOf(
-            if (dailyWordSession.isDaily) {
+            if (wordSession.isDaily) {
                 R.drawable.baseline_today_24
             } else {
                 R.drawable.baseline_infinity
@@ -191,8 +191,8 @@ internal fun HistoryListItem(
             ) {
                 Text(
                     modifier = Modifier
-                        .blur(if (dailyWordSession.gameState.isGameOver) 0.dp else 15.dp),
-                    text = dailyWordSession.correctWord.capitalize(),
+                        .blur(if (wordSession.gameState.isGameOver) 0.dp else 15.dp),
+                    text = wordSession.correctWord.capitalize(),
                     color = textColor,
                     fontSize = 16.sp
                 )
@@ -207,7 +207,7 @@ internal fun HistoryListItem(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = dailyWordSession.emojiRepresentation
+                    text = wordSession.emojiRepresentation
                 )
             }
 
@@ -225,7 +225,7 @@ internal fun HistoryListItem(
                 )
 
                 Text(
-                    text = dailyWordSession.formattedElapsedTime,
+                    text = wordSession.formattedElapsedTime,
                     color = textColor,
                     fontSize = 16.sp
                 )
@@ -238,7 +238,7 @@ internal fun HistoryListItem(
 @Composable
 internal fun HistoryScreenPreview() {
     val historyList = remember {
-        mutableStateListOf<DailyWordSession>()
+        mutableStateListOf<WordSession>()
     }
 
     val maxAttempts = 6
@@ -276,7 +276,7 @@ internal fun HistoryScreenPreview() {
 
     historyList.addAll(
         listOf(
-            DailyWordSession(
+            WordSession(
                 date = Date(),
                 correctWord = "smooth",
                 guesses = w.toImmutableList(),
@@ -286,7 +286,7 @@ internal fun HistoryScreenPreview() {
                 gameState = DailyWordGameState.Success
             ),
 
-            DailyWordSession(
+            WordSession(
                 date = Date(),
                 correctWord = "jumby",
                 guesses = w2.toImmutableList(),
@@ -295,7 +295,7 @@ internal fun HistoryScreenPreview() {
                 startTime = Clock.System.now(),
                 gameState = DailyWordGameState.Failure
             ),
-            DailyWordSession(
+            WordSession(
                 date = Date(),
                 correctWord = "smack",
                 guesses = w3.toImmutableList(),

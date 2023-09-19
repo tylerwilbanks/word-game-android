@@ -6,18 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.google.gson.Gson
-import com.minutesock.core.data.models.DailyWordSessionEntity
 import com.minutesock.core.data.models.WordInfoEntity
+import com.minutesock.core.data.models.WordSessionEntity
 import com.minutesock.core.utils.GsonParser
 
 @Database(
-    entities = [DailyWordSessionEntity::class, WordInfoEntity::class],
+    entities = [WordSessionEntity::class, WordInfoEntity::class],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun DailyWordSessionDao(): DailyWordSessionDao
+    abstract fun WordSessionDao(): WordSessionDao
     abstract fun WordInfoDao(): WordInfoDao
 
     companion object {

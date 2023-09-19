@@ -1,4 +1,4 @@
-package com.minutesock.daily.presentation
+package com.minutesock.core.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,20 +19,22 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.minutesock.core.domain.DailyWordScreenState
+import com.minutesock.core.domain.WordGameMode
 
 
 @Composable
-fun DailyWordScreen(
+fun WordGameScreen(
+    gameMode: WordGameMode,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    dailyWordViewModel: DailyWordViewModel = viewModel()
+    dailyWordViewModel: WordGameViewModel = viewModel()
 ) {
 
     val state by dailyWordViewModel.state.collectAsStateWithLifecycle()
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
-                dailyWordViewModel.setupGame()
+                dailyWordViewModel.setupGame(gameMode)
             }
         }
 
@@ -56,7 +58,7 @@ fun DailyWordScreen(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        DailyWordScreenGame(
+        WordScreenGame(
             state = state,
             guessWords = state.guessWords,
             onEvent = dailyWordViewModel::onGameEvent,
@@ -64,7 +66,7 @@ fun DailyWordScreen(
         )
 
         AnimatedVisibility(visible = visibleStats) {
-            DailyWordScreenStats(
+            WordScreenStats(
                 state = state,
                 onEvent = dailyWordViewModel::onStatsEvent,
                 hasBackgroundScreen = true

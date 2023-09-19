@@ -16,13 +16,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.minutesock.core.theme.WordGameTheme
-import com.minutesock.daily.domain.GuessWordValidator
-import com.minutesock.profile.navigation.profileRoute
+import com.minutesock.core.domain.GuessWordValidator
 import com.minutesock.core.navigation.BottomNavItem
+import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.daily.navigation.dailyRoute
 import com.minutesock.infinity.navigation.infinityRoute
 import com.minutesock.profile.navigation.navigateToHistory
+import com.minutesock.profile.navigation.profileRoute
 import com.minutesock.wordgame.presentation.BottomNavigation
 import kotlinx.collections.immutable.persistentListOf
 
@@ -52,7 +52,8 @@ class MainActivity : ComponentActivity() {
                     },
                     content = { paddingValues ->
                         NavHost(navController, startDestination = BottomNavItem.Daily.route) {
-                            val bottomModifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                            val bottomModifier =
+                                Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             dailyRoute(modifier = bottomModifier)
                             infinityRoute(modifier = bottomModifier)
                             composable(BottomNavItem.Dictionary.route) {

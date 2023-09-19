@@ -1,4 +1,4 @@
-package com.minutesock.daily.presentation
+package com.minutesock.core.presentation
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,19 +30,20 @@ import com.minutesock.core.R
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.GuessWord
+import com.minutesock.core.domain.WordGameMode
+import com.minutesock.core.presentation.components.FalseKeyboard
+import com.minutesock.core.presentation.components.WordRow
 import com.minutesock.core.uiutils.ShakeConfig
 import com.minutesock.core.uiutils.rememberShakeController
 import com.minutesock.core.uiutils.shake
-import com.minutesock.daily.presentation.components.FalseKeyboard
-import com.minutesock.daily.presentation.components.WordRow
 import kotlinx.collections.immutable.ImmutableList
 
 
 @Composable
-fun DailyWordScreenGame(
+fun WordScreenGame(
     state: DailyWordState,
     guessWords: ImmutableList<GuessWord>,
-    onEvent: (DailyWordEventGame) -> Unit,
+    onEvent: (WordEventGame) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val defaultMessageDelay by remember {
@@ -76,9 +78,9 @@ fun DailyWordScreenGame(
                     shakeController.shake(
                         ShakeConfig.no(defaultMessageDelay) {
                             if (state.gameState == DailyWordGameState.Failure) {
-                                onEvent(DailyWordEventGame.OnCompleteAnimationFinished)
+                                onEvent(WordEventGame.OnCompleteAnimationFinished)
                             } else {
-                                onEvent(DailyWordEventGame.OnErrorAnimationFinished)
+                                onEvent(WordEventGame.OnErrorAnimationFinished)
                             }
                         }
                     )
@@ -89,7 +91,7 @@ fun DailyWordScreenGame(
                 shakeController.shake(
                     ShakeConfig.yes(defaultMessageDelay) {
                         onEvent(
-                            DailyWordEventGame.OnCompleteAnimationFinished
+                            WordEventGame.OnCompleteAnimationFinished
                         )
                     }
                 )
@@ -106,6 +108,14 @@ fun DailyWordScreenGame(
             )
         }
 
+        val gameModeIconId by remember(state.gameMode) {
+            mutableStateOf(
+                when (state.gameMode) {
+                    WordGameMode.Daily -> R.drawable.baseline_today_24
+                    WordGameMode.Inifinity -> R.drawable.baseline_infinity
+                }
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.Top,
@@ -114,9 +124,18 @@ fun DailyWordScreenGame(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { onEvent(DailyWordEventGame.OnStatsPress) }) {
+                Icon(
+                    modifier = Modifier
+                        .size(45.dp)
+                        .padding(10.dp),
+                    painter = painterResource(
+                        id = gameModeIconId
+                    ),
+                    contentDescription = null
+                )
+                IconButton(onClick = { onEvent(WordEventGame.OnStatsPress) }) {
                     Icon(
                         painterResource(id = R.drawable.baseline_bar_chart_24),
                         contentDescription = "Stats"

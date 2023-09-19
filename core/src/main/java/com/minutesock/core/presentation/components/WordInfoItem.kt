@@ -1,4 +1,4 @@
-package com.minutesock.daily.presentation.components
+package com.minutesock.core.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

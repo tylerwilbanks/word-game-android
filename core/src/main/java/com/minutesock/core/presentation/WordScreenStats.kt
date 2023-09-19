@@ -1,4 +1,4 @@
-package com.minutesock.daily.presentation
+package com.minutesock.core.presentation
 
 import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -48,23 +48,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.minutesock.core.BuildConfig
+import com.minutesock.core.R
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordScreenState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.DailyWordStateMessage
+import com.minutesock.core.presentation.components.WordInfoItem
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.uiutils.shareExternal
 import com.minutesock.core.utils.capitalize
-import com.minutesock.daily.BuildConfig
-import com.minutesock.daily.R
-import com.minutesock.daily.presentation.components.WordInfoItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyWordScreenStats(
+fun WordScreenStats(
     state: DailyWordState,
-    onEvent: (DailyWordEventStats) -> Unit,
+    onEvent: (WordEventStats) -> Unit,
     hasBackgroundScreen: Boolean
 ) {
 
@@ -77,7 +77,7 @@ fun DailyWordScreenStats(
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             shareEnabled = true
-            onEvent(DailyWordEventStats.OnShareChooserPresented)
+            onEvent(WordEventStats.OnShareChooserPresented)
         }
 
     val title = stringResource(id = R.string.what_in_da_word)
@@ -120,7 +120,7 @@ fun DailyWordScreenStats(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { onEvent(DailyWordEventStats.OnExitButtonPressed) }) {
+                IconButton(onClick = { onEvent(WordEventStats.OnExitButtonPressed) }) {
                     Icon(imageVector = Icons.Default.Close, contentDescription = "close")
                 }
             }
@@ -201,7 +201,7 @@ fun DailyWordScreenStats(
                         Button(
                             onClick = {
                                 shareEnabled = false
-                                onEvent(DailyWordEventStats.OnShareButtonPressed)
+                                onEvent(WordEventStats.OnShareButtonPressed)
                             },
                             enabled = shareEnabled,
                         ) {
@@ -214,7 +214,7 @@ fun DailyWordScreenStats(
                         if (BuildConfig.DEBUG) {
                             Button(
                                 onClick = {
-                                    onEvent(DailyWordEventStats.OnDeleteAndRestartSessionPressed)
+                                    onEvent(WordEventStats.OnDeleteAndRestartSessionPressed)
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                             ) {
@@ -266,7 +266,7 @@ fun DailyWordScreenStats(
 fun DailyWordScreenStatsPreview() {
     WordGameTheme {
         Surface {
-            DailyWordScreenStats(
+            WordScreenStats(
                 state = DailyWordState(
                     gameState = DailyWordGameState.Success,
                     screenState = DailyWordScreenState.Stats,

@@ -1,31 +1,30 @@
-package com.minutesock.daily.presentation
+package com.minutesock.core.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.core.App
+import com.minutesock.core.R
+import com.minutesock.core.data.repository.WordGameRepository
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordScreenState
-import com.minutesock.core.domain.DailyWordSession
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.DailyWordStateMessage
+import com.minutesock.core.domain.DailyWordValidationResult
+import com.minutesock.core.domain.DailyWordValidationResultType
 import com.minutesock.core.domain.GuessKeyboardLetter
 import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
+import com.minutesock.core.domain.GuessWordValidator
 import com.minutesock.core.domain.LetterState
+import com.minutesock.core.domain.WordGameMode
+import com.minutesock.core.domain.WordSession
 import com.minutesock.core.domain.addGuessLetter
 import com.minutesock.core.domain.eraseLetter
 import com.minutesock.core.domain.lockInGuess
 import com.minutesock.core.domain.updateState
-import com.minutesock.core.presentation.FalseKeyboardKeys
-import com.minutesock.core.presentation.GuessWordError
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.utils.Option
-import com.minutesock.daily.R
-import com.minutesock.daily.data.repository.DailyWordRepository
-import com.minutesock.daily.domain.DailyWordValidationResult
-import com.minutesock.daily.domain.DailyWordValidationResultType
-import com.minutesock.daily.domain.GuessWordValidator
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -40,17 +39,17 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import java.util.Date
 
-class DailyWordViewModel(
-    private val dailyWordRepository: DailyWordRepository = DailyWordRepository(
+class WordGameViewModel(
+    private val wordGameRepository: WordGameRepository = WordGameRepository(
         wordInfoDao = App.database.WordInfoDao(),
-        dailyWordSessionDao = App.database.DailyWordSessionDao()
+        wordSessionDao = App.database.WordSessionDao()
     )
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DailyWordState())
     val state = _state.asStateFlow()
 
-    private var dailyWordSession = DailyWordSession(
+    private var wordSession = WordSession(
         date = Date(),
         correctWord = state.value.correctWord
             ?: "",
@@ -90,41 +89,59 @@ class DailyWordViewModel(
         return FalseKeyboardKeys(row1, row2, row3)
     }
 
-    private suspend fun initDailyWordSessionAndState() {
+    private suspend fun initDailyWordSessionAndState(gameMode: WordGameMode) {
         withContext(Dispatchers.IO) {
-            dailyWordSession = dailyWordRepository.loadDailySession(Date()) ?: DailyWordSession(
-                date = Date(),
-                correctWord = state.value.correctWord ?: "",
-                maxAttempts = state.value.maxGuessAttempts,
-                guesses = state.value.guessWords.toImmutableList(),
-                isDaily = true,
-                gameState = state.value.gameState,
-                startTime = Clock.System.now()
-            )
+            when (gameMode) {
+                WordGameMode.Daily -> {
+                    wordSession = wordGameRepository.loadDailySession(Date()) ?: WordSession(
+                        date = Date(),
+                        correctWord = state.value.correctWord ?: "",
+                        maxAttempts = state.value.maxGuessAttempts,
+                        guesses = state.value.guessWords.toImmutableList(),
+                        isDaily = true,
+                        gameState = state.value.gameState,
+                        startTime = Clock.System.now()
+                    )
+                }
+
+                WordGameMode.Inifinity -> {
+                    wordSession = wordGameRepository.loadLatestInfinitySession() ?: WordSession(
+                        date = Date(),
+                        correctWord = state.value.correctWord ?: "",
+                        maxAttempts = state.value.maxGuessAttempts,
+                        guesses = state.value.guessWords.toImmutableList(),
+                        isDaily = false,
+                        gameState = state.value.gameState,
+                        startTime = Clock.System.now()
+                    )
+                }
+            }
+
             _state.update {
                 it.copy(
-                    gameState = dailyWordSession.gameState,
+                    gameState = wordSession.gameState,
                     screenState = DailyWordScreenState.Game,
-                    wordLength = dailyWordSession.correctWord.length,
-                    maxGuessAttempts = dailyWordSession.maxAttempts,
-                    correctWord = dailyWordSession.correctWord,
+                    wordLength = wordSession.correctWord.length,
+                    maxGuessAttempts = wordSession.maxAttempts,
+                    correctWord = wordSession.correctWord,
                     dailyWordStateMessage = DailyWordStateMessage(
                         uiText = UiText.StringResource(R.string.what_in_da_word)
                     ),
-                    guessWords = dailyWordSession.guesses,
+                    guessWords = wordSession.guesses,
                     falseKeyboardKeys = getUpdatedFalseKeyboardKeys(
-                        dailyWordSession.guesses,
+                        wordSession.guesses,
                         state.value.falseKeyboardKeys
                     ),
-                    wordRowAnimating = dailyWordSession.gameState.isGameOver
+                    wordRowAnimating = wordSession.gameState.isGameOver,
+                    gameMode = if (wordSession.isDaily) WordGameMode.Daily else WordGameMode.Inifinity
                 )
             }
         }
     }
 
     private suspend fun updateDailyWordSession() {
-        dailyWordRepository.saveDailySession(
-            dailyWordSession = dailyWordSession.copy(
+        wordGameRepository.saveDailySession(
+            wordSession = wordSession.copy(
                 correctWord = state.value.correctWord ?: "",
                 maxAttempts = state.value.maxGuessAttempts,
                 guesses = state.value.guessWords,
@@ -132,7 +149,7 @@ class DailyWordViewModel(
             )
         )
 
-        dailyWordSession = dailyWordRepository.loadDailySession(Date())!!
+        wordSession = wordGameRepository.loadDailySession(Date())!!
     }
 
     private fun getUpdatedKeyboardRow(
@@ -147,9 +164,9 @@ class DailyWordViewModel(
         return mutableRow.toImmutableList()
     }
 
-    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 6) {
+    fun setupGame(wordGameMode: WordGameMode, wordLength: Int = 5, maxGuessAttempts: Int = 6) {
         viewModelScope.launch(Dispatchers.IO) {
-            initDailyWordSessionAndState()
+            initDailyWordSessionAndState(wordGameMode)
             if (state.value.gameState == DailyWordGameState.NotStarted) {
                 setupNewGame(wordLength, maxGuessAttempts)
             } else if (state.value.gameState.isGameOver) {
@@ -181,7 +198,7 @@ class DailyWordViewModel(
                 guessWords = w.toImmutableList()
             )
         }
-        dailyWordRepository.deleteDailySession(Date())
+        wordGameRepository.deleteDailySession(Date())
         updateDailyWordSession()
 
         _state.update { dailyWordState ->
@@ -196,7 +213,7 @@ class DailyWordViewModel(
 
     private suspend fun getOrFetchWordDefinition(word: String) {
         withContext(Dispatchers.IO) {
-            dailyWordRepository.getOrFetchWordDefinition(word).onEach { option ->
+            wordGameRepository.getOrFetchWordDefinition(word).onEach { option ->
                 when (option) {
                     is Option.Error -> {}
                     is Option.Loading -> {
@@ -230,22 +247,22 @@ class DailyWordViewModel(
         index: Int,
         guessWord: GuessWord
     ): ImmutableList<GuessWord> {
-        val newDailyWordSession = dailyWordSession.copy(
+        val newDailyWordSession = wordSession.copy(
             gameState = state.value.gameState,
             guesses = getUpdatedWordRows(index, guessWord)
         )
-        dailyWordRepository.saveDailySession(newDailyWordSession)
-        return dailyWordRepository.loadDailySession(newDailyWordSession.date)?.guesses
+        wordGameRepository.saveDailySession(newDailyWordSession)
+        return wordGameRepository.loadDailySession(newDailyWordSession.date)?.guesses
             ?: persistentListOf()
     }
 
-    fun onGameEvent(event: DailyWordEventGame) {
+    fun onGameEvent(event: WordEventGame) {
         if (state.value.gameState == DailyWordGameState.NotStarted
         ) {
             return
         }
         when (event) {
-            is DailyWordEventGame.OnCharacterPress -> {
+            is WordEventGame.OnCharacterPress -> {
                 if (state.value.gameState.isGameOver) {
                     return
                 }
@@ -256,7 +273,7 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventGame.OnDeletePress -> {
+            WordEventGame.OnDeletePress -> {
                 if (state.value.gameState.isGameOver) {
                     return
                 }
@@ -267,7 +284,7 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventGame.OnEnterPress -> {
+            WordEventGame.OnEnterPress -> {
                 if (state.value.gameState.isGameOver) {
                     return
                 }
@@ -331,7 +348,7 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventGame.OnErrorAnimationFinished -> {
+            WordEventGame.OnErrorAnimationFinished -> {
                 if (state.value.gameState.isGameOver) {
                     return;
                 }
@@ -346,7 +363,7 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventGame.OnAnsweredWordRowAnimationFinished -> {
+            WordEventGame.OnAnsweredWordRowAnimationFinished -> {
                 viewModelScope.launch {
                     if (
                         state.value.gameState.isGameOver &&
@@ -388,7 +405,7 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventGame.OnCompleteAnimationFinished -> {
+            WordEventGame.OnCompleteAnimationFinished -> {
                 if (gameHasAlreadyBeenPlayed) {
                     return
                 }
@@ -399,7 +416,7 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventGame.OnStatsPress -> _state.update {
+            WordEventGame.OnStatsPress -> _state.update {
                 it.copy(
                     screenState = DailyWordScreenState.Stats
                 )
@@ -407,9 +424,9 @@ class DailyWordViewModel(
         }
     }
 
-    fun onStatsEvent(event: DailyWordEventStats) {
+    fun onStatsEvent(event: WordEventStats) {
         when (event) {
-            DailyWordEventStats.OnExitButtonPressed -> {
+            WordEventStats.OnExitButtonPressed -> {
                 _state.update {
                     it.copy(
                         screenState = DailyWordScreenState.Game
@@ -417,15 +434,15 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventStats.OnShareButtonPressed -> {
+            WordEventStats.OnShareButtonPressed -> {
                 _state.update {
                     it.copy(
-                        shareText = dailyWordSession.shareText
+                        shareText = wordSession.shareText
                     )
                 }
             }
 
-            DailyWordEventStats.OnShareChooserPresented -> {
+            WordEventStats.OnShareChooserPresented -> {
                 _state.update {
                     it.copy(
                         shareText = null
@@ -433,16 +450,16 @@ class DailyWordViewModel(
                 }
             }
 
-            DailyWordEventStats.OnDeleteAndRestartSessionPressed -> {
+            WordEventStats.OnDeleteAndRestartSessionPressed -> {
                 viewModelScope.launch {
                     gameHasAlreadyBeenPlayed = false
-                    val wordLength = dailyWordSession.wordLength
-                    val maxAttempts = dailyWordSession.maxAttempts
-                    dailyWordRepository.deleteDailySession(Date())
+                    val wordLength = wordSession.wordLength
+                    val maxAttempts = wordSession.maxAttempts
+                    wordGameRepository.deleteDailySession(Date())
                     _state.update {
                         DailyWordState()
                     }
-                    setupGame(wordLength, maxAttempts)
+                    setupGame(WordGameMode.Daily, wordLength, maxAttempts)
                 }
             }
         }

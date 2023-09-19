@@ -1,8 +1,8 @@
-import com.minutesock.core.data.DailyWordSessionDao
+import com.minutesock.core.data.WordSessionDao
 import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
-import com.minutesock.core.mappers.toDailyWordSession
+import com.minutesock.core.mappers.toWordSession
 import com.minutesock.core.utils.toString
 import com.minutesock.profile.domain.GuessDistribution
 import com.minutesock.profile.domain.GuessDistributionState
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 import java.util.Date
 
 class ProfileRepository(
-    private val dailyWordSessionDao: DailyWordSessionDao
+    private val wordSessionDao: WordSessionDao
 ) {
 
     fun getGuessDistribution() = flow {
@@ -20,7 +20,7 @@ class ProfileRepository(
         )
         emit(guessDistributionState)
         val guessDistributions =
-            dailyWordSessionDao.getAllSessions().map { dailyWordSessionEntity ->
+            wordSessionDao.getAllSessions().map { dailyWordSessionEntity ->
                 val correctAttemptIndex =
                     dailyWordSessionEntity.guesses.indexOfFirst { it.state == GuessWordState.Correct }
                 GuessDistribution(
@@ -69,8 +69,8 @@ class ProfileRepository(
 
     fun getDailyWordSessions(pageSize: Int, offset: Int) = flow {
         emit(
-            dailyWordSessionDao.getPaginatedSessionsByRecency(pageSize, offset).map {
-                it.toDailyWordSession()
+            wordSessionDao.getPaginatedSessionsByRecency(pageSize, offset).map {
+                it.toWordSession()
             }
         )
     }

@@ -1,4 +1,4 @@
-package com.minutesock.daily.presentation.components
+package com.minutesock.core.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -9,15 +9,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.minutesock.core.R
 import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.presentation.GuessWordError
+import com.minutesock.core.presentation.WordEventGame
 import com.minutesock.core.uiutils.ShakeConfig
 import com.minutesock.core.uiutils.rememberShakeController
 import com.minutesock.core.uiutils.shake
-import com.minutesock.daily.R
-import com.minutesock.daily.presentation.DailyWordEventGame
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -26,7 +26,7 @@ fun WordRow(
     guessLetters: ImmutableList<GuessLetter>,
     message: String?,
     wordRowAnimating: Boolean,
-    onEvent: (DailyWordEventGame) -> Unit
+    onEvent: (WordEventGame) -> Unit
 ) {
     val shakeController = rememberShakeController()
     val defaultMessage = stringResource(id = R.string.what_in_da_word)

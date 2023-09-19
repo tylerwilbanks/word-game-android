@@ -1,12 +1,10 @@
-package com.minutesock.daily.domain
+package com.minutesock.core.domain
 
 import android.content.Context
-import com.minutesock.core.domain.DailyWordGameState
-import com.minutesock.core.domain.GuessWord
+import com.minutesock.core.R
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.utils.FileUtil
 import com.minutesock.core.utils.convertToStringList
-import com.minutesock.daily.R
 import java.util.Calendar
 import kotlin.random.Random
 

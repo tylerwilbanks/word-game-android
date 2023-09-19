@@ -1,4 +1,4 @@
-package com.minutesock.daily.presentation.components
+package com.minutesock.core.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,13 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.domain.GuessKeyboardLetter
 import com.minutesock.core.presentation.FalseKeyboardKeys
-import com.minutesock.daily.presentation.DailyWordEventGame
+import com.minutesock.core.presentation.WordEventGame
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun FalseKeyboard(
     falseKeyboardKeys: FalseKeyboardKeys,
-    onEvent: (DailyWordEventGame) -> Unit,
+    onEvent: (WordEventGame) -> Unit,
     modifier: Modifier = Modifier,
     isWordRowAnimating: Boolean = false,
 ) {
@@ -38,7 +38,7 @@ fun FalseKeyboard(
 @Composable
 fun FalseKeyboardRow(
     row: ImmutableList<GuessKeyboardLetter>,
-    onEvent: (DailyWordEventGame) -> Unit,
+    onEvent: (WordEventGame) -> Unit,
     isWordRowAnimating: Boolean = false
 ) {
     Row {

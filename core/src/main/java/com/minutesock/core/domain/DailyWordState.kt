@@ -16,7 +16,8 @@ data class DailyWordState(
     val shareText: String? = null,
     val definitionMessage: String? = null,
     val wordInfos: ImmutableList<WordInfo> = persistentListOf(),
-    val guessWords: ImmutableList<GuessWord> = persistentListOf()
+    val guessWords: ImmutableList<GuessWord> = persistentListOf(),
+    val gameMode: WordGameMode = WordGameMode.Daily
 )
 
 data class DailyWordStateMessage(
@@ -48,5 +49,9 @@ enum class DailyWordScreenState {
     Stats
 }
 
+enum class WordGameMode {
+    Daily,
+    Inifinity
+}
 
 
