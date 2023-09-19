@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +49,7 @@ import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.theme.guessLetterGreen
 import com.minutesock.core.theme.guessLetterYellow
 import com.minutesock.core.utils.capitalize
+import com.minutesock.core.R
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Clock
 import java.util.Date
@@ -152,6 +156,17 @@ internal fun HistoryListItem(
     val brush =
         Brush.verticalGradient(listOf(MaterialTheme.colorScheme.outlineVariant, backgroundColor))
     val textColor = MaterialTheme.colorScheme.secondary
+
+    val iconId by remember {
+        mutableStateOf(
+            if (dailyWordSession.isDaily) {
+                R.drawable.baseline_today_24
+            } else {
+                R.drawable.baseline_infinity
+            }
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -199,9 +214,16 @@ internal fun HistoryListItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 10.dp, end = 10.dp),
-                horizontalArrangement = Arrangement.End
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = iconId),
+                    tint = textColor,
+                    contentDescription = null
+                )
+
                 Text(
                     text = dailyWordSession.formattedElapsedTime,
                     color = textColor,
