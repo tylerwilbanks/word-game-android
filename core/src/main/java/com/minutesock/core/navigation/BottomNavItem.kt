@@ -13,6 +13,12 @@ sealed class BottomNavItem(
         route = "daily"
     )
 
+    data object Infinity : BottomNavItem(
+        titleId = R.string.infinity,
+        icon = R.drawable.baseline_infinity,
+        route = "infinity"
+    )
+
     data object Dictionary : BottomNavItem(
         titleId = R.string.dictionary,
         icon = R.drawable.baseline_menu_book_24,

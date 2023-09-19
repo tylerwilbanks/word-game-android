@@ -54,6 +54,7 @@ dependencies {
     implementation project(path: ':core')
     implementation project(path: ':profile')
     implementation project(path: ':daily')
+    implementation project(path: ':infinity')
 
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_bom_version")
@@ -84,5 +85,4 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     implementation "androidx.navigation:navigation-compose:$navigation_compose_version"
-
 }

@@ -22,6 +22,7 @@ import com.minutesock.daily.presentation.DailyWordScreen
 import com.minutesock.profile.navigation.profileScreen
 import com.minutesock.core.navigation.BottomNavItem
 import com.minutesock.daily.navigation.dailWordScreen
+import com.minutesock.infinity.navigation.infinityRoute
 import com.minutesock.profile.navigation.navigateToHistory
 import com.minutesock.wordgame.presentation.BottomNavigation
 import kotlinx.collections.immutable.persistentListOf
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
         GuessWordValidator.initValidWords(this)
         val bottomNavItems = persistentListOf(
             BottomNavItem.Daily,
+            BottomNavItem.Infinity,
             BottomNavItem.Dictionary,
             BottomNavItem.Profile
         )
@@ -53,9 +55,10 @@ class MainActivity : ComponentActivity() {
                         NavHost(navController, startDestination = BottomNavItem.Daily.route) {
                             val bottomModifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             dailWordScreen(modifier = bottomModifier)
+                            infinityRoute(modifier = bottomModifier)
                             composable(BottomNavItem.Dictionary.route) {
                                 Column(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = bottomModifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
