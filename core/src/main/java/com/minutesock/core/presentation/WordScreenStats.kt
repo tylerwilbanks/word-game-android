@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
@@ -54,6 +55,7 @@ import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordScreenState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.DailyWordStateMessage
+import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.presentation.components.WordInfoItem
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.UiText
@@ -198,36 +200,61 @@ fun WordScreenStats(
                                 }
                             )
                         }
-                        Button(
-                            onClick = {
-                                shareEnabled = false
-                                onEvent(WordEventStats.OnShareButtonPressed)
-                            },
-                            enabled = shareEnabled,
-                        ) {
-                            Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
-                            Spacer(modifier = Modifier.size(5.dp))
-                            Text(
-                                text = stringResource(R.string.share)
-                            )
-                        }
-                        if (BuildConfig.DEBUG) {
+                        if (state.gameMode == WordGameMode.Daily) {
                             Button(
                                 onClick = {
-                                    onEvent(WordEventStats.OnDeleteAndRestartSessionPressed)
+                                    shareEnabled = false
+                                    onEvent(WordEventStats.OnShareButtonPressed)
                                 },
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                enabled = shareEnabled,
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Restart"
-                                )
-                                Spacer(modifier = Modifier.size(2.dp))
+                                Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
+                                Spacer(modifier = Modifier.size(5.dp))
                                 Text(
-                                    text = "Reset"
+                                    text = stringResource(R.string.share)
                                 )
                             }
                         }
+                        when (state.gameMode) {
+                            WordGameMode.Daily -> {
+                                if (BuildConfig.DEBUG) {
+                                    Button(
+                                        onClick = {
+                                            onEvent(WordEventStats.OnDeleteAndRestartSessionPressed)
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Restart"
+                                        )
+                                        Spacer(modifier = Modifier.size(2.dp))
+                                        Text(
+                                            text = "Reset"
+                                        )
+                                    }
+                                }
+                            }
+                            WordGameMode.Inifinity -> {
+                                Button(
+                                    onClick = {
+                                        onEvent(WordEventStats.OnInfinityNextSessionPressed)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                                    enabled = state.gameState.isGameOver
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowForward,
+                                        contentDescription = "Next"
+                                    )
+                                    Spacer(modifier = Modifier.size(2.dp))
+                                    Text(
+                                        text = "Next"
+                                    )
+                                }
+                            }
+                        }
+
 
                     }
 

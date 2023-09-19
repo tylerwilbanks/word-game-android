@@ -27,14 +27,14 @@ fun WordGameScreen(
     gameMode: WordGameMode,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    dailyWordViewModel: WordGameViewModel = viewModel()
+    wordGameViewModel: WordGameViewModel = viewModel()
 ) {
 
-    val state by dailyWordViewModel.state.collectAsStateWithLifecycle()
+    val state by wordGameViewModel.state.collectAsStateWithLifecycle()
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
-                dailyWordViewModel.setupGame(gameMode)
+                wordGameViewModel.setupGame(gameMode)
             }
         }
 
@@ -61,14 +61,14 @@ fun WordGameScreen(
         WordScreenGame(
             state = state,
             guessWords = state.guessWords,
-            onEvent = dailyWordViewModel::onGameEvent,
+            onEvent = wordGameViewModel::onGameEvent,
             modifier = Modifier.blur(bgBlur)
         )
 
         AnimatedVisibility(visible = visibleStats) {
             WordScreenStats(
                 state = state,
-                onEvent = dailyWordViewModel::onStatsEvent,
+                onEvent = wordGameViewModel::onStatsEvent,
                 hasBackgroundScreen = true
             )
         }

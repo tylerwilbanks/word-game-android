@@ -140,16 +140,33 @@ class WordGameViewModel(
     }
 
     private suspend fun updateDailyWordSession() {
-        wordGameRepository.saveDailySession(
-            wordSession = wordSession.copy(
-                correctWord = state.value.correctWord ?: "",
-                maxAttempts = state.value.maxGuessAttempts,
-                guesses = state.value.guessWords,
-                gameState = state.value.gameState
-            )
-        )
+        when (state.value.gameMode) {
+            WordGameMode.Daily -> {
+                wordGameRepository.saveWordSession(
+                    wordSession = wordSession.copy(
+                        correctWord = state.value.correctWord ?: "",
+                        maxAttempts = state.value.maxGuessAttempts,
+                        guesses = state.value.guessWords,
+                        gameState = state.value.gameState
+                    )
+                )
 
-        wordSession = wordGameRepository.loadDailySession(Date())!!
+                wordSession = wordGameRepository.loadDailySession(Date())!!
+            }
+            WordGameMode.Inifinity -> {
+                wordGameRepository.saveWordSession(
+                    wordSession = wordSession.copy(
+                        correctWord = state.value.correctWord ?: "",
+                        maxAttempts = state.value.maxGuessAttempts,
+                        guesses = state.value.guessWords,
+                        gameState = state.value.gameState
+                    )
+                )
+
+                wordSession = wordGameRepository.loadLatestInfinitySession()!!
+            }
+        }
+
     }
 
     private fun getUpdatedKeyboardRow(
@@ -198,7 +215,9 @@ class WordGameViewModel(
                 guessWords = w.toImmutableList()
             )
         }
-        wordGameRepository.deleteDailySession(Date())
+        if (state.value.gameMode == WordGameMode.Daily) {
+            wordGameRepository.deleteDailySession(Date())
+        }
         updateDailyWordSession()
 
         _state.update { dailyWordState ->
@@ -251,7 +270,7 @@ class WordGameViewModel(
             gameState = state.value.gameState,
             guesses = getUpdatedWordRows(index, guessWord)
         )
-        wordGameRepository.saveDailySession(newDailyWordSession)
+        wordGameRepository.saveWordSession(newDailyWordSession)
         return wordGameRepository.loadDailySession(newDailyWordSession.date)?.guesses
             ?: persistentListOf()
     }
@@ -460,6 +479,21 @@ class WordGameViewModel(
                         DailyWordState()
                     }
                     setupGame(WordGameMode.Daily, wordLength, maxAttempts)
+                }
+            }
+
+            WordEventStats.OnInfinityNextSessionPressed -> {
+                viewModelScope.launch {
+                    gameHasAlreadyBeenPlayed = false
+                    val wordLength = wordSession.wordLength
+                    val maxAttempts = wordSession.maxAttempts
+                    wordGameRepository.deleteDailySession(Date())
+                    _state.update {
+                        DailyWordState(
+                            correctWord = GuessWordValidator.obtainRandomWord()
+                        )
+                    }
+                    setupGame(WordGameMode.Inifinity, wordLength, maxAttempts)
                 }
             }
         }

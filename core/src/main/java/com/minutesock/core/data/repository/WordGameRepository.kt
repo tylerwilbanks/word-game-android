@@ -76,7 +76,7 @@ class WordGameRepository(
         emit(Option.Success(newWordInfos))
     }
 
-    suspend fun saveDailySession(wordSession: WordSession) {
+    suspend fun saveWordSession(wordSession: WordSession) {
         withContext(defaultDispatcher) {
             wordSessionDao.insert(wordSession.toWordSessionEntity())
         }

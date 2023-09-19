@@ -5,4 +5,5 @@ sealed interface WordEventStats {
     object OnShareButtonPressed : WordEventStats
     object OnShareChooserPresented : WordEventStats
     object OnDeleteAndRestartSessionPressed : WordEventStats
+    object OnInfinityNextSessionPressed : WordEventStats
 }

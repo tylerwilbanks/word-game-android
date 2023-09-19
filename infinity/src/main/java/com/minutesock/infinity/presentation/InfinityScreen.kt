@@ -8,19 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.minutesock.core.domain.WordGameMode
+import com.minutesock.core.presentation.WordGameScreen
 
 @Composable
 internal fun InfinityScreen(
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            textAlign = TextAlign.Center,
-            text = "Infinity screen is under construction. \uD83D\uDEA7"
-        )
-    }
+    WordGameScreen(gameMode = WordGameMode.Inifinity, modifier = modifier)
 }
