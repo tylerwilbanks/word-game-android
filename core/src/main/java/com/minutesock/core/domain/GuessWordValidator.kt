@@ -12,7 +12,6 @@ object GuessWordValidator {
     private var validWords = emptyList<String>()
     private var wordSelection = emptyList<String>()
 
-    // todo extract string resources
     private val failureMessages = listOf(
         "The word eludes you this time.",
         "A valiant effort, but not the word.",
@@ -64,10 +63,17 @@ object GuessWordValidator {
         }
     }
 
-    fun obtainRandomWord(): String {
+    private fun obtainDailyWord(): String {
         return wordSelection[Random(
             Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
         ).nextInt(from = 0, until = wordSelection.size)]
+    }
+
+    fun obtainRandomWord(gameMode: WordGameMode): String {
+        return when (gameMode) {
+            WordGameMode.Daily -> obtainDailyWord()
+            WordGameMode.Inifinity -> wordSelection.random()
+        }
     }
 
     fun obtainRandomMessageBasedOnGameState(gameState: DailyWordGameState): UiText {

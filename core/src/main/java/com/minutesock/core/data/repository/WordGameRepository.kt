@@ -108,4 +108,9 @@ class WordGameRepository(
         }
     }
 
+    suspend fun loadInfinitySession(id: Int): WordSession? {
+        return withContext(defaultDispatcher) {
+            wordSessionDao.getInfinityWordSession(id)?.toWordSession()
+        }
+    }
 }

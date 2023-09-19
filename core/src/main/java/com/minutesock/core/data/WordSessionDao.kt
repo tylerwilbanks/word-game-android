@@ -21,6 +21,9 @@ interface WordSessionDao {
     @Query("SELECT * FROM WordSessionEntity WHERE isDaily = 0 AND gameState IN(:wordGameStates) ORDER BY id DESC LIMIT 1")
     fun getLatestInfinityWordSession(wordGameStates: List<Int>): WordSessionEntity?
 
+    @Query("SELECT * FROM WordSessionEntity WHERE id = :id LIMIT 1")
+    fun getInfinityWordSession(id: Int): WordSessionEntity?
+
     @Upsert
     fun insert(vararg dailyWordSessionEntities: WordSessionEntity)
 

@@ -163,7 +163,7 @@ class WordGameViewModel(
                     )
                 )
 
-                wordSession = wordGameRepository.loadLatestInfinitySession()!!
+                wordSession = wordGameRepository.loadInfinitySession(wordSession.id)!!
             }
         }
 
@@ -196,7 +196,7 @@ class WordGameViewModel(
     }
 
     private suspend fun setupNewGame(wordLength: Int = 5, maxGuessAttempts: Int = 6) {
-        val correctWord = GuessWordValidator.obtainRandomWord()
+        val correctWord = GuessWordValidator.obtainRandomWord(state.value.gameMode)
         val w = List(maxGuessAttempts) {
             GuessWord(
                 List(wordLength) {
@@ -271,8 +271,16 @@ class WordGameViewModel(
             guesses = getUpdatedWordRows(index, guessWord)
         )
         wordGameRepository.saveWordSession(newDailyWordSession)
-        return wordGameRepository.loadDailySession(newDailyWordSession.date)?.guesses
-            ?: persistentListOf()
+        return when (state.value.gameMode) {
+            WordGameMode.Daily -> {
+                wordGameRepository.loadDailySession(newDailyWordSession.date)?.guesses
+                    ?: persistentListOf()
+            }
+            WordGameMode.Inifinity -> {
+                wordGameRepository.loadLatestInfinitySession()?.guesses ?: persistentListOf()
+            }
+        }
+
     }
 
     fun onGameEvent(event: WordEventGame) {
@@ -487,11 +495,8 @@ class WordGameViewModel(
                     gameHasAlreadyBeenPlayed = false
                     val wordLength = wordSession.wordLength
                     val maxAttempts = wordSession.maxAttempts
-                    wordGameRepository.deleteDailySession(Date())
                     _state.update {
-                        DailyWordState(
-                            correctWord = GuessWordValidator.obtainRandomWord()
-                        )
+                        DailyWordState()
                     }
                     setupGame(WordGameMode.Inifinity, wordLength, maxAttempts)
                 }
