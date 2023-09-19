@@ -1,8 +1,5 @@
 package com.minutesock.core.presentation
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.minutesock.core.App
 import com.minutesock.core.R
 import com.minutesock.core.data.repository.WordGameRepository
 import com.minutesock.core.domain.DailyWordGameState
@@ -34,18 +31,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import java.util.Date
 
-class WordGameViewModel(
-    private val wordGameRepository: WordGameRepository = WordGameRepository(
-        wordInfoDao = App.database.WordInfoDao(),
-        wordSessionDao = App.database.WordSessionDao()
-    )
-) : ViewModel() {
-
+class WordGameLogicHelper(
+    private val wordGameRepository: WordGameRepository
+) {
     private val _state = MutableStateFlow(DailyWordState())
     val state = _state.asStateFlow()
 
@@ -153,6 +145,7 @@ class WordGameViewModel(
 
                 wordSession = wordGameRepository.loadDailySession(Date())!!
             }
+
             WordGameMode.Inifinity -> {
                 wordGameRepository.saveWordSession(
                     wordSession = wordSession.copy(
@@ -181,8 +174,12 @@ class WordGameViewModel(
         return mutableRow.toImmutableList()
     }
 
-    fun setupGame(wordGameMode: WordGameMode, wordLength: Int = 5, maxGuessAttempts: Int = 6) {
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun setupGame(
+        wordGameMode: WordGameMode,
+        wordLength: Int = 5,
+        maxGuessAttempts: Int = 6
+    ) {
+        withContext(Dispatchers.IO) {
             initDailyWordSessionAndState(wordGameMode)
             if (state.value.gameState == DailyWordGameState.NotStarted) {
                 setupNewGame(wordLength, maxGuessAttempts)
@@ -276,6 +273,7 @@ class WordGameViewModel(
                 wordGameRepository.loadDailySession(newDailyWordSession.date)?.guesses
                     ?: persistentListOf()
             }
+
             WordGameMode.Inifinity -> {
                 wordGameRepository.loadLatestInfinitySession()?.guesses ?: persistentListOf()
             }
@@ -283,7 +281,7 @@ class WordGameViewModel(
 
     }
 
-    fun onGameEvent(event: WordEventGame) {
+    suspend fun onGameEvent(event: WordEventGame) {
         if (state.value.gameState == DailyWordGameState.NotStarted
         ) {
             return
@@ -293,7 +291,7 @@ class WordGameViewModel(
                 if (state.value.gameState.isGameOver) {
                     return
                 }
-                viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         updateCurrentGuessWord(index, event.character)
                     }
@@ -304,7 +302,7 @@ class WordGameViewModel(
                 if (state.value.gameState.isGameOver) {
                     return
                 }
-                viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         eraseLetter(index)
                     }
@@ -315,7 +313,7 @@ class WordGameViewModel(
                 if (state.value.gameState.isGameOver) {
                     return
                 }
-                viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     getCurrentGuessWordIndexAndHandleError()?.let { index ->
                         val currentGuessWord = state.value.guessWords[index]
                         val result = GuessWordValidator.validateGuess(
@@ -377,9 +375,9 @@ class WordGameViewModel(
 
             WordEventGame.OnErrorAnimationFinished -> {
                 if (state.value.gameState.isGameOver) {
-                    return;
+                    return
                 }
-                viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     _state.update {
                         it.copy(
                             dailyWordStateMessage = DailyWordStateMessage(
@@ -391,7 +389,7 @@ class WordGameViewModel(
             }
 
             WordEventGame.OnAnsweredWordRowAnimationFinished -> {
-                viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     if (
                         state.value.gameState.isGameOver &&
                         !state.value.guessWords.any { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
@@ -451,7 +449,7 @@ class WordGameViewModel(
         }
     }
 
-    fun onStatsEvent(event: WordEventStats) {
+    suspend fun onStatsEvent(event: WordEventStats) {
         when (event) {
             WordEventStats.OnExitButtonPressed -> {
                 _state.update {
@@ -478,7 +476,7 @@ class WordGameViewModel(
             }
 
             WordEventStats.OnDeleteAndRestartSessionPressed -> {
-                viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     gameHasAlreadyBeenPlayed = false
                     val wordLength = wordSession.wordLength
                     val maxAttempts = wordSession.maxAttempts
@@ -491,7 +489,7 @@ class WordGameViewModel(
             }
 
             WordEventStats.OnInfinityNextSessionPressed -> {
-                viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     gameHasAlreadyBeenPlayed = false
                     val wordLength = wordSession.wordLength
                     val maxAttempts = wordSession.maxAttempts

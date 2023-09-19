@@ -1,29 +1,22 @@
-package com.minutesock.infinity.presentation
+package com.minutesock.daily.presentation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.presentation.WordGameScreen
 
 @Composable
-internal fun InfinityScreen(
+internal fun DailyWordGameScreen(
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    viewModel: InfinityWordViewModel = viewModel()
+    viewModel: DailyWordViewModel = viewModel()
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()

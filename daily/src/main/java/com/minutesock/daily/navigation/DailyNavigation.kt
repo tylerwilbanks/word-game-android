@@ -6,11 +6,12 @@ import androidx.navigation.compose.composable
 import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.navigation.BottomNavItem
 import com.minutesock.core.presentation.WordGameScreen
+import com.minutesock.daily.presentation.DailyWordGameScreen
 
 val BASE_ROUTE = BottomNavItem.Daily.route
 
 fun NavGraphBuilder.dailyRoute(modifier: Modifier = Modifier) {
     composable(route = BASE_ROUTE) {
-        WordGameScreen(gameMode = WordGameMode.Daily, modifier = modifier)
+        DailyWordGameScreen(modifier = modifier)
     }
 }

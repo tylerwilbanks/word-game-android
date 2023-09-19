@@ -19,32 +19,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.minutesock.core.domain.DailyWordScreenState
+import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.WordGameMode
 
 
 @Composable
 fun WordGameScreen(
-    gameMode: WordGameMode,
     modifier: Modifier = Modifier,
-    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    wordGameViewModel: WordGameViewModel = viewModel()
+    state: DailyWordState,
+    onGameEvent: (WordEventGame) -> Unit,
+    onStatsEvent: (WordEventStats) -> Unit,
 ) {
-
-    val state by wordGameViewModel.state.collectAsStateWithLifecycle()
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                wordGameViewModel.setupGame(gameMode)
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
 
     val bgBlur by remember(state.screenState) {
         mutableStateOf(if (state.screenState == DailyWordScreenState.Stats) 15.dp else 0.dp)
@@ -61,14 +46,14 @@ fun WordGameScreen(
         WordScreenGame(
             state = state,
             guessWords = state.guessWords,
-            onEvent = wordGameViewModel::onGameEvent,
+            onEvent = onGameEvent,
             modifier = Modifier.blur(bgBlur)
         )
 
         AnimatedVisibility(visible = visibleStats) {
             WordScreenStats(
                 state = state,
-                onEvent = wordGameViewModel::onStatsEvent,
+                onEvent = onStatsEvent,
                 hasBackgroundScreen = true
             )
         }
