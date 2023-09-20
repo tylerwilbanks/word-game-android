@@ -1,5 +1,6 @@
 package com.minutesock.core.presentation
 
+import android.util.Log
 import com.minutesock.core.R
 import com.minutesock.core.data.repository.WordGameRepository
 import com.minutesock.core.domain.DailyWordGameState
@@ -97,15 +98,16 @@ class WordGameLogicHelper(
                 }
 
                 WordGameMode.Inifinity -> {
-                    wordSession = wordGameRepository.loadLatestInfinitySession() ?: WordSession(
-                        date = Date(),
-                        correctWord = state.value.correctWord ?: "",
-                        maxAttempts = state.value.maxGuessAttempts,
-                        guesses = state.value.guessWords.toImmutableList(),
-                        isDaily = false,
-                        gameState = state.value.gameState,
-                        startTime = Clock.System.now()
-                    )
+                    wordSession = wordGameRepository.loadLatestToDoInfinitySession() ?:
+                            WordSession(
+                                date = Date(),
+                                correctWord = state.value.correctWord ?: "",
+                                maxAttempts = state.value.maxGuessAttempts,
+                                guesses = state.value.guessWords.toImmutableList(),
+                                isDaily = false,
+                                gameState = state.value.gameState,
+                                startTime = Clock.System.now()
+                            )
                 }
             }
 
@@ -131,8 +133,8 @@ class WordGameLogicHelper(
         }
     }
 
-    private suspend fun updateDailyWordSession() {
-        when (state.value.gameMode) {
+    private suspend fun updateDailyWordSession(wordGameMode: WordGameMode = state.value.gameMode) {
+        when (wordGameMode) {
             WordGameMode.Daily -> {
                 wordGameRepository.saveWordSession(
                     wordSession = wordSession.copy(
@@ -156,7 +158,7 @@ class WordGameLogicHelper(
                     )
                 )
 
-                wordSession = wordGameRepository.loadInfinitySession(wordSession.id)!!
+                wordSession = wordGameRepository.loadLatestToDoInfinitySession()!!
             }
         }
 
@@ -182,17 +184,18 @@ class WordGameLogicHelper(
         withContext(Dispatchers.IO) {
             initDailyWordSessionAndState(wordGameMode)
             if (state.value.gameState == DailyWordGameState.NotStarted) {
-                setupNewGame(wordLength, maxGuessAttempts)
+                setupNewGame(wordGameMode, wordLength, maxGuessAttempts)
             } else if (state.value.gameState.isGameOver) {
                 gameHasAlreadyBeenPlayed = true
             }
             state.value.correctWord?.let {
                 getOrFetchWordDefinition(it)
             }
+            Log.e("shovel", "Correct word: ${state.value.correctWord}")
         }
     }
 
-    private suspend fun setupNewGame(wordLength: Int = 5, maxGuessAttempts: Int = 6) {
+    private suspend fun setupNewGame(wordGameMode: WordGameMode, wordLength: Int = 5, maxGuessAttempts: Int = 6) {
         val correctWord = GuessWordValidator.obtainRandomWord(state.value.gameMode)
         val w = List(maxGuessAttempts) {
             GuessWord(
@@ -212,10 +215,10 @@ class WordGameLogicHelper(
                 guessWords = w.toImmutableList()
             )
         }
-        if (state.value.gameMode == WordGameMode.Daily) {
+        if (wordGameMode == WordGameMode.Daily) {
             wordGameRepository.deleteDailySession(Date())
         }
-        updateDailyWordSession()
+        updateDailyWordSession(wordGameMode)
 
         _state.update { dailyWordState ->
             dailyWordState.copy(
@@ -275,7 +278,7 @@ class WordGameLogicHelper(
             }
 
             WordGameMode.Inifinity -> {
-                wordGameRepository.loadLatestInfinitySession()?.guesses ?: persistentListOf()
+                wordGameRepository.loadLatestToDoInfinitySession()?.guesses ?: persistentListOf()
             }
         }
 
@@ -482,7 +485,10 @@ class WordGameLogicHelper(
                     val maxAttempts = wordSession.maxAttempts
                     wordGameRepository.deleteDailySession(Date())
                     _state.update {
-                        DailyWordState()
+                        DailyWordState(
+                            gameMode = WordGameMode.Daily,
+                            gameState = DailyWordGameState.NotStarted
+                        )
                     }
                     setupGame(WordGameMode.Daily, wordLength, maxAttempts)
                 }
@@ -494,7 +500,10 @@ class WordGameLogicHelper(
                     val wordLength = wordSession.wordLength
                     val maxAttempts = wordSession.maxAttempts
                     _state.update {
-                        DailyWordState()
+                        DailyWordState(
+                            gameMode = WordGameMode.Inifinity,
+                            gameState = DailyWordGameState.NotStarted
+                        )
                     }
                     setupGame(WordGameMode.Inifinity, wordLength, maxAttempts)
                 }

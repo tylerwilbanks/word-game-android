@@ -46,6 +46,12 @@ internal fun InfinityScreen(
         state = state,
         modifier = modifier,
         onGameEvent = viewModel::onGameEvent,
-        onStatsEvent = viewModel::onStatEvent
+        statsContent = {
+            InfinityStatsScreen(
+                state = state,
+                onEvent = viewModel::onStatEvent,
+                hasBackgroundScreen = true
+            )
+        }
     )
 }

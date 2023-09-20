@@ -1,6 +1,7 @@
 package com.minutesock.core.presentation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,7 +29,7 @@ fun WordGameScreen(
     modifier: Modifier = Modifier,
     state: DailyWordState,
     onGameEvent: (WordEventGame) -> Unit,
-    onStatsEvent: (WordEventStats) -> Unit,
+    statsContent: @Composable() () -> Unit,
 ) {
 
     val bgBlur by remember(state.screenState) {
@@ -51,11 +52,7 @@ fun WordGameScreen(
         )
 
         AnimatedVisibility(visible = visibleStats) {
-            WordScreenStats(
-                state = state,
-                onEvent = onStatsEvent,
-                hasBackgroundScreen = true
-            )
+            statsContent()
         }
     }
 }

@@ -97,7 +97,7 @@ class WordGameRepository(
         }
     }
 
-    suspend fun loadLatestInfinitySession(): WordSession? {
+    suspend fun loadLatestToDoInfinitySession(): WordSession? {
         return withContext(defaultDispatcher) {
             wordSessionDao.getLatestInfinityWordSession(
                 listOf(
