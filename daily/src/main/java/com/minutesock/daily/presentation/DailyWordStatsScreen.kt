@@ -266,7 +266,7 @@ fun DailyWordStatsScreen(
 fun DailyWordScreenStatsPreview() {
     WordGameTheme {
         Surface {
-            WordScreenStats(
+            DailyWordStatsScreen(
                 state = DailyWordState(
                     gameState = DailyWordGameState.Success,
                     screenState = DailyWordScreenState.Stats,

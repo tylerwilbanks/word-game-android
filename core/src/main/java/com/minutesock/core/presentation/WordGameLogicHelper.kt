@@ -158,7 +158,12 @@ class WordGameLogicHelper(
                     )
                 )
 
-                wordSession = wordGameRepository.loadLatestToDoInfinitySession()!!
+                if (state.value.gameState.isGameOver) {
+                    wordSession = wordGameRepository.loadInfinitySession(wordSession.id)!!
+                } else {
+                    wordSession = wordGameRepository.loadLatestToDoInfinitySession()!!
+
+                }
             }
         }
 
