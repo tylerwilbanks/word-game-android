@@ -38,7 +38,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.minutesock.core.R
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
@@ -128,19 +128,19 @@ internal fun HistoryListItem(
 
     val borderColor by remember(wordSession.gameState) {
         val color = when (wordSession.gameState) {
-            DailyWordGameState.Success -> guessLetterGreen
-            DailyWordGameState.InProgress -> guessLetterYellow
-            DailyWordGameState.Failure -> errorColor
+            WordGameState.Success -> guessLetterGreen
+            WordGameState.InProgress -> guessLetterYellow
+            WordGameState.Failure -> errorColor
             else -> a
         }
         mutableStateOf(color)
     }
 
     val backgroundColor = when (wordSession.gameState) {
-        DailyWordGameState.NotStarted -> MaterialTheme.colorScheme.scrim
-        DailyWordGameState.InProgress -> MaterialTheme.colorScheme.secondaryContainer
-        DailyWordGameState.Success -> MaterialTheme.colorScheme.primaryContainer
-        DailyWordGameState.Failure -> MaterialTheme.colorScheme.errorContainer
+        WordGameState.NotStarted -> MaterialTheme.colorScheme.scrim
+        WordGameState.InProgress -> MaterialTheme.colorScheme.secondaryContainer
+        WordGameState.Success -> MaterialTheme.colorScheme.primaryContainer
+        WordGameState.Failure -> MaterialTheme.colorScheme.errorContainer
     }
 
     val completeTime by remember(wordSession.completeTime) {
@@ -283,7 +283,7 @@ internal fun HistoryScreenPreview() {
                 maxAttempts = maxAttempts,
                 isDaily = true,
                 startTime = Clock.System.now(),
-                gameState = DailyWordGameState.Success
+                gameState = WordGameState.Success
             ),
 
             WordSession(
@@ -293,7 +293,7 @@ internal fun HistoryScreenPreview() {
                 maxAttempts = maxAttempts,
                 isDaily = true,
                 startTime = Clock.System.now(),
-                gameState = DailyWordGameState.Failure
+                gameState = WordGameState.Failure
             ),
             WordSession(
                 date = Date(),
@@ -302,7 +302,7 @@ internal fun HistoryScreenPreview() {
                 maxAttempts = maxAttempts,
                 isDaily = true,
                 startTime = Clock.System.now(),
-                gameState = DailyWordGameState.InProgress
+                gameState = WordGameState.InProgress
             )
         )
     )

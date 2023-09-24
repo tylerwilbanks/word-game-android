@@ -3,7 +3,7 @@ package com.minutesock.core.data.repository
 import android.util.Log
 import com.minutesock.core.data.WordInfoDao
 import com.minutesock.core.data.WordSessionDao
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.domain.WordSession
 import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
@@ -101,8 +101,8 @@ class WordGameRepository(
         return withContext(defaultDispatcher) {
             wordSessionDao.getLatestInfinityWordSession(
                 listOf(
-                    DailyWordGameState.NotStarted.ordinal,
-                    DailyWordGameState.InProgress.ordinal
+                    WordGameState.NotStarted.ordinal,
+                    WordGameState.InProgress.ordinal
                 )
             )?.toWordSession()
         }

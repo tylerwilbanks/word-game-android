@@ -78,10 +78,10 @@ object GuessWordValidator {
         }
     }
 
-    fun obtainRandomMessageBasedOnGameState(gameState: DailyWordGameState): UiText {
+    fun obtainRandomMessageBasedOnGameState(gameState: WordGameState): UiText {
         return when (gameState) {
-            DailyWordGameState.NotStarted -> UiText.StringResource(R.string.what_in_da_word)
-            DailyWordGameState.InProgress -> {
+            WordGameState.NotStarted -> UiText.StringResource(R.string.what_in_da_word)
+            WordGameState.InProgress -> {
                 UiText.DynamicString(
                     getRandomMessage(
                         encouragingMessages, encouragingMessageIndex
@@ -89,7 +89,7 @@ object GuessWordValidator {
                 )
             }
 
-            DailyWordGameState.Success
+            WordGameState.Success
             -> {
                 UiText.DynamicString(
                     getRandomMessage(
@@ -98,7 +98,7 @@ object GuessWordValidator {
                 )
             }
 
-            DailyWordGameState.Failure -> {
+            WordGameState.Failure -> {
                 UiText.DynamicString(
                     getRandomMessage(
                         failureMessages, failureMessageIndex

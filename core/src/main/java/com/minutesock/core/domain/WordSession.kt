@@ -14,7 +14,7 @@ data class WordSession(
     val maxAttempts: Int,
     val guesses: ImmutableList<GuessWord>,
     val isDaily: Boolean,
-    val gameState: DailyWordGameState,
+    val gameState: WordGameState,
     val startTime: Instant? = null
 ) {
     val wordLength = correctWord.length
@@ -48,7 +48,7 @@ data class WordSession(
             val finalIndex =
                 guesses.indexOfFirst { it.state == GuessWordState.Correct || it.state == GuessWordState.Failure }
             val resultLetter =
-                if (finalIndex + 1 >= guesses.size && gameState == DailyWordGameState.Failure) "X" else "${finalIndex + 1}"
+                if (finalIndex + 1 >= guesses.size && gameState == WordGameState.Failure) "X" else "${finalIndex + 1}"
 
             return "$resultLetter/${guesses.size}\n" +
                     "$formattedElapsedTime\n" +
@@ -60,7 +60,7 @@ data class WordSession(
             val firstGuess =
                 guesses[0].state == GuessWordState.Correct || guesses[0].state == GuessWordState.Failure
             val incomplete =
-                gameState == DailyWordGameState.NotStarted || gameState == DailyWordGameState.InProgress
+                gameState == WordGameState.NotStarted || gameState == WordGameState.InProgress
             if (firstGuess || incomplete) {
                 return Duration.ZERO
             }

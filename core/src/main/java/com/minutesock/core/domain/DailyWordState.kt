@@ -1,13 +1,14 @@
 package com.minutesock.core.domain
 
 import com.minutesock.core.presentation.FalseKeyboardKeys
+import com.minutesock.core.uiutils.UiText
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 data class DailyWordState(
     val wordRowAnimating: Boolean = false,
-    val gameState: DailyWordGameState = DailyWordGameState.NotStarted,
-    val screenState: DailyWordScreenState = DailyWordScreenState.NotStarted,
+    val gameState: WordGameState = WordGameState.NotStarted,
+    val screenState: WordScreenState = WordScreenState.NotStarted,
     val wordLength: Int = 5,
     val maxGuessAttempts: Int = 6,
     val correctWord: String? = null,
@@ -21,11 +22,11 @@ data class DailyWordState(
 )
 
 data class DailyWordStateMessage(
-    val uiText: com.minutesock.core.uiutils.UiText? = null,
+    val uiText: UiText? = null,
     val isError: Boolean = false,
 )
 
-enum class DailyWordGameState {
+enum class WordGameState {
     NotStarted,
     InProgress,
     Success,
@@ -39,11 +40,11 @@ enum class DailyWordGameState {
         }
 
     companion object {
-        fun fromInt(ordinal: Int) = DailyWordGameState.values().first { it.ordinal == ordinal }
+        fun fromInt(ordinal: Int) = WordGameState.values().first { it.ordinal == ordinal }
     }
 }
 
-enum class DailyWordScreenState {
+enum class WordScreenState {
     NotStarted,
     Game,
     Stats

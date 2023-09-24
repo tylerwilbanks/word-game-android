@@ -3,8 +3,8 @@ package com.minutesock.core.presentation
 import android.util.Log
 import com.minutesock.core.R
 import com.minutesock.core.data.repository.WordGameRepository
-import com.minutesock.core.domain.DailyWordGameState
-import com.minutesock.core.domain.DailyWordScreenState
+import com.minutesock.core.domain.WordGameState
+import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.DailyWordStateMessage
 import com.minutesock.core.domain.DailyWordValidationResult
@@ -113,7 +113,7 @@ class WordGameLogicHelper(
             _state.update {
                 it.copy(
                     gameState = wordSession.gameState,
-                    screenState = DailyWordScreenState.Game,
+                    screenState = WordScreenState.Game,
                     wordLength = wordSession.correctWord.length,
                     maxGuessAttempts = wordSession.maxAttempts,
                     correctWord = wordSession.correctWord,
@@ -187,7 +187,7 @@ class WordGameLogicHelper(
     ) {
         withContext(Dispatchers.IO) {
             initDailyWordSessionAndState(wordGameMode)
-            if (state.value.gameState == DailyWordGameState.NotStarted) {
+            if (state.value.gameState == WordGameState.NotStarted) {
                 setupNewGame(wordGameMode, wordLength, maxGuessAttempts)
             } else if (state.value.gameState.isGameOver) {
                 gameHasAlreadyBeenPlayed = true
@@ -216,7 +216,7 @@ class WordGameLogicHelper(
 
         _state.update {
             DailyWordState(
-                gameState = DailyWordGameState.InProgress,
+                gameState = WordGameState.InProgress,
                 wordLength = wordLength,
                 maxGuessAttempts = maxGuessAttempts,
                 correctWord = correctWord,
@@ -230,7 +230,7 @@ class WordGameLogicHelper(
 
         _state.update { dailyWordState ->
             dailyWordState.copy(
-                screenState = DailyWordScreenState.Game,
+                screenState = WordScreenState.Game,
                 dailyWordStateMessage = DailyWordStateMessage(
                     uiText = UiText.StringResource(R.string.what_in_da_word)
                 ),
@@ -293,7 +293,7 @@ class WordGameLogicHelper(
     }
 
     suspend fun onGameEvent(event: WordEventGame) {
-        if (state.value.gameState == DailyWordGameState.NotStarted
+        if (state.value.gameState == WordGameState.NotStarted
         ) {
             return
         }
@@ -411,7 +411,7 @@ class WordGameLogicHelper(
                                     it.copy(
                                         guessWords = runItThroughThePipes(
                                             index, state.value.guessWords[index].updateState(
-                                                if (state.value.gameState == DailyWordGameState.Success) {
+                                                if (state.value.gameState == WordGameState.Success) {
                                                     GuessWordState.Correct
                                                 } else {
                                                     GuessWordState.Failure
@@ -447,14 +447,14 @@ class WordGameLogicHelper(
                 }
                 _state.update {
                     it.copy(
-                        screenState = DailyWordScreenState.Stats
+                        screenState = WordScreenState.Stats
                     )
                 }
             }
 
             WordEventGame.OnStatsPress -> _state.update {
                 it.copy(
-                    screenState = DailyWordScreenState.Stats
+                    screenState = WordScreenState.Stats
                 )
             }
         }
@@ -465,7 +465,7 @@ class WordGameLogicHelper(
             WordEventStats.OnExitButtonPressed -> {
                 _state.update {
                     it.copy(
-                        screenState = DailyWordScreenState.Game
+                        screenState = WordScreenState.Game
                     )
                 }
             }
@@ -495,7 +495,7 @@ class WordGameLogicHelper(
                     _state.update {
                         DailyWordState(
                             gameMode = WordGameMode.Daily,
-                            gameState = DailyWordGameState.NotStarted
+                            gameState = WordGameState.NotStarted
                         )
                     }
                     setupGame(WordGameMode.Daily, wordLength, maxAttempts)
@@ -510,7 +510,7 @@ class WordGameLogicHelper(
                     _state.update {
                         DailyWordState(
                             gameMode = WordGameMode.Inifinity,
-                            gameState = DailyWordGameState.NotStarted
+                            gameState = WordGameState.NotStarted
                         )
                     }
                     setupGame(WordGameMode.Inifinity, wordLength, maxAttempts)
@@ -524,7 +524,7 @@ class WordGameLogicHelper(
             _state.update {
                 it.copy(
                     wordRowAnimating = true,
-                    gameState = DailyWordGameState.Failure,
+                    gameState = WordGameState.Failure,
                     falseKeyboardKeys = getUpdatedFalseKeyboardKeys(
                         state.value.guessWords,
                         state.value.falseKeyboardKeys
@@ -553,7 +553,7 @@ class WordGameLogicHelper(
         _state.update {
             it.copy(
                 wordRowAnimating = true,
-                gameState = DailyWordGameState.Success,
+                gameState = WordGameState.Success,
                 guessWords = updatedGuessWords,
                 falseKeyboardKeys = getUpdatedFalseKeyboardKeys(
                     updatedGuessWords,

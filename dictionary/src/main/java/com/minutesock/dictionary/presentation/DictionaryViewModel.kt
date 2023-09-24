@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class DictionaryViewModel(
     private val dictionaryRepository: DictionaryRepository = DictionaryRepository(
-        wordInfoDao = App.database.WordInfoDao()
+        wordSessionDao = App.database.WordSessionDao()
     )
 ) : ViewModel() {
 
@@ -36,6 +36,10 @@ class DictionaryViewModel(
                 }
             }.launchIn(this)
         }
+    }
+
+    fun loadDictionaryDetail(word: String) {
+
     }
 
     fun onEvent(event: DictionaryEvent) {

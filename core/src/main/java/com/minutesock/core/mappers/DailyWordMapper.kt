@@ -3,7 +3,7 @@ package com.minutesock.core.mappers
 import com.minutesock.core.data.GuessWordStorage
 import com.minutesock.core.data.models.WordInfoEntity
 import com.minutesock.core.data.models.WordSessionEntity
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.domain.WordSession
@@ -27,7 +27,7 @@ fun WordSessionEntity.toWordSession(): WordSession {
         maxAttempts = this.maxAttempts,
         guesses = this.guesses.map { it.toGuessWord() }.toImmutableList(),
         isDaily = isDaily,
-        gameState = DailyWordGameState.fromInt(this.gameState),
+        gameState = WordGameState.fromInt(this.gameState),
         startTime = if (startTime != null) Instant.parse(startTime) else null
     )
 }

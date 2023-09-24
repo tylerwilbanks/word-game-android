@@ -50,7 +50,10 @@ class MainActivity : ComponentActivity() {
                                 Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             dailyRoute(modifier = bottomModifier)
                             infinityRoute(modifier = bottomModifier)
-                            dictionaryRoute(modifier = bottomModifier)
+                            dictionaryRoute(
+                                modifier = bottomModifier,
+                                navController = navController,
+                            )
                             profileRoute(
                                 modifier = bottomModifier,
                                 onHistoryButtonClicked = navController::navigateToHistory,

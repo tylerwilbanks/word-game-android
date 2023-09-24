@@ -1,6 +1,7 @@
 package com.minutesock.dictionary.data.repository
 
 import com.minutesock.core.data.WordInfoDao
+import com.minutesock.core.data.WordSessionDao
 import com.minutesock.core.domain.GuessWordValidator
 import com.minutesock.dictionary.domain.DictionaryHeaderItem
 import com.minutesock.dictionary.domain.DictionaryState
@@ -9,16 +10,12 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.flow
 
 class DictionaryRepository(
-    private val wordInfoDao: WordInfoDao,
+    private val wordSessionDao: WordSessionDao,
 ) {
 
     fun getAlphabeticalDictionaryState() = flow {
-
-        // todo change this to first search the word session dao for all sessions that are complete
-        // then use the list of the correct words of the complete word sessions to query word info dao
-        // sorted alphabetically
-        val groupedWordInfos = wordInfoDao.getAllWordInfosSortedAlphabetically().groupBy { it.word }
-        val listItems = groupedWordInfos.map {
+        val groupedCorrectWords = wordSessionDao.getCompletedCorrectWordsSortedAlphabetically().groupBy { it }
+        val listItems = groupedCorrectWords.map {
             WordInfoListItem(
                 word = it.key,
                 sessionCount = it.value.size
@@ -33,7 +30,7 @@ class DictionaryRepository(
         }
         emit(
             DictionaryState(
-                unlockedWordCount = groupedWordInfos.size,
+                unlockedWordCount = headerItems.sumOf { it.listItems.size },
                 totalWordCount = GuessWordValidator.wordSelectionCount,
                 headerItems = headerItems.toImmutableList()
             )

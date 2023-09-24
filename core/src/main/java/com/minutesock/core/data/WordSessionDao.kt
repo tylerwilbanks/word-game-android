@@ -5,12 +5,21 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.minutesock.core.data.models.WordSessionEntity
+import com.minutesock.core.domain.WordGameState
 
 @Dao
 interface WordSessionDao {
 
     @Query("SELECT * FROM WordSessionEntity")
     fun getAllSessions(): List<WordSessionEntity>
+
+    @Query("SELECT correctWord FROM WordSessionEntity WHERE gameState in(:wordGameStates) ORDER BY correctWord ASC")
+    fun getCompletedCorrectWordsSortedAlphabetically(
+        wordGameStates: List<Int> = listOf(
+            WordGameState.Success.ordinal,
+            WordGameState.Failure.ordinal
+        )
+    ): List<String>
 
     @Query("SELECT * FROM WordSessionEntity ORDER BY id DESC LIMIT :pageSize OFFSET :offset")
     fun getPaginatedSessionsByRecency(pageSize: Int, offset: Int): List<WordSessionEntity>

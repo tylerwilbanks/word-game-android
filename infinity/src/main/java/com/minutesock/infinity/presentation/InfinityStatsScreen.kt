@@ -42,7 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.R
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.presentation.WordEventStats
 import com.minutesock.core.presentation.components.WordInfoItem
@@ -61,7 +61,7 @@ fun InfinityStatsScreen(
     }
 
     var revealSpoiler by remember(state.gameState) {
-        mutableStateOf(state.gameState == DailyWordGameState.Success)
+        mutableStateOf(state.gameState == WordGameState.Success)
     }
 
     val spoilerBlur by remember(revealSpoiler) {
@@ -73,7 +73,7 @@ fun InfinityStatsScreen(
     }
 
     val textResultColor =
-        if (state.dailyWordStateMessage?.isError == true || state.gameState == DailyWordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        if (state.dailyWordStateMessage?.isError == true || state.gameState == WordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier

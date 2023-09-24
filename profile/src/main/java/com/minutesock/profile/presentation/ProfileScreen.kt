@@ -48,7 +48,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.blendColors
 import com.minutesock.core.uiutils.shimmerEffect
@@ -97,7 +97,6 @@ internal fun ProfileScreen(
         Button(
             modifier = buttonModifier,
             onClick = {
-                // todo implement game history
                 onHistoryButtonClicked()
             }
         ) {
@@ -266,7 +265,7 @@ private fun createDummyGuessDistributionState(): GuessDistributionState {
             GuessDistribution(
                 correctAttempt = i,
                 correctAttemptCount = i * 2,
-                gameState = DailyWordGameState.Success,
+                gameState = WordGameState.Success,
                 maxGuessAttempts = maxGuessAttemptsSize,
             )
         )

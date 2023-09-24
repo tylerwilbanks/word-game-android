@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.R
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.WordGameMode
@@ -61,7 +61,7 @@ fun WordScreenGame(
             targetValue = if (
                 state.dailyWordStateMessage?.uiText?.asString() != stringResource(id = R.string.what_in_da_word) &&
                 (state.dailyWordStateMessage?.isError == true ||
-                        state.gameState == DailyWordGameState.Failure)
+                        state.gameState == WordGameState.Failure)
             ) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
             animationSpec = tween(
                 if (state.dailyWordStateMessage?.isError == true) 200 else 1000,
@@ -74,10 +74,10 @@ fun WordScreenGame(
                 return@LaunchedEffect
             }
             state.dailyWordStateMessage?.let {
-                if (it.isError || state.gameState == DailyWordGameState.Failure) {
+                if (it.isError || state.gameState == WordGameState.Failure) {
                     shakeController.shake(
                         ShakeConfig.no(defaultMessageDelay) {
-                            if (state.gameState == DailyWordGameState.Failure) {
+                            if (state.gameState == WordGameState.Failure) {
                                 onEvent(WordEventGame.OnCompleteAnimationFinished)
                             } else {
                                 onEvent(WordEventGame.OnErrorAnimationFinished)
@@ -87,7 +87,7 @@ fun WordScreenGame(
                     return@LaunchedEffect
                 }
             }
-            if (state.gameState == DailyWordGameState.Success) {
+            if (state.gameState == WordGameState.Success) {
                 shakeController.shake(
                     ShakeConfig.yes(defaultMessageDelay) {
                         onEvent(

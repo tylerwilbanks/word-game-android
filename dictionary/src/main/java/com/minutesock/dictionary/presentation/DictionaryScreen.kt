@@ -16,6 +16,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,14 +28,19 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.minutesock.core.uiutils.blendColors
+import com.minutesock.core.uiutils.shimmerEffect
 import com.minutesock.core.utils.capitalize
 import com.minutesock.dictionary.domain.DictionaryEvent
 import com.minutesock.dictionary.domain.WordInfoListItem
+import com.minutesock.dictionary.navigation.navigateToDictionaryDetail
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun DictionaryScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: DictionaryViewModel = viewModel(),
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
@@ -90,7 +97,7 @@ internal fun DictionaryScreen(
                 items(dictionaryHeaderItem.listItems.size) {
                     CategoryItem(
                         item = dictionaryHeaderItem.listItems[it],
-                        onEvent = viewModel::onEvent
+                        onClick = navController::navigateToDictionaryDetail
                     )
                 }
             }
@@ -120,7 +127,7 @@ private fun CategoryHeader(
 private fun CategoryItem(
     item: WordInfoListItem,
     modifier: Modifier = Modifier,
-    onEvent: (DictionaryEvent) -> Unit,
+    onClick: (word: String) -> Unit,
 ) {
     Text(
         text = item.word.capitalize(),
@@ -130,8 +137,17 @@ private fun CategoryItem(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
             .clickable {
-                onEvent(DictionaryEvent.OnWordInfoListItemClicked(item.word))
-            },
+                onClick(item.word)
+            }
+            .shimmerEffect(
+                color1 = MaterialTheme.colorScheme.background,
+                color2 = blendColors(
+                    MaterialTheme.colorScheme.background,
+                    MaterialTheme.colorScheme.primary,
+                    0.15f
+                ),
+                duration = 3_000
+            ),
         color = MaterialTheme.colorScheme.primary,
     )
 }

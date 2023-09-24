@@ -1,13 +1,13 @@
 package com.minutesock.profile.domain
 
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 data class GuessDistribution(
     val correctAttempt: Int,
     val correctAttemptCount: Int = 0,
-    val gameState: DailyWordGameState,
+    val gameState: WordGameState,
     val maxGuessAttempts: Int,
     val isMostRecentGame: Boolean = false
 )

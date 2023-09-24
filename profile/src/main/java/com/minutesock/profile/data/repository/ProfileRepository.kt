@@ -1,5 +1,5 @@
 import com.minutesock.core.data.WordSessionDao
-import com.minutesock.core.domain.DailyWordGameState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
 import com.minutesock.core.mappers.toWordSession
@@ -25,7 +25,7 @@ class ProfileRepository(
                     dailyWordSessionEntity.guesses.indexOfFirst { it.state == GuessWordState.Correct }
                 GuessDistribution(
                     correctAttempt = if (correctAttemptIndex == -1) 0 else correctAttemptIndex + 1,
-                    gameState = DailyWordGameState.fromInt(dailyWordSessionEntity.gameState),
+                    gameState = WordGameState.fromInt(dailyWordSessionEntity.gameState),
                     maxGuessAttempts = dailyWordSessionEntity.maxAttempts,
                     isMostRecentGame = dailyWordSessionEntity.isDaily && dailyWordSessionEntity.date == Date().toString(
                         DATE_FORMAT_PATTERN
@@ -45,14 +45,14 @@ class ProfileRepository(
                     correctAttempt = i,
                     correctAttemptCount = guessDistributions.count { it.correctAttempt == i },
                     maxGuessAttempts = maxGuessAttempts,
-                    gameState = DailyWordGameState.Success,
+                    gameState = WordGameState.Success,
                     isMostRecentGame = mostRecentGame?.correctAttempt == i
                 )
             )
         }
 
         val failedGameSessionsCount =
-            guessDistributions.count { it.gameState == DailyWordGameState.Failure }
+            guessDistributions.count { it.gameState == WordGameState.Failure }
         val maxCorrectAttemptCount = maxOf(
             filteredGuessDistributions.maxOf { it.correctAttemptCount },
             failedGameSessionsCount

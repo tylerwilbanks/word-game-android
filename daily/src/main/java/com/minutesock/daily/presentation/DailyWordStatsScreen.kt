@@ -50,8 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.BuildConfig
 import com.minutesock.core.R
-import com.minutesock.core.domain.DailyWordGameState
-import com.minutesock.core.domain.DailyWordScreenState
+import com.minutesock.core.domain.WordGameState
+import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.DailyWordStateMessage
 import com.minutesock.core.presentation.components.WordInfoItem
@@ -89,7 +89,7 @@ fun DailyWordStatsScreen(
     }
 
     var revealSpoiler by remember(state.gameState) {
-        mutableStateOf(state.gameState == DailyWordGameState.Success)
+        mutableStateOf(state.gameState == WordGameState.Success)
     }
 
     val spoilerBlur by remember(revealSpoiler) {
@@ -101,7 +101,7 @@ fun DailyWordStatsScreen(
     }
 
     val textResultColor =
-        if (state.dailyWordStateMessage?.isError == true || state.gameState == DailyWordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        if (state.dailyWordStateMessage?.isError == true || state.gameState == WordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier
@@ -266,8 +266,8 @@ fun DailyWordScreenStatsPreview() {
         Surface {
             DailyWordStatsScreen(
                 state = DailyWordState(
-                    gameState = DailyWordGameState.Success,
-                    screenState = DailyWordScreenState.Stats,
+                    gameState = WordGameState.Success,
+                    screenState = WordScreenState.Stats,
                     dailyWordStateMessage = DailyWordStateMessage(
                         uiText = UiText.DynamicString(
                             value = "Wow great job you solved it wow great job wow!!!!!!!!!"
