@@ -25,6 +25,10 @@ class DictionaryViewModel(
     val state = _state.asStateFlow()
 
     init {
+        updateList()
+    }
+
+    fun updateList() {
         viewModelScope.launch(Dispatchers.IO) {
             dictionaryRepository.getAlphabeticalDictionaryState().onEach { newState ->
                 _state.update {

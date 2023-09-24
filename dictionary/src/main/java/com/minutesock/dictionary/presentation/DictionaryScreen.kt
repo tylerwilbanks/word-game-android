@@ -12,13 +12,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.minutesock.core.utils.capitalize
@@ -29,9 +34,26 @@ import com.minutesock.dictionary.domain.WordInfoListItem
 @Composable
 internal fun DictionaryScreen(
     modifier: Modifier = Modifier,
-    viewModel: DictionaryViewModel = viewModel()
+    viewModel: DictionaryViewModel = viewModel(),
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                viewModel.updateList()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     val state = viewModel.state.collectAsStateWithLifecycle()
+
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -42,8 +64,8 @@ internal fun DictionaryScreen(
                     .background(
                         brush = Brush.verticalGradient(
                             listOf(
-                                MaterialTheme.colorScheme.outline,
-                                MaterialTheme.colorScheme.onPrimary
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.secondaryContainer
                             )
                         )
                     )

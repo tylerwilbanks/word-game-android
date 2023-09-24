@@ -27,6 +27,7 @@ ext {
     ext.android_test_impl_espresso_core_version = '3.5.1'
     ext.datastore_preferences_version = '1.0.0'
     ext.kotlinx_datetime_version = '0.4.1'
+    ext.accompanist_system_ui_controller_version = '0.27.0'
 }
 
 subprojects {
