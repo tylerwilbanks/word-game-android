@@ -18,7 +18,7 @@ class DictionaryViewModel(
     private val dictionaryRepository: DictionaryRepository = DictionaryRepository(
         wordInfoDao = App.database.WordInfoDao()
     )
-): ViewModel() {
+) : ViewModel() {
 
 
     private val _state = MutableStateFlow(DictionaryState())
@@ -28,7 +28,7 @@ class DictionaryViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             dictionaryRepository.getAlphabeticalDictionaryState().onEach { newState ->
                 _state.update {
-                   newState
+                    newState
                 }
             }.launchIn(this)
         }

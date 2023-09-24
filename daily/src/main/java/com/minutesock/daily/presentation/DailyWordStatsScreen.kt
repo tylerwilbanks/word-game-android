@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
@@ -55,7 +54,6 @@ import com.minutesock.core.domain.DailyWordGameState
 import com.minutesock.core.domain.DailyWordScreenState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.DailyWordStateMessage
-import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.presentation.components.WordInfoItem
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.UiText

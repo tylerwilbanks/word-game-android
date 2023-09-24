@@ -98,16 +98,15 @@ class WordGameLogicHelper(
                 }
 
                 WordGameMode.Inifinity -> {
-                    wordSession = wordGameRepository.loadLatestToDoInfinitySession() ?:
-                            WordSession(
-                                date = Date(),
-                                correctWord = state.value.correctWord ?: "",
-                                maxAttempts = state.value.maxGuessAttempts,
-                                guesses = state.value.guessWords.toImmutableList(),
-                                isDaily = false,
-                                gameState = state.value.gameState,
-                                startTime = Clock.System.now()
-                            )
+                    wordSession = wordGameRepository.loadLatestToDoInfinitySession() ?: WordSession(
+                        date = Date(),
+                        correctWord = state.value.correctWord ?: "",
+                        maxAttempts = state.value.maxGuessAttempts,
+                        guesses = state.value.guessWords.toImmutableList(),
+                        isDaily = false,
+                        gameState = state.value.gameState,
+                        startTime = Clock.System.now()
+                    )
                 }
             }
 
@@ -200,7 +199,11 @@ class WordGameLogicHelper(
         }
     }
 
-    private suspend fun setupNewGame(wordGameMode: WordGameMode, wordLength: Int = 5, maxGuessAttempts: Int = 6) {
+    private suspend fun setupNewGame(
+        wordGameMode: WordGameMode,
+        wordLength: Int = 5,
+        maxGuessAttempts: Int = 6
+    ) {
         val correctWord = GuessWordValidator.obtainRandomWord(state.value.gameMode)
         val w = List(maxGuessAttempts) {
             GuessWord(
