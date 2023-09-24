@@ -20,6 +20,7 @@ import com.minutesock.core.domain.GuessWordValidator
 import com.minutesock.core.navigation.BottomNavItem
 import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.daily.navigation.dailyRoute
+import com.minutesock.dictionary.navigation.dictionaryRoute
 import com.minutesock.infinity.navigation.infinityRoute
 import com.minutesock.profile.navigation.navigateToHistory
 import com.minutesock.profile.navigation.profileRoute
@@ -56,18 +57,7 @@ class MainActivity : ComponentActivity() {
                                 Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             dailyRoute(modifier = bottomModifier)
                             infinityRoute(modifier = bottomModifier)
-                            composable(BottomNavItem.Dictionary.route) {
-                                Column(
-                                    modifier = bottomModifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        textAlign = TextAlign.Center,
-                                        text = "Dictionary screen is under construction. \uD83D\uDEA7"
-                                    )
-                                }
-                            }
+                            dictionaryRoute(modifier = bottomModifier)
                             profileRoute(
                                 modifier = bottomModifier,
                                 onHistoryButtonClicked = navController::navigateToHistory,
