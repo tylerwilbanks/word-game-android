@@ -205,7 +205,15 @@ fun InfinityStatsScreen(
                             if (i > 0) {
                                 Spacer(modifier = Modifier.height(8.dp))
                             }
-                            WordInfoItem(wordInfo = wordInfo, gameState = state.gameState)
+                            WordInfoItem(
+                                wordInfo = wordInfo,
+                                wordColor = if (state.gameState == WordGameState.Failure) {
+                                    MaterialTheme.colorScheme.error
+                                }
+                                else {
+                                    MaterialTheme.colorScheme.primary
+                                }
+                            )
                             if (i < state.wordInfos.size - 1) {
                                 Divider()
                             }

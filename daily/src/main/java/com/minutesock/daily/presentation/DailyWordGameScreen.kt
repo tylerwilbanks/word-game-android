@@ -10,8 +10,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.minutesock.core.presentation.DailyWordStatsScreen
 import com.minutesock.core.presentation.WordGameScreen
+import presentation.DailyWordStatsScreen
 
 @Composable
 internal fun DailyWordGameScreen(

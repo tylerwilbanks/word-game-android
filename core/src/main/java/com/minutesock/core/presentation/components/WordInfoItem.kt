@@ -7,16 +7,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.core.domain.WordGameState
+import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.utils.capitalize
 
 @Composable
 fun WordInfoItem(
-    wordInfo: com.minutesock.core.domain.WordInfo,
-    gameState: WordGameState,
+    wordInfo: WordInfo,
+    wordColor: Color,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -24,7 +26,7 @@ fun WordInfoItem(
             text = wordInfo.word.capitalize(),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = if (gameState == WordGameState.Failure) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            color = wordColor
         )
         Text(text = wordInfo.phonetic ?: "", fontWeight = FontWeight.Light)
         Spacer(modifier = Modifier.height(16.dp))

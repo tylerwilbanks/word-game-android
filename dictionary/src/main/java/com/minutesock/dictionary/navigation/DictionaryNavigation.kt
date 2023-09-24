@@ -1,6 +1,5 @@
 package com.minutesock.dictionary.navigation
 
-import android.net.Uri
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder

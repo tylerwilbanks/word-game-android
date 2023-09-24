@@ -43,8 +43,10 @@ class WordGameRepository(
 
         if (throttleExpireDate != null && Date().before(Date(throttleExpireDate))) {
             Log.e(null, "Fetch definition throttled!")
+            emit(Option.Success(data = data))
             return@flow
         }
+
 
         try {
             Log.e(null, "Fetching definition!")

@@ -1,4 +1,4 @@
-package com.minutesock.core.presentation
+package presentation
 
 import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.BuildConfig
-import com.minutesock.core.R
+import com.minutesock.core.presentation.WordEventStats
 import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.domain.DailyWordState
@@ -59,6 +59,7 @@ import com.minutesock.core.theme.WordGameTheme
 import com.minutesock.core.uiutils.UiText
 import com.minutesock.core.uiutils.shareExternal
 import com.minutesock.core.utils.capitalize
+import com.minutesock.core.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,7 +185,7 @@ fun DailyWordStatsScreen(
                             enabled = spoilerButtonEnabled,
                         ) {
                             Icon(
-                                painterResource(id = if (revealSpoiler) com.minutesock.core.R.drawable.baseline_visibility_off_24 else com.minutesock.core.R.drawable.baseline_visibility_24),
+                                painterResource(id = if (revealSpoiler) R.drawable.baseline_visibility_off_24 else R.drawable.baseline_visibility_24),
                                 contentDescription = "Show/Hide"
                             )
                             Spacer(modifier = Modifier.size(5.dp))
@@ -247,7 +248,15 @@ fun DailyWordStatsScreen(
                             if (i > 0) {
                                 Spacer(modifier = Modifier.height(8.dp))
                             }
-                            WordInfoItem(wordInfo = wordInfo, gameState = state.gameState)
+                            WordInfoItem(
+                                wordInfo = wordInfo,
+                                wordColor = if (state.gameState == WordGameState.Failure) {
+                                    MaterialTheme.colorScheme.error
+                                }
+                                else {
+                                    MaterialTheme.colorScheme.primary
+                                }
+                            )
                             if (i < state.wordInfos.size - 1) {
                                 Divider()
                             }

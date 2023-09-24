@@ -16,8 +16,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,8 +57,7 @@ internal fun DictionaryScreen(
         }
     }
 
-    val state = viewModel.state.collectAsStateWithLifecycle()
-
+    val state = viewModel.stateList.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -97,7 +94,8 @@ internal fun DictionaryScreen(
                 items(dictionaryHeaderItem.listItems.size) {
                     CategoryItem(
                         item = dictionaryHeaderItem.listItems[it],
-                        onClick = navController::navigateToDictionaryDetail
+                        navController = navController,
+                        onEvent = viewModel::onEvent
                     )
                 }
             }
@@ -127,7 +125,8 @@ private fun CategoryHeader(
 private fun CategoryItem(
     item: WordInfoListItem,
     modifier: Modifier = Modifier,
-    onClick: (word: String) -> Unit,
+    navController: NavController,
+    onEvent: (DictionaryEvent) -> Unit,
 ) {
     Text(
         text = item.word.capitalize(),
@@ -137,7 +136,10 @@ private fun CategoryItem(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
             .clickable {
-                onClick(item.word)
+                onEvent(DictionaryEvent.OnWordInfoListItemClicked(
+                    navController = navController,
+                    word = item.word
+                ))
             }
             .shimmerEffect(
                 color1 = MaterialTheme.colorScheme.background,
