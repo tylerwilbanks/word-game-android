@@ -52,6 +52,8 @@ object GuessWordValidator {
     private var encouragingMessageIndex = 0
     private var correctMessagesIndex = 0
 
+    val wordSelectionCount get() = wordSelection.size
+
     fun initValidWords(context: Context) {
         val wordSelectionJsonArray = FileUtil().obtainJsonArray(context, "word_selection.json")
         wordSelectionJsonArray?.let {
