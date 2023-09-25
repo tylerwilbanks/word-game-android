@@ -32,7 +32,6 @@ import com.minutesock.core.uiutils.shimmerEffect
 import com.minutesock.core.utils.capitalize
 import com.minutesock.dictionary.domain.DictionaryEvent
 import com.minutesock.dictionary.domain.WordInfoListItem
-import com.minutesock.dictionary.navigation.navigateToDictionaryDetail
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +56,7 @@ internal fun DictionaryScreen(
         }
     }
 
-    val state = viewModel.stateList.collectAsStateWithLifecycle()
+    val state = viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -136,10 +135,12 @@ private fun CategoryItem(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
             .clickable {
-                onEvent(DictionaryEvent.OnWordInfoListItemClicked(
-                    navController = navController,
-                    word = item.word
-                ))
+                onEvent(
+                    DictionaryEvent.OnWordInfoListItemClicked(
+                        navController = navController,
+                        word = item.word
+                    )
+                )
             }
             .shimmerEffect(
                 color1 = MaterialTheme.colorScheme.background,

@@ -26,11 +26,11 @@ fun NavGraphBuilder.dictionaryRoute(
     composable(
         route = DETAIL_ROUTE,
         arguments = listOf(navArgument("word") { type = NavType.StringType })
-        ) {
+    ) {
         DictionaryDetail(
             word = it.arguments?.getString("word")!!,
             navController = navController
-            )
+        )
     }
 }
 

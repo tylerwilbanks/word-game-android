@@ -8,17 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -31,18 +27,17 @@ import com.minutesock.core.presentation.SmallTopAppBar
 import com.minutesock.core.presentation.components.WordInfoItem
 import com.minutesock.core.utils.capitalize
 import kotlinx.collections.immutable.ImmutableList
-import java.util.Locale
 
 @Composable
 internal fun DictionaryDetail(
     modifier: Modifier = Modifier,
     word: String,
     navController: NavController,
-    viewModel: DictionaryViewModel = viewModel(),
+    viewModel: DictionaryDetailViewModel = viewModel(),
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
 
-    val state by viewModel.stateWordInfo.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->

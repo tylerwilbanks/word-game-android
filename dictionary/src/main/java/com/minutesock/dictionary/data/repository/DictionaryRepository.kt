@@ -1,6 +1,5 @@
 package com.minutesock.dictionary.data.repository
 
-import com.minutesock.core.data.WordInfoDao
 import com.minutesock.core.data.WordSessionDao
 import com.minutesock.core.domain.GuessWordValidator
 import com.minutesock.dictionary.domain.DictionaryHeaderItem
@@ -14,7 +13,8 @@ class DictionaryRepository(
 ) {
 
     fun getAlphabeticalDictionaryState() = flow {
-        val groupedCorrectWords = wordSessionDao.getCompletedCorrectWordsSortedAlphabetically().groupBy { it }
+        val groupedCorrectWords =
+            wordSessionDao.getCompletedCorrectWordsSortedAlphabetically().groupBy { it }
         val listItems = groupedCorrectWords.map {
             WordInfoListItem(
                 word = it.key,
