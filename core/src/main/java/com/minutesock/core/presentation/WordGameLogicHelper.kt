@@ -3,8 +3,6 @@ package com.minutesock.core.presentation
 import android.util.Log
 import com.minutesock.core.R
 import com.minutesock.core.data.repository.WordGameRepository
-import com.minutesock.core.domain.WordGameState
-import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.DailyWordStateMessage
 import com.minutesock.core.domain.DailyWordValidationResult
@@ -16,6 +14,8 @@ import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.domain.GuessWordValidator
 import com.minutesock.core.domain.LetterState
 import com.minutesock.core.domain.WordGameMode
+import com.minutesock.core.domain.WordGameState
+import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.domain.WordSession
 import com.minutesock.core.domain.addGuessLetter
 import com.minutesock.core.domain.eraseLetter

@@ -3,10 +3,10 @@ package com.minutesock.core.mappers
 import com.minutesock.core.data.GuessWordStorage
 import com.minutesock.core.data.models.WordInfoEntity
 import com.minutesock.core.data.models.WordSessionEntity
-import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordRowInfoView
 import com.minutesock.core.domain.WordGameMode
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.domain.WordSession
 import com.minutesock.core.domain.WordSessionInfoView
@@ -58,7 +58,8 @@ fun WordSessionEntity.toWordSessionInfoView(): WordSessionInfoView {
         guessWordRowInfoViews = w.guesses.map {
             GuessWordRowInfoView(
                 guessWord = it,
-                displayTimestamp = it.completeTime?.toLocalDateTime(TimeZone.currentSystemDefault())?.date?.toString() ?: ""
+                displayTimestamp = it.completeTime?.toLocalDateTime(TimeZone.currentSystemDefault())?.date?.toString()
+                    ?: ""
             )
         }.toImmutableList(),
         displayCompleteTime = w.formattedElapsedTime,

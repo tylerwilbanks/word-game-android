@@ -118,7 +118,8 @@ class WordGameRepository(
     }
 
     suspend fun getWordSessionInfoViews(word: String) = flow {
-        val sessions = wordSessionDao.getAllWordSessionsWithWord(word).map { it.toWordSessionInfoView() }
+        val sessions =
+            wordSessionDao.getAllWordSessionsWithWord(word).map { it.toWordSessionInfoView() }
         emit(sessions)
     }
 }

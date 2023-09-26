@@ -7,6 +7,7 @@ import com.minutesock.core.data.repository.WordGameRepository
 import com.minutesock.core.domain.WordSessionInfoView
 import com.minutesock.core.utils.Option
 import com.minutesock.dictionary.domain.DictionaryDetailState
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,8 @@ class DictionaryDetailViewModel(
     private val _state = MutableStateFlow(DictionaryDetailState())
     val state = _state.asStateFlow()
 
-    private val _wordSessionInfoViews = MutableStateFlow(emptyList<WordSessionInfoView>())
+    private val _wordSessionInfoViews =
+        MutableStateFlow<ImmutableList<WordSessionInfoView>>(persistentListOf())
     val wordSessionInfoViews = _wordSessionInfoViews.asStateFlow()
 
     fun loadDictionaryDetail(word: String) {
@@ -64,9 +66,10 @@ class DictionaryDetailViewModel(
                     }
                 }
             }.launchIn(this)
+
             wordGameRepository.getWordSessionInfoViews(word).onEach { newWordSessionInfoViews ->
                 _wordSessionInfoViews.update {
-                    newWordSessionInfoViews
+                    newWordSessionInfoViews.toImmutableList()
                 }
             }.launchIn(this)
         }

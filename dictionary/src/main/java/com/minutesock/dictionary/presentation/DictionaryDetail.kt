@@ -42,6 +42,7 @@ internal fun DictionaryDetail(
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val sessions by viewModel.wordSessionInfoViews.collectAsStateWithLifecycle()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -95,7 +96,9 @@ internal fun DictionaryDetail(
             }
             when (selectedTab) {
                 DictionaryDetailTabs.Definition -> WordDefinitionList(wordInfos = state.wordInfos)
-                DictionaryDetailTabs.Sessions -> { /* todo */ }
+                DictionaryDetailTabs.Sessions -> {
+                    DictionaryDetailSession(sessionInfoViews = sessions)
+                }
             }
 
         }
@@ -110,12 +113,11 @@ private fun WordDefinitionList(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                start = 20.dp,
-                end = 20.dp
+                horizontal = 20.dp,
             )
     ) {
         items(wordInfos.size) { i ->
-            if (i == 0){
+            if (i == 0) {
                 Spacer(modifier = Modifier.height(10.dp))
             }
             val wordInfo = wordInfos[i]
@@ -137,10 +139,11 @@ private enum class DictionaryDetailTabs {
     Definition,
     Sessions;
 
-    val displayName: String get() = when (this) {
-        Definition -> "Definition"
-        Sessions -> "Sessions"
-    }
+    val displayName: String
+        get() = when (this) {
+            Definition -> "Definition"
+            Sessions -> "Sessions"
+        }
 
     companion object {
         fun fromInt(value: Int) = DictionaryDetailTabs.values().first { it.ordinal == value }

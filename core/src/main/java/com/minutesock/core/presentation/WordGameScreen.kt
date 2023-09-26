@@ -11,8 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
-import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.domain.DailyWordState
+import com.minutesock.core.domain.WordScreenState
 
 
 @Composable
