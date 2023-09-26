@@ -5,13 +5,18 @@ import com.minutesock.core.data.models.WordInfoEntity
 import com.minutesock.core.data.models.WordSessionEntity
 import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.GuessWord
+import com.minutesock.core.domain.GuessWordRowInfoView
+import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.domain.WordInfo
 import com.minutesock.core.domain.WordSession
+import com.minutesock.core.domain.WordSessionInfoView
 import com.minutesock.core.remote.dto.WordDefinitionItem
 import com.minutesock.core.utils.toDate
 import com.minutesock.core.utils.toString
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,6 +48,21 @@ fun WordSession.toWordSessionEntity(): WordSessionEntity {
         gameState = this.gameState.ordinal,
         startTime = startTime?.toString()
 
+    )
+}
+
+fun WordSessionEntity.toWordSessionInfoView(): WordSessionInfoView {
+    val w = this.toWordSession()
+    return WordSessionInfoView(
+        displayDate = w.formattedTime?.toString() ?: "",
+        guessWordRowInfoViews = w.guesses.map {
+            GuessWordRowInfoView(
+                guessWord = it,
+                displayTimestamp = it.completeTime?.toLocalDateTime(TimeZone.currentSystemDefault())?.date?.toString() ?: ""
+            )
+        }.toImmutableList(),
+        displayCompleteTime = w.formattedElapsedTime,
+        gameMode = if (w.isDaily) WordGameMode.Daily else WordGameMode.Inifinity
     )
 }
 

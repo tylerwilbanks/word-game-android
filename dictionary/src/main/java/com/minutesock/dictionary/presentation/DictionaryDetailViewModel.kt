@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.core.App
 import com.minutesock.core.data.repository.WordGameRepository
+import com.minutesock.core.domain.WordSessionInfoView
 import com.minutesock.core.utils.Option
 import com.minutesock.dictionary.domain.DictionaryDetailState
 import kotlinx.collections.immutable.persistentListOf
@@ -25,6 +26,9 @@ class DictionaryDetailViewModel(
 
     private val _state = MutableStateFlow(DictionaryDetailState())
     val state = _state.asStateFlow()
+
+    private val _wordSessionInfoViews = MutableStateFlow(emptyList<WordSessionInfoView>())
+    val wordSessionInfoViews = _wordSessionInfoViews.asStateFlow()
 
     fun loadDictionaryDetail(word: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -58,6 +62,11 @@ class DictionaryDetailViewModel(
                             )
                         }
                     }
+                }
+            }.launchIn(this)
+            wordGameRepository.getWordSessionInfoViews(word).onEach { newWordSessionInfoViews ->
+                _wordSessionInfoViews.update {
+                    newWordSessionInfoViews
                 }
             }.launchIn(this)
         }

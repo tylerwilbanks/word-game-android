@@ -11,6 +11,7 @@ import com.minutesock.core.mappers.toWordInfo
 import com.minutesock.core.mappers.toWordInfoEntity
 import com.minutesock.core.mappers.toWordSession
 import com.minutesock.core.mappers.toWordSessionEntity
+import com.minutesock.core.mappers.toWordSessionInfoView
 import com.minutesock.core.remote.DictionaryApi
 import com.minutesock.core.remote.RetrofitInstance
 import com.minutesock.core.uiutils.UiText
@@ -37,7 +38,6 @@ class WordGameRepository(
         emit(Option.Loading())
 
         val data = wordInfoDao.getWordInfos(word).map { it.toWordInfo() }
-        emit(Option.Loading(data = data))
 
         val throttleExpireDate = data.firstOrNull()?.fetchDate?.time?.plus(14L.asDaysToMillis())
 
@@ -47,6 +47,7 @@ class WordGameRepository(
             return@flow
         }
 
+        emit(Option.Loading(data = data))
 
         try {
             Log.e(null, "Fetching definition!")
@@ -114,5 +115,10 @@ class WordGameRepository(
         return withContext(defaultDispatcher) {
             wordSessionDao.getInfinityWordSession(id)?.toWordSession()
         }
+    }
+
+    suspend fun getWordSessionInfoViews(word: String) = flow {
+        val sessions = wordSessionDao.getAllWordSessionsWithWord(word).map { it.toWordSessionInfoView() }
+        emit(sessions)
     }
 }

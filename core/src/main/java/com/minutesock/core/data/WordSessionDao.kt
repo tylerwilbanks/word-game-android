@@ -33,6 +33,9 @@ interface WordSessionDao {
     @Query("SELECT * FROM WordSessionEntity WHERE id = :id LIMIT 1")
     fun getInfinityWordSession(id: Int): WordSessionEntity?
 
+    @Query("SELECT * FROM WordSessionEntity WHERE correctWord = :word ORDER BY date DESC")
+    fun getAllWordSessionsWithWord(word: String) : List<WordSessionEntity>
+
     @Upsert
     fun insert(vararg dailyWordSessionEntities: WordSessionEntity)
 
