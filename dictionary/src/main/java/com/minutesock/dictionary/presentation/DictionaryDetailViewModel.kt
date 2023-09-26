@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -34,44 +35,47 @@ class DictionaryDetailViewModel(
 
     fun loadDictionaryDetail(word: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            wordGameRepository.getOrFetchWordDefinition(word).onEach { result ->
-                when (result) {
-                    is Option.Error -> {
-                        _state.update {
-                            it.copy(
-                                loading = false,
-                                wordInfos = persistentListOf(),
-                                message = "Failed to get definition."
-                            )
+            async {
+                wordGameRepository.getOrFetchWordDefinition(word).onEach { result ->
+                    when (result) {
+                        is Option.Error -> {
+                            _state.update {
+                                it.copy(
+                                    loading = false,
+                                    wordInfos = persistentListOf(),
+                                    message = "Failed to get definition."
+                                )
+                            }
+                        }
+
+                        is Option.Loading -> {
+                            _state.update {
+                                it.copy(
+                                    loading = true,
+                                    wordInfos = result.data?.toImmutableList()
+                                        ?: persistentListOf(),
+                                    message = "Loading..."
+                                )
+                            }
+                        }
+
+                        is Option.Success -> {
+                            _state.update {
+                                it.copy(
+                                    loading = false,
+                                    wordInfos = result.data?.toImmutableList() ?: persistentListOf()
+                                )
+                            }
                         }
                     }
+                }.launchIn(this)
 
-                    is Option.Loading -> {
-                        _state.update {
-                            it.copy(
-                                loading = true,
-                                wordInfos = result.data?.toImmutableList() ?: persistentListOf(),
-                                message = "Loading..."
-                            )
-                        }
+                wordGameRepository.getWordSessionInfoViews(word).onEach { newWordSessionInfoViews ->
+                    _wordSessionInfoViews.update {
+                        newWordSessionInfoViews.toImmutableList()
                     }
-
-                    is Option.Success -> {
-                        _state.update {
-                            it.copy(
-                                loading = false,
-                                wordInfos = result.data?.toImmutableList() ?: persistentListOf()
-                            )
-                        }
-                    }
-                }
-            }.launchIn(this)
-
-            wordGameRepository.getWordSessionInfoViews(word).onEach { newWordSessionInfoViews ->
-                _wordSessionInfoViews.update {
-                    newWordSessionInfoViews.toImmutableList()
-                }
-            }.launchIn(this)
+                }.launchIn(this)
+            }.await()
         }
     }
 }

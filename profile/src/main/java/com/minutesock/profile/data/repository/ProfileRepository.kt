@@ -1,6 +1,6 @@
 import com.minutesock.core.data.WordSessionDao
-import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.GuessWordState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.mappers.DATE_FORMAT_PATTERN
 import com.minutesock.core.mappers.toWordSession
 import com.minutesock.core.utils.toString

@@ -72,6 +72,23 @@ data class WordSession(
             return Duration.INFINITE
         }
 
+    fun getFormattedIndividualElapsedTime(currentIndex: Int): String {
+        if (currentIndex == 0) {
+            return "0m 0s"
+        }
+
+        val startTime = guesses[0].completeTime
+        val currentTime = guesses[currentIndex].completeTime
+
+        if (startTime != null && currentTime != null) {
+            return currentTime.minus(startTime)
+                .toComponents { minutes, seconds, nanoseconds ->
+                    "${minutes}m ${seconds}s"
+                }.toString()
+        }
+        return ""
+    }
+
     val formattedElapsedTime: String
         get() = elapsedTime.toComponents { minutes, seconds, nanoseconds ->
             "${minutes}m ${seconds}s"

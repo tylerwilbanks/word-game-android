@@ -38,10 +38,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.minutesock.core.R
-import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.WordSession
 import com.minutesock.core.domain.lockInGuess
 import com.minutesock.core.domain.updateState

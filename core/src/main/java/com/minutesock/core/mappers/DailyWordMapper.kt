@@ -15,8 +15,6 @@ import com.minutesock.core.utils.toDate
 import com.minutesock.core.utils.toString
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,15 +53,15 @@ fun WordSessionEntity.toWordSessionInfoView(): WordSessionInfoView {
     val w = this.toWordSession()
     return WordSessionInfoView(
         displayDate = w.formattedTime?.toString() ?: "",
-        guessWordRowInfoViews = w.guesses.map {
+        guessWordRowInfoViews = w.guesses.mapIndexed { index: Int, guessWord: GuessWord ->
             GuessWordRowInfoView(
-                guessWord = it,
-                displayTimestamp = it.completeTime?.toLocalDateTime(TimeZone.currentSystemDefault())?.date?.toString()
-                    ?: ""
+                guessWord = guessWord,
+                displayTimestamp = w.getFormattedIndividualElapsedTime(index)
             )
         }.toImmutableList(),
         displayCompleteTime = w.formattedElapsedTime,
-        gameMode = if (w.isDaily) WordGameMode.Daily else WordGameMode.Inifinity
+        gameMode = if (w.isDaily) WordGameMode.Daily else WordGameMode.Inifinity,
+        gameState = w.gameState
     )
 }
 

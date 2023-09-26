@@ -6,5 +6,6 @@ data class WordSessionInfoView(
     val displayDate: String,
     val guessWordRowInfoViews: ImmutableList<GuessWordRowInfoView>,
     val displayCompleteTime: String,
-    val gameMode: WordGameMode
+    val gameMode: WordGameMode,
+    val gameState: WordGameState
 )
