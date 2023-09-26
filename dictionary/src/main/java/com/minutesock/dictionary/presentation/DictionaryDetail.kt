@@ -1,6 +1,6 @@
 package com.minutesock.dictionary.presentation
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -57,30 +61,63 @@ internal fun DictionaryDetail(
     val displayWord by remember {
         mutableStateOf(word.capitalize())
     }
+
+    val tabs by remember {
+        mutableStateOf(
+            DictionaryDetailTabs.values()
+        )
+    }
+
+    var selectedTab by remember {
+        mutableStateOf(DictionaryDetailTabs.Definition)
+    }
+
+
     SmallTopAppBar(
         title = displayWord,
         onBackButtonClicked = navController::popBackStack
     ) { padding ->
-        WordDefinitionList(padding = padding, wordInfos = state.wordInfos)
+        Column(
+            modifier = Modifier.padding(top = padding.calculateTopPadding()),
+        ) {
+            TabRow(
+                selectedTabIndex = selectedTab.ordinal
+            ) {
+                tabs.forEachIndexed { index: Int, _: DictionaryDetailTabs ->
+                    Tab(
+                        selected = selectedTab.ordinal == index,
+                        onClick = {
+                            selectedTab = DictionaryDetailTabs.fromInt(index)
+                        },
+                        text = { Text(text = tabs[index].displayName) }
+                    )
+                }
+            }
+            when (selectedTab) {
+                DictionaryDetailTabs.Definition -> WordDefinitionList(wordInfos = state.wordInfos)
+                DictionaryDetailTabs.Sessions -> { /* todo */ }
+            }
+
+        }
     }
 }
 
 @Composable
 private fun WordDefinitionList(
-    padding: PaddingValues,
     wordInfos: ImmutableList<WordInfo>
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                bottom = padding.calculateBottomPadding(),
-                top = padding.calculateTopPadding(),
                 start = 20.dp,
                 end = 20.dp
             )
     ) {
         items(wordInfos.size) { i ->
+            if (i == 0){
+                Spacer(modifier = Modifier.height(10.dp))
+            }
             val wordInfo = wordInfos[i]
             if (i > 0) {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -93,5 +130,19 @@ private fun WordDefinitionList(
                 Divider()
             }
         }
+    }
+}
+
+private enum class DictionaryDetailTabs {
+    Definition,
+    Sessions;
+
+    val displayName: String get() = when (this) {
+        Definition -> "Definition"
+        Sessions -> "Sessions"
+    }
+
+    companion object {
+        fun fromInt(value: Int) = DictionaryDetailTabs.values().first { it.ordinal == value }
     }
 }

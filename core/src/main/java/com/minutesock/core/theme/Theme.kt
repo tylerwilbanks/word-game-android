@@ -83,7 +83,7 @@ fun WordGameTheme(
 
     val colors = if (useDarkTheme) {
         systemUiController.setSystemBarsColor(
-            color = Color.Black
+            color = DarkColors.background
         )
         DarkColors
     } else {
