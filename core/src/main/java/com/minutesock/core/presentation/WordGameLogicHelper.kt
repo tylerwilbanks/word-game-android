@@ -126,7 +126,7 @@ class WordGameLogicHelper(
                         state.value.falseKeyboardKeys
                     ),
                     wordRowAnimating = wordSession.gameState.isGameOver,
-                    gameMode = if (wordSession.isDaily) WordGameMode.Daily else WordGameMode.Inifinity
+                    gameMode = gameMode
                 )
             }
         }
@@ -215,12 +215,13 @@ class WordGameLogicHelper(
         w[0] = w[0].updateState(GuessWordState.Editing)
 
         _state.update {
-            DailyWordState(
+            it.copy(
                 gameState = WordGameState.InProgress,
                 wordLength = wordLength,
                 maxGuessAttempts = maxGuessAttempts,
                 correctWord = correctWord,
-                guessWords = w.toImmutableList()
+                guessWords = w.toImmutableList(),
+                gameMode = wordGameMode
             )
         }
         if (wordGameMode == WordGameMode.Daily) {
