@@ -67,9 +67,9 @@ class ProfileRepository(
         emit(guessDistributionState)
     }
 
-    fun getDailyWordSessions(pageSize: Int, offset: Int) = flow {
+    suspend fun getDailyWordSessions(pageSize: Int, lastFetchedId: Int) = flow {
         emit(
-            wordSessionDao.getPaginatedSessionsByRecency(pageSize, offset).map {
+            wordSessionDao.getPaginatedSessionsByRecency(pageSize, lastFetchedId).map {
                 it.toWordSession()
             }
         )

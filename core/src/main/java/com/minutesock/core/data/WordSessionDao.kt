@@ -21,8 +21,8 @@ interface WordSessionDao {
         )
     ): List<String>
 
-    @Query("SELECT * FROM WordSessionEntity ORDER BY id DESC LIMIT :pageSize OFFSET :offset")
-    fun getPaginatedSessionsByRecency(pageSize: Int, offset: Int): List<WordSessionEntity>
+    @Query("SELECT * FROM WordSessionEntity WHERE id < :lastFetchedItemId ORDER BY id DESC LIMIT :pageSize")
+    fun getPaginatedSessionsByRecency(pageSize: Int, lastFetchedItemId: Int): List<WordSessionEntity>
 
     @Query("SELECT * FROM WordSessionEntity WHERE date = :date AND isDaily = 1 LIMIT 1")
     fun getTodayDailyWordSession(date: String): WordSessionEntity?

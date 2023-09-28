@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.core.App
+import com.minutesock.core.data.models.WordSessionEntity
 import com.minutesock.core.domain.WordSession
 import com.minutesock.profile.domain.GuessDistributionState
 import kotlinx.coroutines.Dispatchers
@@ -28,9 +29,9 @@ class ProfileViewModel(
 
     val historyList = mutableStateListOf<WordSession>()
     private val historyPageSize = 20
-    private val endOfPageReached = mutableStateOf(false)
 
     private var historyScrollPosition = 0
+    private var lastFetchedId = 100_000_000
 
     init {
         updateGuessDistribution()
@@ -41,6 +42,7 @@ class ProfileViewModel(
             when (event) {
                 is HistoryScreenEvent.UpdateScrollPosition -> {
                     historyScrollPosition = event.scrollPosition
+                    Log.e("shovel", "HIStory scroll position: ${historyScrollPosition}")
                     if (historyScrollPosition + 1 >= (currentHistoryPage.value * historyPageSize)) {
                         loadPaginatedHistory()
                     }
@@ -61,13 +63,17 @@ class ProfileViewModel(
 
     fun loadPaginatedHistory() {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.e("shovel", "loading new paginated history. page#: ${currentHistoryPage.value}")
-            profileRepository.getDailyWordSessions(historyPageSize, currentHistoryPage.value)
-                .onEach {
-                    historyList.addAll(it)
-                }.launchIn(this)
-            currentHistoryPage.value += 1
-            endOfPageReached.value = false
+            if (historyScrollPosition + 1 >= (currentHistoryPage.value * historyPageSize)) {
+                Log.e("shovel", "loading new paginated history. page#: ${currentHistoryPage.value}")
+                profileRepository.getDailyWordSessions(historyPageSize, lastFetchedId)
+                    .onEach { newList: List<WordSession> ->
+                        historyList.addAll(newList)
+                        currentHistoryPage.value += 1
+                        newList.lastOrNull()?.let {
+                            lastFetchedId = it.id
+                        }
+                    }.launchIn(this)
+            }
         }
     }
 }
