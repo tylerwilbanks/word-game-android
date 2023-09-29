@@ -28,6 +28,7 @@ ext {
     ext.datastore_preferences_version = '1.0.0'
     ext.kotlinx_datetime_version = '0.4.1'
     ext.accompanist_system_ui_controller_version = '0.27.0'
+    ext.appcompat_version = "1.6.1"
 }
 
 subprojects {

@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -63,10 +64,14 @@ internal fun ProfileScreen(
     onHistoryButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    profileViewModel: ProfileViewModel = viewModel()
+    profileViewModel: ProfileViewModel = viewModel(),
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
 ) {
 
     val state by profileViewModel.guessDistributionState.collectAsStateWithLifecycle()
+
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
@@ -94,6 +99,8 @@ internal fun ProfileScreen(
             .fillMaxWidth()
             .padding(horizontal = 30.dp)
 
+        Spacer(modifier = Modifier.height(20.dp))
+
         Button(
             modifier = buttonModifier,
             onClick = {
@@ -103,6 +110,8 @@ internal fun ProfileScreen(
             Text("History")
         }
 
+        Spacer(modifier = Modifier.height(20.dp))
+
         Button(
             modifier = buttonModifier,
             onClick = {
@@ -110,6 +119,16 @@ internal fun ProfileScreen(
             }
         ) {
             Text(text = "More Games")
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = "Dark Mode")
+            Spacer(modifier = Modifier.width(20.dp))
+            Switch(checked = isDarkTheme, onCheckedChange = onDarkThemeToggled)
         }
     }
 }

@@ -19,9 +19,16 @@ fun NavGraphBuilder.profileRoute(
     onHistoryButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     onBackButtonClicked: () -> Unit,
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
 ) {
     composable(route = BASE_ROUTE) {
-        ProfileScreen(onHistoryButtonClicked = onHistoryButtonClicked, modifier = modifier)
+        ProfileScreen(
+            onHistoryButtonClicked = onHistoryButtonClicked,
+            modifier = modifier,
+            isDarkTheme = isDarkTheme,
+            onDarkThemeToggled = onDarkThemeToggled,
+        )
     }
 
     composable(route = HISTORY_ROUTE) {
