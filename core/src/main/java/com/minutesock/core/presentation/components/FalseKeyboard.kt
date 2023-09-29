@@ -9,8 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.domain.GuessKeyboardLetter
+import com.minutesock.core.domain.WordEventGame
 import com.minutesock.core.presentation.FalseKeyboardKeys
-import com.minutesock.core.presentation.WordEventGame
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

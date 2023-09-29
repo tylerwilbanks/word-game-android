@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.core.domain.GuessKeyboardLetter
-import com.minutesock.core.presentation.WordEventGame
+import com.minutesock.core.domain.WordEventGame
 
 @Composable
 fun FalseKeyboardLetter(

@@ -13,7 +13,10 @@ import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
 import com.minutesock.core.domain.GuessWordValidator
 import com.minutesock.core.domain.LetterState
+import com.minutesock.core.domain.WordEventGame
+import com.minutesock.core.domain.WordEventStats
 import com.minutesock.core.domain.WordGameMode
+import com.minutesock.core.domain.WordGameNotStartedEvent
 import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.domain.WordSession
@@ -180,7 +183,7 @@ class WordGameLogicHelper(
         return mutableRow.toImmutableList()
     }
 
-    suspend fun setupGame(
+    private suspend fun setupGame(
         wordGameMode: WordGameMode,
         wordLength: Int = 5,
         maxGuessAttempts: Int = 6
@@ -291,6 +294,18 @@ class WordGameLogicHelper(
             }
         }
 
+    }
+
+    suspend fun onWordGameNotStartedEvent(event: WordGameNotStartedEvent) {
+        when (event) {
+            is WordGameNotStartedEvent.OnGameBegin -> {
+                setupGame(
+                    event.gameMode, event.wordLength, event.maxAttempts
+                )
+            }
+
+            WordGameNotStartedEvent.OnHowToPlayPressed -> TODO()
+        }
     }
 
     suspend fun onGameEvent(event: WordEventGame) {

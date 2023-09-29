@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWordState
-import com.minutesock.core.presentation.WordEventGame
+import com.minutesock.core.domain.WordEventGame
 
 @Composable
 fun LetterBox(

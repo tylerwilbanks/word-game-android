@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.core.App
 import com.minutesock.core.data.repository.WordGameRepository
-import com.minutesock.core.domain.WordGameMode
-import com.minutesock.core.presentation.WordEventGame
-import com.minutesock.core.presentation.WordEventStats
+import com.minutesock.core.domain.WordEventGame
+import com.minutesock.core.domain.WordEventStats
+import com.minutesock.core.domain.WordGameNotStartedEvent
 import com.minutesock.core.presentation.WordGameLogicHelper
 import kotlinx.coroutines.launch
 
@@ -23,9 +23,9 @@ class InfinityWordViewModel(
 
     val state = wordGameLogicHelper.state
 
-    fun setupGame(wordLength: Int = 5, maxGuessAttempts: Int = 6) {
+    fun onWordGameNotStartedEvent(event: WordGameNotStartedEvent) {
         viewModelScope.launch {
-            wordGameLogicHelper.setupGame(WordGameMode.Inifinity, wordLength, maxGuessAttempts)
+            wordGameLogicHelper.onWordGameNotStartedEvent(event)
         }
     }
 

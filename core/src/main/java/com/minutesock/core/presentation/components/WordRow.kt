@@ -13,8 +13,8 @@ import com.minutesock.core.R
 import com.minutesock.core.domain.GuessLetter
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.GuessWordState
+import com.minutesock.core.domain.WordEventGame
 import com.minutesock.core.presentation.GuessWordError
-import com.minutesock.core.presentation.WordEventGame
 import com.minutesock.core.uiutils.ShakeConfig
 import com.minutesock.core.uiutils.rememberShakeController
 import com.minutesock.core.uiutils.shake

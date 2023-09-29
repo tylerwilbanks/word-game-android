@@ -22,7 +22,10 @@ interface WordSessionDao {
     ): List<String>
 
     @Query("SELECT * FROM WordSessionEntity WHERE id < :lastFetchedItemId ORDER BY id DESC LIMIT :pageSize")
-    fun getPaginatedSessionsByRecency(pageSize: Int, lastFetchedItemId: Int): List<WordSessionEntity>
+    fun getPaginatedSessionsByRecency(
+        pageSize: Int,
+        lastFetchedItemId: Int
+    ): List<WordSessionEntity>
 
     @Query("SELECT * FROM WordSessionEntity WHERE date = :date AND isDaily = 1 LIMIT 1")
     fun getTodayDailyWordSession(date: String): WordSessionEntity?

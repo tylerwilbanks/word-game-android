@@ -42,9 +42,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.R
-import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.domain.DailyWordState
-import com.minutesock.core.presentation.WordEventStats
+import com.minutesock.core.domain.WordEventStats
+import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.presentation.components.WordInfoItem
 import com.minutesock.core.utils.capitalize
 
@@ -209,8 +209,7 @@ fun InfinityStatsScreen(
                                 wordInfo = wordInfo,
                                 wordColor = if (state.gameState == WordGameState.Failure) {
                                     MaterialTheme.colorScheme.error
-                                }
-                                else {
+                                } else {
                                     MaterialTheme.colorScheme.primary
                                 }
                             )

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.minutesock.core.R
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.GuessWord
+import com.minutesock.core.domain.WordEventGame
 import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.presentation.components.FalseKeyboard

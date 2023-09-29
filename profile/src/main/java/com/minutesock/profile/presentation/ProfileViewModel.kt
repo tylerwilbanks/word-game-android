@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.minutesock.core.App
-import com.minutesock.core.data.models.WordSessionEntity
 import com.minutesock.core.domain.WordSession
 import com.minutesock.profile.domain.GuessDistributionState
 import kotlinx.coroutines.Dispatchers

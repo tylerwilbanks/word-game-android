@@ -1,4 +1,4 @@
-package com.minutesock.core.presentation
+package com.minutesock.core.domain
 
 sealed interface WordEventStats {
     object OnExitButtonPressed : WordEventStats

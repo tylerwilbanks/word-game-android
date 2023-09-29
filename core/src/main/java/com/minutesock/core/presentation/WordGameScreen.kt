@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
 import com.minutesock.core.domain.DailyWordState
+import com.minutesock.core.domain.WordEventGame
 import com.minutesock.core.domain.WordScreenState
 
 
@@ -30,6 +31,8 @@ fun WordGameScreen(
     val visibleStats by remember(state.screenState) {
         mutableStateOf(state.screenState == WordScreenState.Stats)
     }
+
+
 
     Surface(
         modifier = modifier.fillMaxSize(),
