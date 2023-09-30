@@ -21,6 +21,8 @@ fun WordGameScreen(
     modifier: Modifier = Modifier,
     state: DailyWordState,
     onGameEvent: (WordEventGame) -> Unit,
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
     statsContent: @Composable() () -> Unit,
 ) {
 
@@ -32,8 +34,6 @@ fun WordGameScreen(
         mutableStateOf(state.screenState == WordScreenState.Stats)
     }
 
-
-
     Surface(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -42,7 +42,9 @@ fun WordGameScreen(
             state = state,
             guessWords = state.guessWords,
             onEvent = onGameEvent,
-            modifier = Modifier.blur(bgBlur)
+            modifier = Modifier.blur(bgBlur),
+            isDarkTheme = isDarkTheme,
+            onDarkThemeToggled = onDarkThemeToggled
         )
 
         AnimatedVisibility(visible = visibleStats) {

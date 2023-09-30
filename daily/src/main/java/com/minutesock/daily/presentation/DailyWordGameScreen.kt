@@ -25,7 +25,9 @@ import presentation.DailyWordStatsScreen
 @Composable
 internal fun DailyWordGameScreen(
     modifier: Modifier = Modifier,
-    viewModel: DailyWordViewModel = viewModel()
+    viewModel: DailyWordViewModel = viewModel(),
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -37,7 +39,7 @@ internal fun DailyWordGameScreen(
 
     val visibleGameScreen by remember(state.screenState) {
         mutableStateOf(
-            state.screenState == WordScreenState.Game
+            state.screenState == WordScreenState.Game || state.screenState == WordScreenState.Stats
         )
     }
 
@@ -50,6 +52,8 @@ internal fun DailyWordGameScreen(
             state = state,
             modifier = modifier,
             onGameEvent = viewModel::onGameEvent,
+            isDarkTheme = isDarkTheme,
+            onDarkThemeToggled = onDarkThemeToggled,
             statsContent = {
                 DailyWordStatsScreen(
                     state = state,

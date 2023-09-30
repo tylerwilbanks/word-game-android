@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +46,9 @@ fun WordScreenGame(
     state: DailyWordState,
     guessWords: ImmutableList<GuessWord>,
     onEvent: (WordEventGame) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
 ) {
     val defaultMessageDelay by remember {
         mutableStateOf(1000L)
@@ -118,6 +121,15 @@ fun WordScreenGame(
             )
         }
 
+        val themeIconId by remember(isDarkTheme) {
+            mutableStateOf(
+                when (isDarkTheme) {
+                    false -> R.drawable.baseline_wb_sunny_24
+                    true -> R.drawable.baseline_moon_24
+                }
+            )
+        }
+
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -136,6 +148,17 @@ fun WordScreenGame(
                     ),
                     contentDescription = null
                 )
+                IconButton(
+                   onClick = { onDarkThemeToggled(!isDarkTheme) }
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(45.dp)
+                            .padding(10.dp),
+                        painter = painterResource(id = themeIconId),
+                        contentDescription = null
+                    )
+                }
                 IconButton(onClick = { onEvent(WordEventGame.OnStatsPress) }) {
                     Icon(
                         painterResource(id = R.drawable.baseline_bar_chart_24),

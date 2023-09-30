@@ -8,8 +8,16 @@ import com.minutesock.daily.presentation.DailyWordGameScreen
 
 val BASE_ROUTE = BottomNavItem.Daily.route
 
-fun NavGraphBuilder.dailyRoute(modifier: Modifier = Modifier) {
+fun NavGraphBuilder.dailyRoute(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
+) {
     composable(route = BASE_ROUTE) {
-        DailyWordGameScreen(modifier = modifier)
+        DailyWordGameScreen(
+            modifier = modifier,
+            isDarkTheme = isDarkTheme,
+            onDarkThemeToggled = onDarkThemeToggled
+        )
     }
 }

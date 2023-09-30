@@ -9,9 +9,15 @@ import com.minutesock.infinity.presentation.InfinityScreen
 val BASE_ROUTE = BottomNavItem.Infinity.route
 
 fun NavGraphBuilder.infinityRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
 ) {
     composable(route = BASE_ROUTE) {
-        InfinityScreen(modifier = modifier)
+        InfinityScreen(
+            modifier = modifier,
+            isDarkTheme = isDarkTheme,
+            onDarkThemeToggled = onDarkThemeToggled,
+        )
     }
 }

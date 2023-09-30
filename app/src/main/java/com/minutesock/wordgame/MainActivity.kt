@@ -67,8 +67,16 @@ class MainActivity : ComponentActivity() {
                         NavHost(navController, startDestination = BottomNavItem.Daily.route) {
                             val bottomModifier =
                                 Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-                            dailyRoute(modifier = bottomModifier)
-                            infinityRoute(modifier = bottomModifier)
+                            dailyRoute(
+                                modifier = bottomModifier,
+                                isDarkTheme = isDarkTheme,
+                                onDarkThemeToggled = viewModel::toggleDarkMode
+                            )
+                            infinityRoute(
+                                modifier = bottomModifier,
+                                isDarkTheme = isDarkTheme,
+                                onDarkThemeToggled = viewModel::toggleDarkMode
+                            )
                             dictionaryRoute(
                                 modifier = bottomModifier,
                                 navController = navController,

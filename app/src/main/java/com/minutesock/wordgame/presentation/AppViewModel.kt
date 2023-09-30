@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class AppViewModel : ViewModel() {
 
-    private val _isDarkMode = MutableStateFlow(App.isDarkMode)
+    private val _isDarkMode = MutableStateFlow(true)
     val isDarkMode = _isDarkMode.asStateFlow()
 
     fun toggleDarkMode(toggle: Boolean) {

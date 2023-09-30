@@ -18,7 +18,9 @@ import com.minutesock.core.presentation.WordGameScreen
 @Composable
 internal fun InfinityScreen(
     modifier: Modifier = Modifier,
-    viewModel: InfinityWordViewModel = viewModel()
+    viewModel: InfinityWordViewModel = viewModel(),
+    isDarkTheme: Boolean,
+    onDarkThemeToggled: (Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -30,7 +32,7 @@ internal fun InfinityScreen(
 
     val visibleGameScreen by remember(state.screenState) {
         mutableStateOf(
-            state.screenState == WordScreenState.Game
+            state.screenState == WordScreenState.Game || state.screenState == WordScreenState.Stats
         )
     }
 
@@ -43,6 +45,8 @@ internal fun InfinityScreen(
             state = state,
             modifier = modifier,
             onGameEvent = viewModel::onGameEvent,
+            isDarkTheme = isDarkTheme,
+            onDarkThemeToggled = onDarkThemeToggled,
             statsContent = {
                 InfinityStatsScreen(
                     state = state,
