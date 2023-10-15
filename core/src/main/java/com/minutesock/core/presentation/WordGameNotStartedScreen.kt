@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.minutesock.core.R
 import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.domain.WordGameNotStartedEvent
@@ -40,6 +42,8 @@ import com.minutesock.core.theme.WordGameTheme
 @Composable
 fun WordGameNotStartedScreen(
     modifier: Modifier = Modifier,
+    completedGameCount: Int = 0,
+    navController: NavController,
     gameMode: WordGameMode,
     onEvent: (WordGameNotStartedEvent) -> Unit
 ) {
@@ -75,31 +79,51 @@ fun WordGameNotStartedScreen(
             color = textColor
         )
         Spacer(modifier = Modifier.height(50.dp))
-        Button(
-            onClick = {
-                onEvent(
-                    WordGameNotStartedEvent.OnGameBegin(
-                        gameMode = gameMode
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            if (completedGameCount < 5) {
+                Button(
+                    onClick = {
+                        navController.navigate("how")
+                    }
+                ) {
+                    Text(
+                        text = "How To Play?",
+                        fontSize = 20.sp
                     )
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+            }
+
+            Button(
+                onClick = {
+                    onEvent(
+                        WordGameNotStartedEvent.OnGameBegin(
+                            gameMode = gameMode
+                        )
+                    )
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(id = gameModeIconId),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "Play",
+                    fontSize = 20.sp
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(id = gameModeIconId),
+                    contentDescription = null
                 )
             }
-        ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = gameModeIconId),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = "Play",
-                fontSize = 20.sp
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = gameModeIconId),
-                contentDescription = null
-            )
         }
     }
 
@@ -112,6 +136,7 @@ fun WordGameNotStartedScreenPreview() {
         Surface {
             WordGameNotStartedScreen(
                 gameMode = WordGameMode.Inifinity,
+                navController = NavController(LocalContext.current),
                 onEvent = { }
             )
         }

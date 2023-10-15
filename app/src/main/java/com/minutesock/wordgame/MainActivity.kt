@@ -69,11 +69,13 @@ class MainActivity : ComponentActivity() {
                                 Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                             dailyRoute(
                                 modifier = bottomModifier,
+                                navController = navController,
                                 isDarkTheme = isDarkTheme,
                                 onDarkThemeToggled = viewModel::toggleDarkMode
                             )
                             infinityRoute(
                                 modifier = bottomModifier,
+                                navController = navController,
                                 isDarkTheme = isDarkTheme,
                                 onDarkThemeToggled = viewModel::toggleDarkMode
                             )

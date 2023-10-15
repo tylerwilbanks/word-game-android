@@ -39,6 +39,9 @@ interface WordSessionDao {
     @Query("SELECT * FROM WordSessionEntity WHERE correctWord = :word ORDER BY id DESC")
     fun getAllWordSessionsWithWord(word: String): List<WordSessionEntity>
 
+    @Query("SELECT COUNT(*) FROM WordSessionEntity WHERE gameState IN(:wordGameStates)")
+    fun getCompletedWordSessionCount(wordGameStates: List<Int>): Int
+
     @Upsert
     fun insert(vararg dailyWordSessionEntities: WordSessionEntity)
 

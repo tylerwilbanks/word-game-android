@@ -5,8 +5,5 @@ sealed class WordGameNotStartedEvent {
         val gameMode: WordGameMode,
         val wordLength: Int = 5,
         val maxAttempts: Int = 6
-    ) :
-        WordGameNotStartedEvent()
-
-    data object OnHowToPlayPressed : WordGameNotStartedEvent()
+    ) : WordGameNotStartedEvent()
 }

@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.domain.WordScreenState
 import com.minutesock.core.presentation.WordGameNotStartedScreen
@@ -18,11 +19,13 @@ import com.minutesock.core.presentation.WordGameScreen
 @Composable
 internal fun InfinityScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: InfinityWordViewModel = viewModel(),
     isDarkTheme: Boolean,
     onDarkThemeToggled: (Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val completedWordSessionCount by viewModel.completedWordSessionCount.collectAsStateWithLifecycle()
 
     val visibleNotStartedScreen by remember(state.screenState) {
         mutableStateOf(
@@ -44,6 +47,7 @@ internal fun InfinityScreen(
         WordGameScreen(
             state = state,
             modifier = modifier,
+            navController = navController,
             onGameEvent = viewModel::onGameEvent,
             isDarkTheme = isDarkTheme,
             onDarkThemeToggled = onDarkThemeToggled,
@@ -64,9 +68,10 @@ internal fun InfinityScreen(
     ) {
         WordGameNotStartedScreen(
             modifier = modifier,
+            navController = navController,
+            completedGameCount = completedWordSessionCount,
             gameMode = WordGameMode.Inifinity,
             onEvent = viewModel::onWordGameNotStartedEvent
         )
     }
-
 }

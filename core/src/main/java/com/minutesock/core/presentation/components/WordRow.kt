@@ -1,5 +1,6 @@
 package com.minutesock.core.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,6 +50,8 @@ fun WordRow(
         }
     }
 
+    Log.d("shovel", guessWord.state.name)
+
     Row(
         modifier = Modifier
             .padding(5.dp)
@@ -59,6 +62,7 @@ fun WordRow(
         horizontalArrangement = Arrangement.Center
     ) {
         guessLetters.forEachIndexed { index: Int, guessLetter: GuessLetter ->
+            Log.d("shovel", guessLetter.character.toString())
             LetterBox(
                 letter = guessLetter,
                 guessWordState = guessWord.state,

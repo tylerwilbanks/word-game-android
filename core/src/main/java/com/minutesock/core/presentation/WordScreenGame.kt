@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,11 +26,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.minutesock.core.R
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.GuessWord
 import com.minutesock.core.domain.WordEventGame
-import com.minutesock.core.domain.WordGameMode
 import com.minutesock.core.domain.WordGameState
 import com.minutesock.core.presentation.components.FalseKeyboard
 import com.minutesock.core.presentation.components.WordRow
@@ -44,6 +43,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun WordScreenGame(
     state: DailyWordState,
+    navController: NavController,
     guessWords: ImmutableList<GuessWord>,
     onEvent: (WordEventGame) -> Unit,
     modifier: Modifier = Modifier,
@@ -112,15 +112,6 @@ fun WordScreenGame(
             )
         }
 
-        val gameModeIconId by remember(state.gameMode) {
-            mutableStateOf(
-                when (state.gameMode) {
-                    WordGameMode.Daily -> R.drawable.baseline_today_24
-                    WordGameMode.Inifinity -> R.drawable.baseline_infinity
-                }
-            )
-        }
-
         val themeIconId by remember(isDarkTheme) {
             mutableStateOf(
                 when (isDarkTheme) {
@@ -139,17 +130,20 @@ fun WordScreenGame(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    modifier = Modifier
-                        .size(45.dp)
-                        .padding(10.dp),
-                    painter = painterResource(
-                        id = gameModeIconId
-                    ),
-                    contentDescription = null
-                )
+                IconButton(onClick = { navController.navigate("how") }) {
+                    Icon(
+                        modifier = Modifier
+                            .size(45.dp)
+                            .padding(10.dp),
+                        painter = painterResource(
+                            id = R.drawable.baseline_question_mark_24
+                        ),
+                        contentDescription = null
+                    )
+                }
+
                 IconButton(
-                   onClick = { onDarkThemeToggled(!isDarkTheme) }
+                    onClick = { onDarkThemeToggled(!isDarkTheme) }
                 ) {
                     Icon(
                         modifier = Modifier

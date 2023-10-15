@@ -122,4 +122,15 @@ class WordGameRepository(
             wordSessionDao.getAllWordSessionsWithWord(word).map { it.toWordSessionInfoView() }
         emit(sessions)
     }
+
+    suspend fun getCompletedWordSessionCount(): Int {
+        return withContext(defaultDispatcher) {
+            wordSessionDao.getCompletedWordSessionCount(
+                listOf(
+                    WordGameState.Failure.ordinal,
+                    WordGameState.Success.ordinal
+                )
+            )
+        }
+    }
 }

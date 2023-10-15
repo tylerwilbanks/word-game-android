@@ -29,12 +29,14 @@ import com.minutesock.core.utils.Option
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import java.util.Date
@@ -83,6 +85,17 @@ class WordGameLogicHelper(
         val row2 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row2)
         val row3 = getUpdatedKeyboardRow(keysWithNewState, falseKeyboardKeys.row3)
         return FalseKeyboardKeys(row1, row2, row3)
+    }
+
+    private val _completedWordSessionCount = MutableStateFlow(0)
+    val completedWordSessionCount = _completedWordSessionCount.asStateFlow()
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            _completedWordSessionCount.update {
+                wordGameRepository.getCompletedWordSessionCount()
+            }
+        }
     }
 
     private suspend fun initDailyWordSessionAndState(gameMode: WordGameMode) {
@@ -303,8 +316,6 @@ class WordGameLogicHelper(
                     event.gameMode, event.wordLength, event.maxAttempts
                 )
             }
-
-            WordGameNotStartedEvent.OnHowToPlayPressed -> TODO()
         }
     }
 

@@ -2,7 +2,6 @@ package com.minutesock.core
 
 import android.app.Application
 import android.content.Context
-import android.content.res.Configuration
 import com.minutesock.core.data.AppDatabase
 
 

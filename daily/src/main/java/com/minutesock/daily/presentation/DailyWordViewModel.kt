@@ -23,6 +23,8 @@ class DailyWordViewModel(
 
     val state = wordGameLogicHelper.state
 
+    val completedWordSessionCount = wordGameLogicHelper.completedWordSessionCount
+
     fun onWordGameNotStartedEvent(event: WordGameNotStartedEvent) {
         viewModelScope.launch {
             wordGameLogicHelper.onWordGameNotStartedEvent(event)

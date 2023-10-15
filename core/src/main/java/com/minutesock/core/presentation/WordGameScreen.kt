@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.minutesock.core.domain.DailyWordState
 import com.minutesock.core.domain.WordEventGame
 import com.minutesock.core.domain.WordScreenState
@@ -19,6 +20,7 @@ import com.minutesock.core.domain.WordScreenState
 @Composable
 fun WordGameScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
     state: DailyWordState,
     onGameEvent: (WordEventGame) -> Unit,
     isDarkTheme: Boolean,
@@ -40,6 +42,7 @@ fun WordGameScreen(
     ) {
         WordScreenGame(
             state = state,
+            navController = navController,
             guessWords = state.guessWords,
             onEvent = onGameEvent,
             modifier = Modifier.blur(bgBlur),
