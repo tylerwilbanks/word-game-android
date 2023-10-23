@@ -33,7 +33,7 @@ class ProfileRepository(
                 )
             }
 
-        val maxGuessAttempts = guessDistributions.maxBy { it.maxGuessAttempts }.maxGuessAttempts
+        val maxGuessAttempts = guessDistributions.maxByOrNull { it.maxGuessAttempts }?.maxGuessAttempts ?: 0
 
         val filteredGuessDistributions = mutableListOf<GuessDistribution>()
 
@@ -54,7 +54,7 @@ class ProfileRepository(
         val failedGameSessionsCount =
             guessDistributions.count { it.gameState == WordGameState.Failure }
         val maxCorrectAttemptCount = maxOf(
-            filteredGuessDistributions.maxOf { it.correctAttemptCount },
+            filteredGuessDistributions.maxOfOrNull { it.correctAttemptCount } ?: 0,
             failedGameSessionsCount
         )
 
