@@ -20,8 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#-dontwarn kotlinx.serialization.KSerializer
-#-dontwarn kotlinx.serialization.Serializable
+-dontwarn kotlinx.serialization.KSerializer
+-dontwarn kotlinx.serialization.Serializable
 
 ##---------------Begin: proguard configuration for Gson  ----------
 ### Gson ProGuard and R8 rules which are relevant for all users
