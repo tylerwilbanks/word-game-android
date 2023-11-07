@@ -93,3 +93,7 @@
 -keepclassmembers,allowobfuscation,allowoptimization class <1> {
   <init>();
 }
+
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class *
+-dontwarn androidx.room.paging.**
